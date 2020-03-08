@@ -1,0 +1,17 @@
+{
+    "name": "NavMeshEditor",
+    "references": [
+        "GUID:bcf131c476357c545834dae2057830ec"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -11,12 +11,12 @@ public class TaskListHolder : ScriptableObject
 {
     [SerializeField] private List<TaskBase> tasks = new List<TaskBase>();
 
-    public IEnumerable<TaskBase> GetAllTasks { get { return tasks.ToArray(); } }
+    public IEnumerable<TaskBase> GetAllTasks => tasks.ToArray();
 
     public void AddTask(TaskBase newTask)
     {
         tasks.Add(newTask);
-        tasks.Sort((t1, t2) => { return t1.priority.CompareTo(t2.priority); });
+        tasks.Sort((t1, t2) => t1.priority.CompareTo(t2.priority));
     }
 
     public void Clear()

@@ -53,6 +53,9 @@ MonoBehaviour:
   minDistanceToTaskPosition: 0.2
   movementSpeed: 12
   animator: {fileID: 7049157507610613767}
+  roomsMask:
+    serializedVersion: 2
+    m_Bits: 256
   bed: {fileID: 0}
   references:
     version: 1

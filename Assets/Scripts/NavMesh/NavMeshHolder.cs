@@ -1,14 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 namespace Pieter.NavMesh
 {
     public class NavMeshHolder : MonoBehaviour
     {
-        [SerializeField] private NavMeshTriangle[] triangles = null;
+        [SerializeField] private NavMeshTriangle[] triangles = new NavMeshTriangle[0];
+        [SerializeField] private Vertex[] vertexes = new Vertex[0];
 
         public NavMeshTriangle[] Triangles { get { return triangles; } }
+
+        public Vertex[] Vertexes { get { return vertexes; } }
+
+        private Action OnValueUpdated;
+        public void AddListener(Action call)
+        {
+            OnValueUpdated += call;
+        }
+        public void RemoveListener(Action call)
+        {
+            OnValueUpdated -= call;
+        }
+        public void Notify()
+        {
+            OnValueUpdated?.Invoke();
+        }
 
         public void CollectTriangles(NavMeshGenerator[] generators)
         {
@@ -19,19 +39,45 @@ namespace Pieter.NavMesh
             }
             triangles = collectedTriangels.ToArray();
             int counter = 0;
-            foreach (NavMeshTriangle triangle in triangles)
+            for (int i = 0; i < triangles.Length; i++)
             {
-                triangle.ID = counter++;
+                //triangles[i].ID = counter++;
+            }
+        }
+
+        public void AddTriangles(NavMeshGenerator generators)
+        {
+            List<NavMeshTriangle> collectedTriangles = new List<NavMeshTriangle>();
+            collectedTriangles.AddRange(triangles);
+            collectedTriangles.AddRange(generators.Triangles);
+            triangles = collectedTriangles.ToArray();
+            int counter = 0;
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                //triangles[i].ID = counter++;
+            }
+        }
+
+        public void AddVertexes(NavMeshGenerator generators)
+        {
+            List<Vertex> collectedVertexes = new List<Vertex>();
+            collectedVertexes.AddRange(vertexes);
+            collectedVertexes.AddRange(generators.Vertexes);
+            vertexes = collectedVertexes.ToArray();
+            int counter = 0;
+            for(int i = 0; i < vertexes.Length; i++)
+            {
+                //vertexes[i].ID = counter++;
             }
         }
 
         public NavMeshTriangle GetContainingTriangle(Vector3 pos)
         {
-            foreach (NavMeshTriangle triangle in triangles)
+            for(int i = 0; i < triangles.Length; i++)
             {
-                if (IsPositionInTriangle(pos, triangle))
+                if (IsPositionInTriangle(pos, triangles[i]))
                 {
-                    return triangle;
+                    return triangles[i];
                 }
             }
             return null;
@@ -66,6 +112,10 @@ namespace Pieter.NavMesh
 
         public NavMeshTriangle GetRandomTriangle()
         {
+            if (triangles.Length == 0)
+            {
+                return null;
+            }
             int index = Random.Range(0, triangles.Length);
 
             return triangles[index];
@@ -90,6 +140,19 @@ namespace Pieter.NavMesh
         //    {
         //        tri.GizmoDrawTriangle(Color.green);
         //    }
+        }
+
+        public void AddNavMesh(NavMeshGenerator meshGenerator)
+        {
+            AddTriangles(meshGenerator);
+            AddVertexes(meshGenerator);
+            Notify();
+        }
+
+        public void ResetData()
+        {
+            triangles = new NavMeshTriangle[0];
+            vertexes = new Vertex[0];
         }
     }
 }

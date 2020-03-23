@@ -57,7 +57,7 @@ namespace Pieter.NavMesh
                 if (GUILayout.Button("Insert Triangle"))
                 {
                     navMesh.AddNewTriangle();
-                }
+                } 
             }
             ////EditorGUILayout.LabelField(Selection.activeGameObject.name);
             //EditorGUILayout.Space();

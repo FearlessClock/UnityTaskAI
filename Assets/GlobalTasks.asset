@@ -12,28 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310dc8b51c5b99146b9f57d31e38bc87, type: 3}
   m_Name: GlobalTasks
   m_EditorClassIdentifier: 
-  tasks:
-  - interactionPoint: {fileID: 0}
-    workAnimationType: 1
-    workTime: 3
-    workTimer: 0
-    timeLimit: 10
-    priority: 1
-    interactableObject: {fileID: 0}
-    followUpTasks: []
-  - interactionPoint: {fileID: 0}
-    workAnimationType: 1
-    workTime: 3
-    workTimer: 0
-    timeLimit: 10
-    priority: 1
-    interactableObject: {fileID: 0}
-    followUpTasks: []
-  - interactionPoint: {fileID: 0}
-    workAnimationType: 1
-    workTime: 3
-    workTimer: 0
-    timeLimit: 10
-    priority: 1
-    interactableObject: {fileID: 0}
-    followUpTasks: []
+  tasks: []

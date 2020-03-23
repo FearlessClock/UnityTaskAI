@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Pieter.NavMesh
@@ -9,11 +11,13 @@ namespace Pieter.NavMesh
     [System.Serializable]
     public class NavMeshEntrance
     {
+        public int ID = 0;
         public Vertex entrance1;
         public Vertex entrance2;
         public Vector3 awayFromDoorDirection;
         public Transform entranceMidPoint;
         public float offset;
+        [HideInInspector] public NavMeshGenerator generator;
 
         public void CalculateDoorDirection()
         {
@@ -25,12 +29,33 @@ namespace Pieter.NavMesh
             }
         }
     }
+
     public class NavMeshGenerator : MonoBehaviour
     {
+        public RoomInformation containedRoom;
         [SerializeField] private NavMeshTriangle[] triangles = null;
 
 
+        private Vertex[] cachedVertex = null;
         public int GetNumberOfVertexes => transform.childCount;
+        /// <summary>
+        /// This is a very comp heavy function, use with caution
+        /// </summary>
+        public Vertex[] Vertexes
+        {
+            get
+            {
+                if (cachedVertex == null || cachedVertex.Length != GetNumberOfVertexes)
+                {
+                    cachedVertex = new Vertex[GetNumberOfVertexes];
+                    for (int i = 0; i < cachedVertex.Length; i++)
+                    {
+                        cachedVertex[i] = transform.GetChild(i).GetComponent<Vertex>();
+                    }
+                }
+                return cachedVertex;
+            }
+        }
 
         public NavMeshTriangle[] Triangles { get { return triangles; } }
 
@@ -69,10 +94,11 @@ namespace Pieter.NavMesh
             UpdateEntranceDoorDirections();
         }
 
-        private void UpdateEntranceDoorDirections()
+        public void UpdateEntranceDoorDirections()
         {
             foreach (NavMeshEntrance entrance in entrancePoints)
             {
+                entrance.generator = this;
                 entrance.CalculateDoorDirection();
             }
         }
@@ -112,7 +138,7 @@ namespace Pieter.NavMesh
                     vert = item.gameObject.AddComponent<Vertex>();
                 }
                 vert.ID = counter - 1;
-                vert.adjacent = new List<Vertex>();
+                vert.ResetAdjacentLists();
             }
             return counter;
         }
@@ -140,9 +166,9 @@ namespace Pieter.NavMesh
 
         private static void AddVertexesToAdjacentList(Vertex vert1, Vertex vert2)
         {
-            if (vert1 != null && vert2 != null && !vert1.adjacent.Contains(vert2))
+            if (vert1 != null && vert2 != null && !vert1.Adjacent.Contains(vert2))
             {
-                vert1.adjacent.Add(vert2);
+                vert1.AddAdjacentNode(vert2);
             }
         }
 
@@ -161,8 +187,14 @@ namespace Pieter.NavMesh
                     Gizmos.DrawLine(item.entrance1.Position, item.entrance2.Position);
                     Gizmos.DrawSphere(item.entrance2.Position, 0.3f);
                     Gizmos.DrawRay(item.entranceMidPoint.position, item.awayFromDoorDirection);
+                    Handles.Label(item.entranceMidPoint.position + Vector3.left*0.5f, item.ID.ToString());
                 }
             }
+        }
+
+        public NavMeshEntrance[] Entrances
+        {
+            get { return entrancePoints; }
         }
     }
 }

@@ -9,10 +9,10 @@ public class WorkStation : InteractableObject
     private float taskGenerateTimer = 0;
     [SerializeField] private float workstationPriority = 10;
     [SerializeField] private float workstationWorkTime = 10;
-    private void Awake()
+    private void Start()
     {
         taskGenerateTimer = timeTillTaskGenerate;
-        taskList.AddTask(GenerateTask());
+        //taskList.AddTask(GenerateTask());
     }
 
     private void Update()

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts;
+using Pieter.GraphTraversal;
 using UnityEngine;
 using Pieter.NavMesh;
 
@@ -25,17 +27,22 @@ public class PersonBase : MonoBehaviour
     [SerializeField] private float movementSpeed = 1;
 
     [Space]
-    [SerializeField] private Animator animator = null;
+    private Animator animator = null;
 
     [Space]
-    private AStarNavMeshNavigation navMeshNavigation = null;
-    private NavMeshHolder navMeshHolder = null;
+    private TraversalAStarNavigation traversalAStar = null;
+    private TraversalGraphHolder traversalGraphHolder = null;
     private List<NavMeshMovementLine> path = new List<NavMeshMovementLine>();
     private Vector3 target;
+
+    [SerializeField] private LayerMask roomsMask = 0;
+    private Collider[] hits = new Collider[10];
+
     public void StartUp()
     {
-        navMeshHolder = FindObjectOfType<NavMeshHolder>();
-        navMeshNavigation = new AStarNavMeshNavigation(navMeshHolder);
+        animator = GetComponent<Animator>();
+        traversalGraphHolder = FindObjectOfType<TraversalGraphHolder>();
+        traversalAStar = new TraversalAStarNavigation(traversalGraphHolder);
 
         personalTasks = ScriptableObject.CreateInstance<TaskListHolder>();
         currentState = GoToState(startingState);
@@ -72,6 +79,10 @@ public class PersonBase : MonoBehaviour
     private ePersonState FinishState()
     {
         CallExitForState(stateStack.Pop());
+        if (stateStack.Count == 0)
+        {
+            stateStack.Push(ePersonState.Idle);
+        }
         CallEntryForState(stateStack.Peek());
         return stateStack.Peek();
     }
@@ -145,8 +156,16 @@ public class PersonBase : MonoBehaviour
     private void GoToEntry()
     {
         animator.SetBool(ePersonState.GoTo.ToString(), true);
-        path = navMeshNavigation.GetPathFromTo(this.transform.position, currentTask.interactionPoint.position);
-        if(path != null && path.Count > 0)
+
+        RoomInformation startingRoom = null;
+        startingRoom = GetRoomInformationForLocation(this.transform.position);
+        RoomInformation endingRoom = null;
+        endingRoom = GetRoomInformationForLocation(currentTask.interactionPoint.position);
+        if (startingRoom != null && endingRoom != null)
+        {
+            path = LevelOfDetailNavigationSolver.GetLODPath(this.transform.position, currentTask.interactionPoint.position, startingRoom, endingRoom, traversalAStar);
+        }
+        if (path != null && path.Count > 0)
         {
             target = path[0].point;
             path.RemoveAt(0);
@@ -174,10 +193,14 @@ public class PersonBase : MonoBehaviour
             {
                 currentState = FinishState();
             }
-            else
+            else if(path != null)
             {
                 target = path[0].point;
                 path.RemoveAt(0);
+            }
+            else if(path == null)
+            {
+                currentState = FinishState();
             }
         }
     }
@@ -297,6 +320,25 @@ public class PersonBase : MonoBehaviour
         Debug.Log(fillAmount);
     }
 
+    private RoomInformation GetRoomInformationForLocation(Vector3 position)
+    {
+        RoomInformation startingRoom = null;
+        int nmbrOfHits = Physics.OverlapSphereNonAlloc(position, 1, hits, roomsMask);
+        if (nmbrOfHits > 0)
+        {
+            for (int i = 0; i < nmbrOfHits; i++)
+            {
+                startingRoom = hits[i].GetComponent<RoomInformation>();
+                if (startingRoom != null)
+                {
+                    break;
+                }
+            }
+        }
+
+        return startingRoom;
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawSphere(target, 0.7f);
@@ -304,7 +346,7 @@ public class PersonBase : MonoBehaviour
         foreach (NavMeshMovementLine line in path)
         {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(lastPosition, line.point);
+            Gizmos.DrawLine(lastPosition +Vector3.up, line.point+Vector3.up);
             Gizmos.DrawWireCube(line.point, Vector3.one * 0.4f);
             lastPosition = line.point;
         }

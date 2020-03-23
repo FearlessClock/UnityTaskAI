@@ -46,6 +46,7 @@ public class Human : PersonBase
         if(currentTask != null)
         {
             Gizmos.color = Color.red;
+            
             Gizmos.DrawWireSphere(currentTask.interactionPoint.position, 0.2f);
         }
     }

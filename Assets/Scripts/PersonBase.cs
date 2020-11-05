@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts;
+﻿using Assets.Scripts;
 using Pieter.GraphTraversal;
-using UnityEngine;
 using Pieter.NavMesh;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public enum ePersonState { Idle, GoTo, Working}
 /// <summary>
@@ -12,6 +12,7 @@ public enum ePersonState { Idle, GoTo, Working}
 /// </summary>
 public class PersonBase : MonoBehaviour
 {
+    [SerializeField] private PersonAIDebugHolder debugHolder = null;
     // The persons current state 
     [SerializeField] private ePersonState startingState = ePersonState.Idle;
     private Stack<ePersonState> stateStack = new Stack<ePersonState>();
@@ -21,32 +22,138 @@ public class PersonBase : MonoBehaviour
     private TaskListHolder personalTasks = null;
     [SerializeField] private TaskListHolder globalTasks = null;
 
-    [SerializeReference] protected TaskBase currentTask = null;
-
+    protected ITask currentTask = null;
+    public string taskName = "";
+    public string stateName = "";
     [SerializeField] private float minDistanceToTaskPosition = 0.1f;
     [SerializeField] private float movementSpeed = 1;
 
     [Space]
-    private Animator animator = null;
+    private AnimationCommandController animatorController = null;
 
     [Space]
     private TraversalAStarNavigation traversalAStar = null;
     private TraversalGraphHolder traversalGraphHolder = null;
     private List<NavMeshMovementLine> path = new List<NavMeshMovementLine>();
     private Vector3 target;
+    private Vertex associatedVertexTarget = null;
 
     [SerializeField] private LayerMask roomsMask = 0;
     private Collider[] hits = new Collider[10];
 
+    protected RoomInformation currentRoom = null;
+    private LevelGeneration levelGeneration = null;
+    public bool isOnFire = false;
+    public bool isCloseToFire = false;
+    private bool hasCreatedFireTask = false;
+
+    [SerializeField] private RoomGraphHolder roomGraph = null;
+
+    private bool isWaitingForAnimationEnd = false;
+    private Health health = null;
+    [SerializeField] private float burningDamageAmount = 0.1f;
+    [SerializeField] private Health healthController = null;
+
+    public bool CheckIfAlive()
+    {
+        if(healthController == null)
+        {
+            Debug.LogError("Health controller is null");
+        }
+        return healthController.IsAlive;
+    }
+
     public void StartUp()
     {
-        animator = GetComponent<Animator>();
+        health = GetComponent<Health>();
+        if(health == null)
+        {
+            Debug.LogError("Could not find Health component", this);
+        }
+        debugHolder = ScriptableObject.CreateInstance<PersonAIDebugHolder>();
+        levelGeneration = FindObjectOfType<LevelGeneration>();
+
+        animatorController = GetComponent<AnimationCommandController>();
         traversalGraphHolder = FindObjectOfType<TraversalGraphHolder>();
         traversalAStar = new TraversalAStarNavigation(traversalGraphHolder);
 
         personalTasks = ScriptableObject.CreateInstance<TaskListHolder>();
         currentState = GoToState(startingState);
-        animator.SetBool(currentState.ToString(), true);
+
+        FindCurrentRoom();
+    }
+
+    protected void FindCurrentRoom()
+    {
+        for (int i = 0; i < levelGeneration.GeneratedRooms.Count; i++)
+        {
+            if (levelGeneration.GeneratedRooms[i].IsInsideRoomArea(this.transform.position))
+            {
+                currentRoom = levelGeneration.GeneratedRooms[i];
+            }
+        }
+    }
+
+    protected void CheckIfOnFire()
+    {
+        FindCurrentRoom();
+
+        bool isFireClose = currentRoom.IsOnFire;
+        if (isFireClose)
+        {
+            health.LoseHealth(burningDamageAmount);
+        }
+
+        for (int i = 0; !isFireClose && i < currentRoom.GetEntrances.Length; i++)
+        {
+            isFireClose = isFireClose || (currentRoom.GetEntrances[i].connectedEntrance != null && currentRoom.GetEntrances[i].IsPassable && currentRoom.GetConnectedRoomFromEntranceWithID(currentRoom.GetEntrances[i].ID).IsOnFire );
+        }
+        if (isFireClose)
+        {
+            if (!hasCreatedFireTask)
+            {
+                CreateRunFromFireTask();
+            }
+            isCloseToFire = true;
+        }
+        else
+        {
+            isCloseToFire = false;
+            isOnFire = false;
+        }
+    }
+
+    private void CreateRunFromFireTask()
+    {
+        debugHolder.Log("Started creating fire task", eDebugImportance.Unimportant);
+        RoomInformation selectedRoom = roomGraph.FindRoomFromStartMatching((x) => x >= 3, currentRoom.ID);
+        if (selectedRoom != null)
+        {
+            hasCreatedFireTask = true;
+            WalkTask walkTask = new WalkTask("Walk-RunFromFire", TaskScope.Personal, selectedRoom.GetRandomSpotInsideRoom, 10, 0, false, 2, () => { hasCreatedFireTask = false; debugHolder.Log("I am done running", eDebugImportance.Important); return true; });
+            personalTasks.AddTask(walkTask);
+            debugHolder.Log("Created Fire Task", eDebugImportance.Unimportant);
+            isOnFire = false;
+        }
+        else
+        {
+            debugHolder.Log("Could not find a room to create the fire task", eDebugImportance.Error);
+            WanderTask wanderTask = new WanderTask("Panic", TaskScope.Personal, currentRoom.GetRandomSpotInsideRoom, () => isOnFire, 10, 0, false, 2, 4, eAnimationType.Panic, CreatePanicTaskIfStillOnFire);
+            AddNewTask(wanderTask);
+            isOnFire = true;
+        }
+    }
+
+    private bool CreatePanicTaskIfStillOnFire()
+    {
+        if (isOnFire)
+        {
+            debugHolder.Log("Create next wave of panic", eDebugImportance.Unimportant);
+            WanderTask wanderTask = new WanderTask("Panic", TaskScope.Personal, currentRoom.GetRandomSpotInsideRoom, () => isOnFire, 10, 0, false, 2, 4, eAnimationType.Panic, CreatePanicTaskIfStillOnFire);
+            AddNewTask(wanderTask);
+            return true;
+        }
+        return false;
     }
 
     private ePersonState GoToState(ePersonState state)
@@ -103,18 +210,37 @@ public class PersonBase : MonoBehaviour
         }
     }
 
+    protected void UpdateDebug()
+    {
+        if(currentTask != null)
+        {
+            taskName = currentTask.GetTaskInformation;
+        }
+        else
+        {
+            taskName = "Nothing";
+        }
+        stateName = currentState.ToString();
+    }
+
     /// <summary>
     /// Work on the current task till it is finished
     /// </summary>
     public void WorkOnTask()
     {
+        if (!currentTask.IsTaskValid)
+        {
+            debugHolder.Log("Task is invalid (" + currentTask.GetTaskInformation + ")", eDebugImportance.Error);
+            currentTask = null;
+        }
+
         switch (currentState)
         {
             case ePersonState.Idle:
                 IdleState();
                 break;
             case ePersonState.GoTo:
-                GoToState();
+                WalkingState();
                 break;
             case ePersonState.Working:
                 WorkingState();
@@ -124,7 +250,8 @@ public class PersonBase : MonoBehaviour
 
     private void IdleEntry()
     {
-        animator.SetBool(ePersonState.Idle.ToString(), true);
+        debugHolder.Log("Idle Entry Called", eDebugImportance.Entry);
+        animatorController.ChangeState(eAnimationType.Idle);
     }
     /// <summary>
     /// The Idle state checks the transitions to go to the next states
@@ -133,8 +260,13 @@ public class PersonBase : MonoBehaviour
     /// </summary>
     private void IdleState()
     {
-        if (currentTask == null)
+        if (currentTask == null || !currentTask.IsTaskValid)
         {
+            return;
+        }
+        if (isCloseToFire && currentTask.Isinterruptible)
+        {
+            ReturnSelectedTaskToTaskList();
             return;
         }
         float distanceToTaskPosition = GetDistanceToTaskPosition(currentTask);
@@ -149,30 +281,30 @@ public class PersonBase : MonoBehaviour
     }
     private void IdleExit()
     {
-        animator.SetBool(ePersonState.Idle.ToString(), false);
+        debugHolder.Log("Idle Exit Called", eDebugImportance.Exit);
     }
 
 
     private void GoToEntry()
     {
-        animator.SetBool(ePersonState.GoTo.ToString(), true);
-
+        debugHolder.Log("GOTO Entry Called", eDebugImportance.Entry);
         RoomInformation startingRoom = null;
-        startingRoom = GetRoomInformationForLocation(this.transform.position);
+        startingRoom = currentRoom;
         RoomInformation endingRoom = null;
-        endingRoom = GetRoomInformationForLocation(currentTask.interactionPoint.position);
+        endingRoom = GetRoomInformationForLocation(currentTask.GetInteractionPosition);
+        path = null;
         if (startingRoom != null && endingRoom != null)
         {
-            path = LevelOfDetailNavigationSolver.GetLODPath(this.transform.position, currentTask.interactionPoint.position, startingRoom, endingRoom, traversalAStar);
+            path = LevelOfDetailNavigationSolver.GetLODPath(this.transform.position, currentTask.GetInteractionPosition, startingRoom, endingRoom, traversalAStar);
+            debugHolder.Log("Found path of length " + path.Count, eDebugImportance.Unimportant);
         }
         if (path != null && path.Count > 0)
         {
+            animatorController.ChangeState(eAnimationType.Walk);
+            animatorController.SetFloat("SpeedMultiplier", currentTask.GetTaskUrgencyLevel);
             target = path[0].point;
+            associatedVertexTarget = path[0].associatedVertex;
             path.RemoveAt(0);
-        }
-        else
-        {
-            currentState = FinishState();
         }
     }
     /// <summary>
@@ -180,42 +312,95 @@ public class PersonBase : MonoBehaviour
     /// if the person is close, pop the state
     /// if the person is far away, walk to the position
     /// </summary>
-    private void GoToState()
+    private void WalkingState()
     {
-        float distanceToTaskPosition = GetDistanceToPosition(target);
-        if (distanceToTaskPosition >= minDistanceToTaskPosition)
+        if(currentTask == null)
         {
-            WalkToTarget();
+            return;
+        }
+        if (isCloseToFire && currentTask.Isinterruptible)
+        {
+            ReturnSelectedTaskToTaskList();
+            currentState = FinishState();
+        }
+        // No path was found to the target task
+        if (path == null)
+        {
+            ReturnSelectedTaskToTaskList();
+
+            currentState = FinishState();
         }
         else
         {
-            if(path != null && path.Count == 0)
+            //Check if the target is a open vertex
+            if(associatedVertexTarget == null || ( associatedVertexTarget != null && associatedVertexTarget.isPassable))
             {
-                currentState = FinishState();
+                float distanceToTaskPosition = GetDistanceToPosition(target);
+                if (distanceToTaskPosition >= minDistanceToTaskPosition)
+                {
+                    WalkToTarget();
+                }
+                else
+                {
+                    if (path != null && path.Count == 0)
+                    {
+                        this.transform.position = currentTask.GetInteractionPosition;
+                        currentState = FinishState();
+                    }
+                    else if (path != null)
+                    {
+                        target = path[0].point;
+                        associatedVertexTarget = path[0].associatedVertex;
+                        path.RemoveAt(0);
+                    }
+                    else if (path == null)
+                    {
+                        currentState = FinishState();
+                    }
+                }
             }
-            else if(path != null)
+            // The vertex is not passable, so we cancel the task
+            else
             {
-                target = path[0].point;
-                path.RemoveAt(0);
-            }
-            else if(path == null)
-            {
+                associatedVertexTarget = null;
+                path.Clear();
+                ReturnSelectedTaskToTaskList();
                 currentState = FinishState();
             }
         }
+    }
+
+    private void ReturnSelectedTaskToTaskList()
+    {
+        currentTask.GetTaskInformation = currentTask.GetTaskInformation + " Returned";
+        switch (currentTask.GetTaskScope)
+        {
+            case TaskScope.Global:
+                globalTasks.AddTask(currentTask);
+                break;
+            case TaskScope.Personal:
+                personalTasks.AddTask(currentTask);
+                break;
+        }
+        currentTask = null;
     }
 
     private void GoToExit()
     {
-        animator.SetBool(ePersonState.GoTo.ToString(), false);
+        debugHolder.Log("GOTO Exit Called", eDebugImportance.Exit);
     }
 
     private void WorkingEntry()
     {
-        animator.SetBool(currentTask.workAnimationType.ToString(), true);
-        currentTask.workTimer = currentTask.workTime;
-        this.transform.position = currentTask.interactionPoint.position;
-        this.transform.rotation = currentTask.interactionPoint.rotation;
+        debugHolder.Log("Working Entry Called", eDebugImportance.Entry);
+        if (currentTask.DoesWork)
+        {
+            isWaitingForAnimationEnd = true;
+            animatorController.ChangeState(currentTask.GetWorkAnimationType);
+            currentTask.SetWorkTimer(currentTask.GetWorkTime);
+            this.transform.position = currentTask.GetInteractionPosition;
+            this.transform.rotation = currentTask.GetInteractionRotation;
+        }
     }
 
     /// <summary>
@@ -224,20 +409,50 @@ public class PersonBase : MonoBehaviour
     /// </summary>
     private void WorkingState()
     {
-        currentTask.workTimer -= Time.deltaTime;
-        if (currentTask.IsWorkDone())
+        if(currentTask == null)
         {
-            animator.SetBool(currentTask.workAnimationType.ToString(), false);
+            return;
+        }
+
+        if (!currentTask.DoesWork)
+        {
+            currentTask.GetWorkDoneFunction?.Invoke();
+            currentState = FinishState();
+            return;
+        }
+        if(isCloseToFire && currentTask.Isinterruptible)
+        {
+            animatorController.ChangeState(currentTask.GetWorkAnimationType);
+            ReturnSelectedTaskToTaskList();
+
+            currentState = FinishState();
+            return;
+        }
+
+        currentTask.UpdateWorkTimer(Time.deltaTime);
+        if (currentTask.IsWorkDone)
+        {
+            currentTask.GetWorkDoneFunction?.Invoke();
+            animatorController.ChangeState(currentTask.GetWorkAnimationType);
         }
     }
 
     public void WorkingAnimationDone()
     {
-        currentState = FinishState();
+        if (isWaitingForAnimationEnd && currentTask != null && currentTask.IsWorkDone)
+        {
+            debugHolder.Log("Waiting for animation finished", eDebugImportance.Unimportant);
+            isWaitingForAnimationEnd = false;
+            currentState = FinishState();
+        }
     }
     private void WorkingExit()
     {
-        currentTask = currentTask.GetRandomFollowUpTask();
+        debugHolder.Log("Working Exit Called", eDebugImportance.Exit);
+        if (currentTask != null)
+        {
+            currentTask = currentTask.GetRandomFollowUpTask();
+        }
     }
 
     /// <summary>
@@ -245,50 +460,88 @@ public class PersonBase : MonoBehaviour
     /// </summary>
     protected virtual void WalkToTarget()
     {
-        Vector3 direction = ( target - this.transform.position).normalized;
-        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), movementSpeed * Time.deltaTime); ;
+        if(currentTask != null)
+        {
+            Vector3 direction = (target - this.transform.position).normalized;
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), currentTask.GetTaskUrgencyLevel * movementSpeed * Time.deltaTime);
+        }
     }
 
 
     /// <summary>
     /// Get a new task from the list of tasks
     /// </summary>
-    public TaskBase GetNewTask()
+    public ITask GetNewTask()
     {
-        TaskBase personalTaskBase = personalTasks.PeekHighestPriorityTask();
-        TaskBase globalTaskBase = globalTasks.PeekHighestPriorityTask();
-        if(personalTaskBase == null)
+        debugHolder.Log("Get a new Task", eDebugImportance.Unimportant);
+        List<ITask> allTasks = new List<ITask>();
+        allTasks.AddRange(personalTasks.Tasks);
+        allTasks.AddRange(globalTasks.Tasks);
+        List<NavMeshMovementLine> newPath = new List<NavMeshMovementLine>();
+        for (int i = 0; i < allTasks.Count; i++)
         {
-            return globalTasks.GetHighestPriorityTask();
+            if (!allTasks[i].IsTaskValid)
+            {
+                switch (allTasks[i].GetTaskScope)
+                {
+                    case TaskScope.Global:
+                        globalTasks.Remove(allTasks[i]);
+                        break;
+                    case TaskScope.Personal:
+                        personalTasks.Remove(allTasks[i]);
+                        break;
+                }
+                continue;
+            }
+            newPath.Clear();
+            //Quick check to see if the task is possible
+            if (allTasks[i] != null)
+            {
+                RoomInformation targetRoom = GetRoomInformationForLocation(allTasks[i].GetInteractionPosition);
+                if (targetRoom != null)
+                {
+                    Vertex targetVertex = targetRoom.GetCenterVertex;
+                    newPath = traversalAStar.GetPathFromTo(currentRoom.GetCenterVertex, targetVertex);
+                }
+            }
+            else
+            {
+                Debug.Log("Could not find route");
+                newPath = null;
+            }
+            if (currentRoom != null && newPath != null && newPath.Count > 0)
+            {
+                switch (allTasks[i].GetTaskScope)
+                {
+                    case TaskScope.Global:
+                        globalTasks.Remove(allTasks[i]);
+                        break;
+                    case TaskScope.Personal:
+                        personalTasks.Remove(allTasks[i]);
+                        break;
+                }
+                debugHolder.Log("Found a task (" + allTasks[i].GetTaskInformation + ")", eDebugImportance.Unimportant);
+                newPath.Clear();
+                return allTasks[i];
+            }
         }
-        if(globalTaskBase == null)
-        {
-            return personalTasks.GetHighestPriorityTask();
-        }
-        if(personalTaskBase.priority <= globalTaskBase.priority)
-        {
-            return personalTasks.GetHighestPriorityTask();
-        }
-        else
-        {
-            return globalTasks.GetHighestPriorityTask();
-        }
+        return new WanderTask("Wander "+ currentRoom.name, TaskScope.Personal, currentRoom.GetRandomSpotInsideRoom, null, 2, 5, true, 1, 3);
     }
 
     /// <summary>
     /// Get a new task from the list of follow up tasks from the current task
     /// </summary>
-    public TaskBase GetNewFollowUpTask()
+    public ITask GetNewFollowUpTask()
     {
         if (currentTask.FollowUpTasks.Count > 0)
         {
-            float highestPriority = currentTask.followUpTasks[0].priority;
-            TaskBase selectedTask = currentTask.followUpTasks[0];
-            foreach (TaskBase newTask in currentTask.followUpTasks)
+            float highestPriority = currentTask.FollowUpTasks[0].GetPriority;
+            ITask selectedTask = currentTask.FollowUpTasks[0];
+            foreach (ITask newTask in currentTask.FollowUpTasks)
             {
-                if (highestPriority < newTask.priority)
+                if (highestPriority < newTask.GetPriority)
                 {
-                    highestPriority = newTask.priority;
+                    highestPriority = newTask.GetPriority;
                     selectedTask = newTask;
                 }
             }
@@ -301,14 +554,22 @@ public class PersonBase : MonoBehaviour
         }
     }
 
-    public void AddNewTask(TaskBase task)
+    public void AddNewTask(ITask task)
     {
         personalTasks.AddTask(task);
     }
 
-    private float GetDistanceToTaskPosition(TaskBase targetTask)
+    private float GetDistanceToTaskPosition(ITask targetTask)
     {
-        return Vector3.Distance(targetTask.interactionPoint.position, this.transform.position);
+        if (targetTask != null && targetTask.IsTaskValid)
+        {
+            return Vector3.Distance(targetTask.GetInteractionPosition, this.transform.position);
+        }
+        else
+        {
+            currentTask = null;
+            return 0;
+        }
     }
     private float GetDistanceToPosition(Vector3 target)
     {
@@ -322,33 +583,30 @@ public class PersonBase : MonoBehaviour
 
     private RoomInformation GetRoomInformationForLocation(Vector3 position)
     {
-        RoomInformation startingRoom = null;
-        int nmbrOfHits = Physics.OverlapSphereNonAlloc(position, 1, hits, roomsMask);
-        if (nmbrOfHits > 0)
+        for (int i = 0; i < levelGeneration.GeneratedRooms.Count; i++)
         {
-            for (int i = 0; i < nmbrOfHits; i++)
+            if (levelGeneration.GeneratedRooms[i].IsInsideRoomArea(position))
             {
-                startingRoom = hits[i].GetComponent<RoomInformation>();
-                if (startingRoom != null)
-                {
-                    break;
-                }
+                return levelGeneration.GeneratedRooms[i];
             }
         }
-
-        return startingRoom;
+        
+        return null;
     }
 
-    private void OnDrawGizmos()
+    protected void PersonBaseOnDrawGizmos()
     {
         Gizmos.DrawSphere(target, 0.7f);
         Vector3 lastPosition = this.transform.position;
-        foreach (NavMeshMovementLine line in path)
+        if(path != null)
         {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(lastPosition +Vector3.up, line.point+Vector3.up);
-            Gizmos.DrawWireCube(line.point, Vector3.one * 0.4f);
-            lastPosition = line.point;
+            foreach (NavMeshMovementLine line in path)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawLine(lastPosition + Vector3.up, line.point + Vector3.up);
+                Gizmos.DrawWireCube(line.point, Vector3.one * 0.4f);
+                lastPosition = line.point;
+            }
         }
     }
 }

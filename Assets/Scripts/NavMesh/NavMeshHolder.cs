@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -28,6 +29,38 @@ namespace Pieter.NavMesh
         public void Notify()
         {
             OnValueUpdated?.Invoke();
+        }
+
+        public void UpdateAdjacentTris()
+        {
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                triangles[i].adjacentTriangles.Clear();
+            }
+            Thread t = new Thread(new ParameterizedThreadStart(UpdatingTrisThread));
+            t.Start(new AdjacentTriangles() { from = 0, to = triangles.Length / 2 });
+            Thread t2 = new Thread(new ParameterizedThreadStart(UpdatingTrisThread));
+            t2.Start(new AdjacentTriangles() { from = triangles.Length / 2, to = triangles.Length });
+        }
+
+        private void UpdatingTrisThread(object obj)
+        {
+            AdjacentTriangles adjacentTriangles = (AdjacentTriangles)obj;
+            for (int i = adjacentTriangles.from; i < adjacentTriangles.to; i++)
+            {
+                for (int j = 0; j < triangles.Length; j++)
+                {
+                    if (triangles[i].Equals(triangles[j]))
+                    {
+                        continue;
+                    }
+                    if (triangles[i].IsAdjacent(triangles[j]))
+                    {
+                        triangles[i].adjacentTriangles.Add(triangles[j].ID);
+                    }
+                }
+            }
+            Debug.Log("Done " + adjacentTriangles.from + " to " + adjacentTriangles.to);
         }
 
         public void CollectTriangles(NavMeshGenerator[] generators)
@@ -154,5 +187,11 @@ namespace Pieter.NavMesh
             triangles = new NavMeshTriangle[0];
             vertexes = new Vertex[0];
         }
+    }
+
+    struct AdjacentTriangles
+    {
+        public int from;
+        public int to;
     }
 }

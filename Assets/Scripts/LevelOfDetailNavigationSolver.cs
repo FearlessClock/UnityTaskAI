@@ -20,11 +20,17 @@ namespace Assets.Scripts
                 return startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, endPosition);
             }
             List<NavMeshMovementLine> path = new List<NavMeshMovementLine>();
-            
-            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, startingRoom.TraversalGenerator.MiddleVertex.Position));
 
-            path.AddRange(graphNavigation.GetPathFromTo(
-                startingRoom.TraversalGenerator.MiddleVertex, arrivalRoom.TraversalGenerator.MiddleVertex));
+            List<NavMeshMovementLine> traversalMovementList = graphNavigation.GetPathFromTo(
+                startingRoom.TraversalGenerator.MiddleVertex, arrivalRoom.TraversalGenerator.MiddleVertex);
+            if(traversalMovementList.Count == 0)
+            {
+                return null;
+            }
+
+            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, startingRoom.TraversalGenerator.MiddleVertex.Position));
+            
+            path.AddRange(traversalMovementList);
             path.AddRange(arrivalRoom.NavMeshNavigation.GetPathFromTo(arrivalRoom.TraversalGenerator.MiddleVertex.Position, endPosition));
 
             return path;

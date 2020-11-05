@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace Pieter.NavMesh
 {
@@ -21,14 +22,16 @@ namespace Pieter.NavMesh
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            if(GUILayout.Button("Update Generator Values"))
-            {
-                //navMesh.UpdateInformation();
-            }
             // Add script drawer
             SerializedProperty prop = serializedObject.FindProperty("m_Script");
             EditorGUILayout.PropertyField(prop, true, new GUILayoutOption[0]);
 
+            //if (GUILayout.Button("Add Adjacent Tris"))
+            //{
+            //    navMesh.UpdateAdjacentTris();
+            //    EditorUtility.SetDirty(navMesh);
+            //    EditorSceneManager.MarkSceneDirty(navMesh.gameObject.scene);
+            //}
             showPosition = EditorGUILayout.Foldout(showPosition, "triangles");
             if (showPosition)
             {

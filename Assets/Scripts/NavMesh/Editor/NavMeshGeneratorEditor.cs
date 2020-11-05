@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace Pieter.NavMesh
 {
@@ -27,6 +28,10 @@ namespace Pieter.NavMesh
             if(GUILayout.Button("Update Generator Values"))
             {
                 navMesh.UpdateInformation();
+            }
+            if (GUILayout.Button("Update Adjacent Triangles"))
+            {
+                navMesh.UpdateAdjacentTriangles();
             }
             SerializedProperty prop = serializedObject.FindProperty("m_Script");
             EditorGUILayout.PropertyField(prop, true, new GUILayoutOption[0]);
@@ -57,7 +62,12 @@ namespace Pieter.NavMesh
                 if (GUILayout.Button("Insert Triangle"))
                 {
                     navMesh.AddNewTriangle();
-                } 
+                }
+            }
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(navMesh);
+                EditorSceneManager.MarkSceneDirty(navMesh.gameObject.scene);
             }
             ////EditorGUILayout.LabelField(Selection.activeGameObject.name);
             //EditorGUILayout.Space();

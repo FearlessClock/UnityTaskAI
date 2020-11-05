@@ -4,26 +4,30 @@ using UnityEngine;
 
 public class AnimationExitNotifier : StateMachineBehaviour
 {
+    [SerializeField] private string exitStringEventName = "";
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
     //    
     //}
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        AnimatorEventActivator eventActivator = animator.gameObject.GetComponent<AnimatorEventActivator>();
+        if (eventActivator)
+        {
+            eventActivator.EventStringReceived(exitStringEventName);
+        }
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log("Done evaluating " + animator.gameObject.name);
         AnimatorEventActivator eventActivator = animator.gameObject.GetComponent<AnimatorEventActivator>();
         if (eventActivator)
         {
-            eventActivator.EventStringReceived("WorkDone");
+            eventActivator.EventStringReceived(exitStringEventName);
         }
     }
 

@@ -25,7 +25,7 @@ namespace Pieter.GraphTraversal
     public class TraversalEntrance
     {
         [HideInInspector] public string name;
-        public int ID;
+        public int ID => vertex.ID;
         public Vertex vertex;
     }
     public class TraversalGenerator : MonoBehaviour
@@ -33,6 +33,7 @@ namespace Pieter.GraphTraversal
         public RoomInformation containedRoom;
         [SerializeField] private TraversalLine[] traversalLines = null;
         [SerializeField] private TraversalEntrance[] entrances = null;
+        
 
         public TraversalLine[] TraversalLines => traversalLines;
         [SerializeField] private Vertex middleVertex = null;

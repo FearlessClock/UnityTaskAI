@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 
 public class Human : PersonBase
@@ -7,18 +8,25 @@ public class Human : PersonBase
     private float tiredLevel = 10;
     private float tiredBecoming = 0.1f;
     private TaskBase sleepTask = null;
+
+    private void OnDestroy()
+    {
+        currentTask = null;    
+    }
+
     private void Awake()
     {
         StartUp();
-        if(currentTask == null)
-        {
-            currentTask = GetNewTask();
-        }
     }
 
     private void Update()
     {
-        if(currentTask != null)
+        if (!CheckIfAlive())
+        {
+            return;
+        }
+        CheckIfOnFire();
+        if (currentTask != null)
         {
             WorkOnTask();
         }
@@ -27,7 +35,8 @@ public class Human : PersonBase
             currentTask = GetNewTask();
         }
 
-        if(bed != null)
+        UpdateDebug();
+        if (bed != null)
         {
             tiredLevel -= tiredBecoming;
             if (tiredLevel < 5)
@@ -47,7 +56,9 @@ public class Human : PersonBase
         {
             Gizmos.color = Color.red;
             
-            Gizmos.DrawWireSphere(currentTask.interactionPoint.position, 0.2f);
+            Gizmos.DrawWireSphere(currentTask.GetInteractionPosition, 0.2f);
         }
+
+        base.PersonBaseOnDrawGizmos();
     }
 }

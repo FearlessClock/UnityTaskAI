@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310dc8b51c5b99146b9f57d31e38bc87, type: 3}
   m_Name: GlobalTasks
   m_EditorClassIdentifier: 
-  tasks: []

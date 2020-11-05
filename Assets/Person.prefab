@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 7049157507610613764}
   - component: {fileID: 7049157507610613767}
   - component: {fileID: 7049157507610613766}
+  - component: {fileID: 7292225733365320031}
+  - component: {fileID: 7004388679653035422}
   m_Layer: 0
   m_Name: Person
   m_TagString: Untagged
@@ -46,21 +48,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f180e221ae4436c40b2634a1a1a75e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugHolder: {fileID: 0}
   startingState: 0
   globalTasks: {fileID: 11400000, guid: 2bea0cf92a6c3bb409dfef4a85cdff74, type: 2}
-  currentTask:
-    id: 0
-  minDistanceToTaskPosition: 0.2
+  taskName: 
+  stateName: 
+  minDistanceToTaskPosition: 0.4
   movementSpeed: 12
-  animator: {fileID: 7049157507610613767}
   roomsMask:
     serializedVersion: 2
     m_Bits: 256
+  isOnFire: 0
+  isCloseToFire: 0
+  roomGraph: {fileID: 11400000, guid: ccd9c7b5050250a4eb51b93e3a7ca598, type: 2}
+  burningDamageAmount: 0.1
+  healthController: {fileID: 7004388679653035422}
   bed: {fileID: 0}
-  references:
-    version: 1
-    00000000:
-      type: {class: , ns: , asm: }
 --- !u!95 &7049157507610613767
 Animator:
   serializedVersion: 3
@@ -99,6 +102,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7049157507610613764}
+        m_TargetAssemblyTypeName: 
         m_MethodName: WorkingAnimationDone
         m_Mode: 1
         m_Arguments:
@@ -109,6 +113,32 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7292225733365320031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7049157507610613762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d99e587797e97c4dbbeb748acf694e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 7049157507610613767}
+--- !u!114 &7004388679653035422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7049157507610613762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8bd1a79068f0e4a8b1c86dbcbe663f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 10
 --- !u!1001 &7049157507983782604
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -116,9 +146,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7049157507610613765}
     m_Modifications:
+    - target: {fileID: 105630, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 117284, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
       propertyPath: m_Name
       value: Character_Ninja_White
+      objectReference: {fileID: 0}
+    - target: {fileID: 138766, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 139182, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 170064, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 175300, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 181852, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195354, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 472772, guid: 241659bc2ecdb3c44aae2b1a066043f1, type: 3}
       propertyPath: m_LocalPosition.x

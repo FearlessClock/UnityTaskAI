@@ -6,6 +6,7 @@ namespace Pieter.NavMesh
     public class NavMeshMovementLine
     {
         public Vector3 point;
+        public Vertex associatedVertex = null;
 
         public override string ToString()
         {

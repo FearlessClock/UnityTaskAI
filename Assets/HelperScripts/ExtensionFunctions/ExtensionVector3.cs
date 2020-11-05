@@ -11,4 +11,8 @@ public static class ExtensionVector3
     {
         return new Vector3(vec.x, vec.y, 0);
     }
+    public static Vector3 FlattenVectorY(this Vector3 vec)
+    {
+        return new Vector3(vec.x, 0, vec.z);
+    }
 }

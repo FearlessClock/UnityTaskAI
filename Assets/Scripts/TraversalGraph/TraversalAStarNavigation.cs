@@ -107,12 +107,16 @@ namespace Pieter.GraphTraversal
 
                 open.RemoveAt(index);
                 current.inClosed = true;
-                if (open.Count > 4000)
+                if (open.Count > 9999)
                 {
                     break;
                 }
                 for (int i = 0; i < current.vert.Count; i++)
                 {
+                    if (!current.vert.GetAdjacentVertex(i).isPassable)
+                    {
+                        continue;
+                    }
                     AStarPoint aStarPointExisting = GetPointValue(current.vert.GetAdjacentVertex(i));
                     if (aStarPointExisting.inClosed)
                     {
@@ -146,11 +150,11 @@ namespace Pieter.GraphTraversal
         private List<NavMeshMovementLine> ReconstructPath(AStarPoint lastPoint, Vector3 end, Vector3 start)
         {
             reconstructedPath.Clear();
-            reconstructedPath.Add(new NavMeshMovementLine { point = lastPoint.vert.Position });
+            reconstructedPath.Add(new NavMeshMovementLine { point = lastPoint.vert.Position, associatedVertex = lastPoint.vert });
             current = lastPoint.parent;
             while (current != null)
             {
-                reconstructedPath.Add(new NavMeshMovementLine { point = current.vert.Position });
+                reconstructedPath.Add(new NavMeshMovementLine { point = current.vert.Position, associatedVertex = lastPoint.vert });
                 lastPoint = current;
                 current = lastPoint.parent;
             }

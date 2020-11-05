@@ -4,4 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public enum eAnimationType { Idle, Work, Sleep}
+public enum eAnimationType { Idle, Work, Sleep,
+    Panic,
+    Walk,
+    Death
+}

@@ -9,10 +9,14 @@ public class WorkStation : InteractableObject
     private float taskGenerateTimer = 0;
     [SerializeField] private float workstationPriority = 10;
     [SerializeField] private float workstationWorkTime = 10;
+    [SerializeField] private bool generateOnStartup = false;
     private void Start()
     {
         taskGenerateTimer = timeTillTaskGenerate;
-        //taskList.AddTask(GenerateTask());
+        if (generateOnStartup)
+        {
+            taskList.AddTask(GenerateTask());
+        }
     }
 
     private void Update()
@@ -26,6 +30,6 @@ public class WorkStation : InteractableObject
     }
     public override TaskBase GenerateTask()
     {
-        return new TaskBase(interactionPoint, 10, 1, 3, eAnimationType.Work, this);
+        return new TaskBase("WorkStation-"+this.name, TaskScope.Global, interactionPoint, 10, 1, 3, true, 1, null, eAnimationType.Work, this) ;
     }
 }

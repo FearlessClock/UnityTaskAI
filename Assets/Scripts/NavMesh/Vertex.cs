@@ -30,7 +30,10 @@ namespace Pieter.NavMesh
 
         public int ID = -1;
         private Vector3 lastSavedPosition = Vector3.zero;
+        private Vector3 lastSavedLocalPosition = Vector3.zero;
         private int transformUpdateCounter = 0;
+        private DoorController doorController = null;
+        public bool isPassable => (doorController == null) || (doorController != null && doorController.IsPassable);
         public Vector3 Position
         {
             get
@@ -38,21 +41,39 @@ namespace Pieter.NavMesh
                 if (transformUpdateCounter++ % 50 == 0)
                 {
                     transformUpdateCounter = 0;
-                    lastSavedPosition = this.transform.position;
+                    try
+                    {
+                        lastSavedPosition = this.transform.position;
+                    }
+                    catch
+                    {
+
+                    }
                 }
                 return lastSavedPosition;
-                if (Thread.CurrentThread == LevelGeneration.mainThread)
-                {
-                    lastSavedPosition = this.transform.position;
-                    return this.transform.position;
-                }
-                else
-                {
-                    return lastSavedPosition;
-                }
             }
         }
-        public List<Vertex> adjacent;
+
+        public Vector3 LocalPosition
+        {
+            get
+            {
+                if (transformUpdateCounter++ % 50 == 0)
+                {
+                    transformUpdateCounter = 0;
+                    try
+                    {
+                        lastSavedPosition = this.transform.localPosition;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                return lastSavedPosition;
+            }
+        }
+        [SerializeField] private List<Vertex> adjacent;
         public List<Vertex> Adjacent => adjacent;
         private List<AdjacentVertex> adjacentInformation;
         public List<AdjacentVertex> AdjacentInformation => adjacentInformation;
@@ -72,6 +93,7 @@ namespace Pieter.NavMesh
         }
         private void Awake()
         {
+            doorController = GetComponentInChildren<DoorController>();
             if (adjacentInformation == null)
             {
                 adjacentInformation = new List<AdjacentVertex>();

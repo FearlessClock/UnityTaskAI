@@ -8,7 +8,7 @@ public class Bed : InteractableObject
 
     public override TaskBase GenerateTask()
     {
-        return new TaskBase(interactionPoint, 10, 10, 10, eAnimationType.Sleep, this);
+        return new TaskBase("Bed-" + this.name, TaskScope.Personal, interactionPoint, 10, 5, 10, false, 1, null, eAnimationType.Sleep, this) ;
     }
 
     public override bool Work(PersonBase workingPerson)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,14 +10,16 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "TaskAI/Task List Holder")]
 public class TaskListHolder : ScriptableObject
 {
-    [SerializeField] private List<TaskBase> tasks = new List<TaskBase>();
+    private List<ITask> tasks = new List<ITask>();
 
-    public IEnumerable<TaskBase> GetAllTasks => tasks.ToArray();
+    public IEnumerable<ITask> GetAllTasks => tasks.ToArray();
+    public ITask[] Tasks => tasks.ToArray();
+    public int Length => tasks.Count;
 
-    public void AddTask(TaskBase newTask)
+    public void AddTask(ITask newTask)
     {
         tasks.Add(newTask);
-        tasks.Sort((t1, t2) => t1.priority.CompareTo(t2.priority));
+        tasks.Sort((t1, t2) => t1.GetPriority.CompareTo(t2.GetPriority));
     }
 
     public void Clear()
@@ -24,18 +27,18 @@ public class TaskListHolder : ScriptableObject
         tasks.Clear();
     }
 
-    public TaskBase GetHighestPriorityTask()
+    public ITask GetHighestPriorityTask()
     {
         if(tasks.Count > 0)
         {
-            TaskBase task = tasks[0];
+            ITask task = tasks[0];
             tasks.RemoveAt(0);
             return task;
         }
         return null;
     }
 
-    public TaskBase PeekHighestPriorityTask()
+    public ITask PeekHighestPriorityTask()
     {
         if(tasks.Count > 0)
         {
@@ -45,5 +48,10 @@ public class TaskListHolder : ScriptableObject
         {
             return null;
         }
+    }
+
+    public void Remove(ITask task)
+    {
+        tasks.Remove(task);
     }
 }

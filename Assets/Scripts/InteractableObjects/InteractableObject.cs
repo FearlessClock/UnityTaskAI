@@ -8,7 +8,7 @@ public class InteractableObject : MonoBehaviour
 
     public virtual TaskBase GenerateTask()
     {
-        return new TaskBase(interactionPoint, 10, 10, 10, eAnimationType.Work, this);
+        return new TaskBase("Interactable-" + this.name, TaskScope.Global, interactionPoint, 10, 10, 10, true, 1, null, eAnimationType.Work, this);
     }
 
     public virtual bool Work(PersonBase workingPerson) { return true; }

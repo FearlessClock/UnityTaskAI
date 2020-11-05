@@ -9,6 +9,10 @@ public class EntrancePoints : MonoBehaviour
 {
     [SerializeField] private NavMeshGenerator generator = null;
     [SerializeField] private NavMeshEntrance[] entrancePoints = null;
+    private enum Direction { up, down, left, right};
+    private Dictionary<Direction, NavMeshEntrance> doorDirections = new Dictionary<Direction, NavMeshEntrance>();
+    private List<Vector2Int> directions = new List<Vector2Int>();
+    public Vector2Int[] Directions => directions.ToArray();
 
     private void Awake()
     {
@@ -19,16 +23,13 @@ public class EntrancePoints : MonoBehaviour
     {
         UpdateVertexInfo();
         UpdateEntranceDoorDirections();
-        UpdateConnectedTriangle();
     }
 
     private void UpdateVertexInfo()
     {
         for (int i = 0; i < entrancePoints.Length; i++)
         {
-            entrancePoints[i].entranceMidPoint.ID = i;
-            entrancePoints[i].entranceMidPoint.name = this.transform.parent.name + this.name + i;
-            entrancePoints[i].entranceMidPoint.transform.SetSiblingIndex(i);
+            entrancePoints[i].ID = i;
         }
     }
 
@@ -42,52 +43,78 @@ public class EntrancePoints : MonoBehaviour
         get { return entrancePoints; }
     }
 
+
     public NavMeshEntrance GetEntrance(int i)
     {
         return this.entrancePoints[i];
     }
 
-    public void UpdateEntranceDoorDirections()
+    public NavMeshEntrance GetEntranceFromDirection(Vector2 direction)
     {
-        foreach (NavMeshEntrance entrance in entrancePoints)
+        if (direction.Equals(Vector2.right) && doorDirections.ContainsKey(Direction.right))
         {
-            entrance.generator = generator;
-            entrance.CalculateDoorDirection();
-            entrance.SetDoorController();
-            
-            //foreach (Transform child in entrance.entranceMidPoint)
-            //{
-            //    DestroyImmediate(child.gameObject);
-            //}
-
-            //Instantiate(doorPrefab, entrance.entranceMidPoint.position, entrance.entranceMidPoint.localRotation,
-            //    entrance.entranceMidPoint);
+            return doorDirections[Direction.right];
         }
-    }
-
-    public void UpdateConnectedTriangle()
-    {
-        for (int i = 0; i < entrancePoints.Length; i++)
+        else if (direction.Equals(Vector2.left) && doorDirections.ContainsKey(Direction.left))
         {
-            // Find the other point in the triangle by looking at all the other vertexes
-            Vertex thirdPointid = FindThirdPointInTriangle(entrancePoints[i]);
-            entrancePoints[i].connectedTriangle = generator.FindTriangle(entrancePoints[i].entrance1, entrancePoints[i].entrance2, thirdPointid);
+            return doorDirections[Direction.left];
         }
-    }
-
-    private Vertex FindThirdPointInTriangle(NavMeshEntrance entrance)
-    {
-        for (int j = 0; j < entrance.entrance1.Adjacent.Count; j++)
+        else if (direction.Equals(Vector2.up) && doorDirections.ContainsKey(Direction.up))
         {
-            int adjID = entrance.entrance1.Adjacent[j].ID;
-            for (int k = 0; k < entrance.entrance2.Adjacent.Count; k++)
-            {
-                if (adjID == entrance.entrance2.Adjacent[k].ID)
-                {
-                    return entrance.entrance2.Adjacent[k];
-                }
-            }
+            return doorDirections[Direction.up];
+        }
+        else if (direction.Equals(Vector2.down) && doorDirections.ContainsKey(Direction.down))
+        {
+            return doorDirections[Direction.down];
         }
         return null;
+    }
+
+    public void UpdateEntranceDoorDirections()
+    {
+        doorDirections.Clear();
+        directions.Clear();
+        foreach (NavMeshEntrance entrance in entrancePoints)
+        {
+            Vector2 direction = new Vector2((entrance.entrance.Position - generator.containedRoom.center).x, (entrance.entrance.Position - generator.containedRoom.center).z);
+
+            direction.Normalize();
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+            {
+                direction = new Vector2(1 * Mathf.Sign(direction.x), 0);
+            }
+            else
+            {
+                direction = new Vector2(0, 1 * Mathf.Sign(direction.y));
+            }
+
+            if (direction.Equals(Vector2.right))
+            {
+                doorDirections.Add(Direction.right, entrance);
+                directions.Add(Vector2Int.right);
+            }
+            else if(direction.Equals(Vector2.left))
+            {
+                doorDirections.Add(Direction.left, entrance);
+                directions.Add(Vector2Int.left);
+            }
+            else if(direction.Equals(Vector2.up))
+            {
+                doorDirections.Add(Direction.up, entrance);
+                directions.Add(Vector2Int.up);
+            }
+            else if (direction.Equals(Vector2.down))
+            {
+                doorDirections.Add(Direction.down, entrance);
+                directions.Add(Vector2Int.down);
+            }
+
+            entrance.generator = generator;
+        }
+    }
+
+    public bool HasEntranceInDirection(Vector2 dir)
+    {
+        return GetEntranceFromDirection(dir) != null;
     }
 }

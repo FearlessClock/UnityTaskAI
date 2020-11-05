@@ -45,7 +45,7 @@ public class LevelGeneration : MonoBehaviour
         traversalGraphHolder.AddTraversalLines(initRoom.TraversalGenerator);
         AddEntrancesToAvailableEntrances(initRoom.GetEntrances.ToList(), 0);
         initRoom.SetID(0);
-        roomGraph.AddRoom(initRoom, null);
+        roomGraph.AddRoom(initRoom);
         generationMap.AddRectangle(initRoom.transform.position + initRoom.center, initRoom.extents);
 
     }
@@ -73,7 +73,7 @@ public class LevelGeneration : MonoBehaviour
 
             NavMeshEntrance randomRoomEntrance = randomRoomPrefab.GetEntrance(randomRoomEntranceIndex);
 
-            float angle = Vector3.SignedAngle(randomEntrance.GetRotatedAwayFromDoorDirection(), randomRoomEntrance.GetRotatedAwayFromDoorDirection(), Vector3.up);
+            float angle = 0;
             float amountToRotate = 180 - angle;
 
             // Init the random generator
@@ -82,9 +82,9 @@ public class LevelGeneration : MonoBehaviour
             List<NavMeshEntrance> newRoomEntrances = new List<NavMeshEntrance>(room2.GetEntrances);
             NavMeshEntrance room2Entrance = newRoomEntrances[randomRoomEntranceIndex];
 
-            room2.transform.RotateAround(room2Entrance.entranceMidPoint.transform.position, Vector3.up, amountToRotate);
+            room2.transform.RotateAround(room2Entrance.entrance.transform.position, Vector3.up, amountToRotate);
 
-            Vector3 directionToMove = randomEntrance.entranceMidPoint.transform.position - room2Entrance.entranceMidPoint.transform.position;
+            Vector3 directionToMove = randomEntrance.entrance.transform.position - room2Entrance.entrance.transform.position;
             room2.transform.Translate(directionToMove, Space.World);
 
             room2.GetRotatedCenter(out cen, out ext);
@@ -97,7 +97,8 @@ public class LevelGeneration : MonoBehaviour
                 generatedRooms.Add(room2);
 
                 room2.SetID(roomCounter + 1);
-                roomGraph.AddRoom(room2, randomEntrance.generator.containedRoom);
+                roomGraph.AddRoom(room2);
+                roomGraph.AddChild(room2, randomEntrance.generator.containedRoom);
                 newRoomEntrances.RemoveAt(randomRoomEntranceIndex);
 
                 AddEntrancesToAvailableEntrances(newRoomEntrances, amountToRotate);
@@ -156,11 +157,6 @@ public class LevelGeneration : MonoBehaviour
 
     private void AddEntrancesToAvailableEntrances(List<NavMeshEntrance> newRoomEntrances, float amountToRotate)
     {
-        foreach (NavMeshEntrance entrance in newRoomEntrances)
-        {
-            entrance.spawnedRotation = amountToRotate;
-        }
-
         availableEntrances.AddRange(newRoomEntrances);
     }
 

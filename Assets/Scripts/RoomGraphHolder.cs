@@ -9,7 +9,7 @@ public class RoomGraphHolder : ScriptableObject
 {
     public Node[] rooms;
 
-    public void AddRoom(RoomInformation room, RoomInformation parent)
+    public void AddRoom(RoomInformation room)
     {
         if(rooms == null)
         {
@@ -22,14 +22,30 @@ public class RoomGraphHolder : ScriptableObject
         for (int i = 0; i < rooms.Length; i++)
         {
             roomsNew[i] = rooms[i];
-            if(parent != null && (rooms[i].payload as RoomInformation).ID == parent.ID)
-            {
-                nextRoom.AddNode(rooms[i]);
-                rooms[i].AddNode(nextRoom);
-            }
         }
         roomsNew[roomsNew.Length - 1] = nextRoom;
         rooms = roomsNew;
+    }
+
+    public void AddChild(RoomInformation selectedRoom, RoomInformation child)
+    {
+        Node selectedNode = null;
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if((rooms[i].payload as RoomInformation).ID == selectedRoom.ID)
+            {
+                selectedNode = rooms[i];
+            }
+        }
+
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if ((rooms[i].payload as RoomInformation).ID == child.ID)
+            {
+                selectedNode.AddNode(rooms[i]);
+                rooms[i].AddNode(selectedNode);
+            }
+        }
     }
 
     public void Clear()
@@ -103,12 +119,32 @@ public class RoomGraphHolder : ScriptableObject
         }
         return null;
     }
+
+    public void DebugGraph()
+    {
+        if (Application.isPlaying)
+        {
+            foreach (Node node in rooms)
+            {
+                RoomInformation roomInfo = (RoomInformation)node.payload;
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(roomInfo.GetCenterVertex.Position, 0.5f);
+                foreach (Node child in node.connectedNodes)
+                {
+                    RoomInformation childRoomInfo = (RoomInformation)child.payload;
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(childRoomInfo.GetCenterVertex.Position, roomInfo.GetCenterVertex.Position);
+                }
+            }
+        }
+    }
 }
 
 [System.Serializable]
 public class Node
 {
     public int id;
+    [HideInInspector]
     public Object payload;
     public Node[] connectedNodes = new Node[0];
 

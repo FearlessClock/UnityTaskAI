@@ -18,6 +18,7 @@ public class RoomInformation : MonoBehaviour
     public void SetID(int id)
     {
         roomID = id;
+        worldSpaceTextDebug.Write("RoomInformation", roomID.ToString());
     }
     [SerializeField] private NavMeshGenerator meshGenerator = null;
 
@@ -29,6 +30,9 @@ public class RoomInformation : MonoBehaviour
     private AStarNavMeshNavigation navMeshNavigation = null;
     public AStarNavMeshNavigation NavMeshNavigation => navMeshNavigation;
 
+    [SerializeField] private EntrancePoints entrancePoints = null;
+    public EntrancePoints EntrancePoints => entrancePoints;
+
     public RoomGrid roomGrid = null;
 
     public bool showOccupiedSpace = false;
@@ -38,6 +42,7 @@ public class RoomInformation : MonoBehaviour
     private Dictionary<int, RoomInformation> connectedRooms = new Dictionary<int, RoomInformation>();
     [SerializeField] private FireGenerator fireGenerator = null;
     [SerializeField] private Vertex centerVertex = null;
+    [SerializeField] private WorldSpaceTextDebug worldSpaceTextDebug = null;
 
     public Vector3 RoomCenter => centerVertex.Position;
 

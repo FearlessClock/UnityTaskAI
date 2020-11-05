@@ -41,6 +41,11 @@ namespace Pieter.GraphTraversal
         
         private void OnValidate()
         {
+            UpdateInfo();
+        }
+
+        public void UpdateInfo()
+        {
             RenameVertexes();
             UpdateAdjacencyLists();
         }

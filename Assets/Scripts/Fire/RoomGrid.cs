@@ -86,7 +86,7 @@ namespace Pieter.Grid
             entranceIds = new int[roomInfo.GetEntrances.Length];
             for (int i = 0; i < roomInfo.GetEntrances.Length; i++)
             {
-                Vector3 entrancePos = ( roomInfo.GetEntrance(i).entranceMidPoint.transform.localPosition) / tileSize;
+                Vector3 entrancePos = ( roomInfo.GetEntrance(i).entrance.transform.localPosition) / tileSize;
                 int xPos = Mathf.FloorToInt(entrancePos.x);
                 if(xPos >= grid.GetLength(0))
                 {

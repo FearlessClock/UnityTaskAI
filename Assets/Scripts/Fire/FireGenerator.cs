@@ -134,7 +134,7 @@ public class FireGenerator : MonoBehaviour
                         RoomInformation nextRoom = room.GetConnectedRoomFromEntranceWithID(selectedEntrance.ID);
                         if (nextRoom)
                         {
-                            nextRoom.StartFire(selectedEntrance.connectedEntrance.connectedTriangle.ID);
+                            //TODO: Get start position for fire controller coming from another room
                         }
                     }
                 }

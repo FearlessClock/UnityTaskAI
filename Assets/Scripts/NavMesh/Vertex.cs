@@ -75,7 +75,7 @@ namespace Pieter.NavMesh
         }
         [SerializeField] private List<Vertex> adjacent;
         public List<Vertex> Adjacent => adjacent;
-        private List<AdjacentVertex> adjacentInformation;
+        private List<AdjacentVertex> adjacentInformation = new List<AdjacentVertex>();
         public List<AdjacentVertex> AdjacentInformation => adjacentInformation;
 
         public int Count
@@ -127,7 +127,14 @@ namespace Pieter.NavMesh
         }
         public void AddAdjacentNode(Vertex adjacentVertex)
         {
-
+            if(adjacent == null)
+            {
+                adjacent = new List<Vertex>();
+            }
+            if(adjacentInformation == null)
+            {
+                adjacentInformation = new List<AdjacentVertex>();
+            }
             if (!adjacent.Contains(adjacentVertex))
             {
                 adjacent.Add(adjacentVertex);

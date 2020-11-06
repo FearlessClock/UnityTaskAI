@@ -242,39 +242,11 @@ MonoBehaviour:
   generator: {fileID: 9209250416612283179}
   entrancePoints:
   - ID: 0
-    entrance1: {fileID: 9209250416480769034}
-    entrance2: {fileID: 9209250417152863204}
-    connectedTriangle:
-      vertex1: {fileID: 9209250417152863204}
-      vertex2: {fileID: 9209250416480769034}
-      vertex3: {fileID: 9209250418198943564}
-      ID: 42
-      isSelected: 1
-      adjacentTriangles: 29000000
-      isConnectedToEntrance: 1
-      connectedEntranceIDs: 0000000000000000
-    awayFromDoorDirection: {x: 0, y: 0, z: -1}
-    entranceMidPoint: {fileID: 8158957332986258433}
-    offset: 0
-    spawnedRotation: 0
+    entrance: {fileID: 0}
     generator: {fileID: 9209250416612283179}
     doorController: {fileID: 2114031810408822034}
   - ID: 1
-    entrance1: {fileID: 9209250416584249422}
-    entrance2: {fileID: 9209250418369288177}
-    connectedTriangle:
-      vertex1: {fileID: 9209250417619177134}
-      vertex2: {fileID: 9209250418369288177}
-      vertex3: {fileID: 9209250416584249422}
-      ID: 24
-      isSelected: 0
-      adjacentTriangles: 150000002b000000
-      isConnectedToEntrance: 1
-      connectedEntranceIDs: 0100000001000000
-    awayFromDoorDirection: {x: 0, y: 0, z: 1}
-    entranceMidPoint: {fileID: 771746842531451736}
-    offset: 0.15
-    spawnedRotation: 0
+    entrance: {fileID: 0}
     generator: {fileID: 9209250416612283179}
     doorController: {fileID: 7360438398132095922}
 --- !u!1 &8113899652250964071
@@ -380,12 +352,14 @@ MonoBehaviour:
   meshGenerator: {fileID: 9209250416612283179}
   traversalGenerator: {fileID: 8373386625190412902}
   navMeshHolder: {fileID: 1641658397864715200}
+  entrancePoints: {fileID: 0}
   roomGrid: {fileID: 8216917362313663292}
   showOccupiedSpace: 0
   center: {x: 7.43, y: 1.54, z: 5.09}
   extents: {x: 14.76, y: 3.65, z: 10.1}
   fireGenerator: {fileID: 7347494259944578280}
   centerVertex: {fileID: 8720069486235852608}
+  worldSpaceTextDebug: {fileID: 0}
 --- !u!65 &4967216683485646111
 BoxCollider:
   m_ObjectHideFlags: 0

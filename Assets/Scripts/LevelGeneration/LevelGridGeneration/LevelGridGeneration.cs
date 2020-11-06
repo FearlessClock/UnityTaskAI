@@ -24,11 +24,16 @@ public class LevelGridGeneration : MonoBehaviour
     {
         gridWorldMap = new GridWorldMap(tileSize);
         roomGraph.Clear();
+        UpdateEntrancePointsForLevelBlocks();
+        GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0, 0) });
+    }
+
+    private void UpdateEntrancePointsForLevelBlocks()
+    {
         for (int i = 0; i < levelBlocks.Length; i++)
         {
             levelBlocks[i].RoomInfo.EntrancePoints.UpdateEntranceValues();
         }
-        GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0,0)});
     }
 
     private void GenerateBuilding(int maxBuildings, int numberOfBuildings, List<Vector2Int> availableSpots)
@@ -50,70 +55,14 @@ public class LevelGridGeneration : MonoBehaviour
         Vector3 pos = Vec2IntToVec3D(currentGridPoint * tileSize);
         int randomRoomIndex = GetWorkingRandomRoom(pos, neighborRoomsForFirstDirectionTest);
 
-
         if (randomRoomIndex < 0)
         {
             GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
             return;
         }
-
-        GridLevelSquareInformation room = Instantiate<GridLevelSquareInformation>(levelBlocks[randomRoomIndex], this.transform);
-        room.RoomInfo.SetID(maxBuildings - numberOfBuildings);
-        room.transform.position = pos;
-        gridWorldMap.AddRectangle(currentGridPoint, Vector2Int.one, room.RoomInfo);
-
-        roomGraph.AddRoom(room.RoomInfo);
-
-        List<RoomInformation> surroundingRooms = GetNeighbouringRooms(currentGridPoint, room.RoomInfo.EntrancePoints.Directions);
-
-        for (int i = 0; i < surroundingRooms.Count; i++)
-        {
-            roomGraph.AddChild(room.RoomInfo, surroundingRooms[i]);
-        }
-        foreach (RoomInformation neighbor in surroundingRooms)
-        {
-            Vector2 dir = GetSingleDirectionToNextRoom(room.RoomInfo.transform.position, neighbor.transform.position);
-
-            NavMeshEntrance entranceRoom = room.RoomInfo.EntrancePoints.GetEntranceFromDirection(-dir);
-
-            TraversalEntrance traversalEntranceRoom =
-                    room.RoomInfo.TraversalGenerator.GetEntrance(entranceRoom.ID);
-
-            if (traversalEntranceRoom != null)
-            {
-                NavMeshEntrance entranceNeighbor = neighbor.EntrancePoints.GetEntranceFromDirection(dir);
-
-                TraversalEntrance traversalEntranceNeigbor =
-                        neighbor.TraversalGenerator.GetEntrance(entranceNeighbor.ID);
-
-                if (traversalEntranceNeigbor != null)
-                {
-                    room.RoomInfo.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
-                    neighbor.roomGrid.AddGrid(room.RoomInfo.roomGrid, traversalEntranceNeigbor.ID, traversalEntranceRoom.ID);
-
-                    room.RoomInfo.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
-                    neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
-
-                    room.RoomInfo.AddConnectedRoom(entranceNeighbor.generator.containedRoom, entranceRoom);
-                    entranceNeighbor.generator.containedRoom.AddConnectedRoom(room.RoomInfo, entranceNeighbor);
-
-                    entranceRoom.connectedEntrance = entranceNeighbor;
-                    entranceNeighbor.connectedEntrance = entranceRoom;
-                }
-                else
-                {
-                    Debug.Log("-- Could not find entrance " + entranceNeighbor.ID);
-                }
-            }
-            else
-            {
-                Debug.Log("-- Could not find entrance " + entranceRoom.ID);
-            }
-        }
-
-        traversalGraphHolder.AddTraversalLines(room.RoomInfo.TraversalGenerator);
-
+        GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, levelBlocks[randomRoomIndex]);
         numberOfBuildings--;
+
         if (numberOfBuildings > 0)
         {
             Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
@@ -127,6 +76,71 @@ public class LevelGridGeneration : MonoBehaviour
 
             GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
         }
+    }
+
+    private GridLevelSquareInformation GenerateRoom(int maxBuildings, int numberOfBuildings, Vector2Int gridPosition, Vector3 worldSpacePosition, GridLevelSquareInformation randomRoom)
+    {
+        GridLevelSquareInformation room = Instantiate<GridLevelSquareInformation>(randomRoom, this.transform);
+        room.RoomInfo.SetID(maxBuildings - numberOfBuildings);
+        room.transform.position = worldSpacePosition;
+        gridWorldMap.AddRectangle(gridPosition, Vector2Int.one, room.RoomInfo);
+
+        roomGraph.AddRoom(room.RoomInfo);
+
+        List<RoomInformation> surroundingRooms = GetNeighbouringRooms(gridPosition, room.RoomInfo.EntrancePoints.Directions);
+
+        foreach (RoomInformation neighbor in surroundingRooms)
+        {
+            Vector2 dir = GetSingleDirectionToNextRoom(room.RoomInfo.transform.position, neighbor.transform.position);
+
+            NavMeshEntrance entranceRoom = room.RoomInfo.EntrancePoints.GetEntranceFromDirection(-dir);
+
+            TraversalEntrance traversalEntranceRoom =
+                    room.RoomInfo.TraversalGenerator.GetEntrance(entranceRoom.ID);
+
+            if (traversalEntranceRoom != null)
+            {
+                NavMeshEntrance entranceNeighbor = neighbor.EntrancePoints.GetEntranceFromDirection(dir);
+                if (entranceNeighbor != null)
+                {
+                    TraversalEntrance traversalEntranceNeigbor =
+                           neighbor.TraversalGenerator.GetEntrance(entranceNeighbor.ID);
+
+                    if (traversalEntranceNeigbor != null)
+                    {
+                        ConnectCurrentRoomToNeighborRoom(room.RoomInfo, neighbor, entranceRoom, traversalEntranceRoom, entranceNeighbor, traversalEntranceNeigbor);
+                    }
+                    else
+                    {
+                        Debug.Log("-- Could not find entrance " + entranceNeighbor.ID);
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("-- Could not find entrance " + entranceRoom.ID);
+            }
+        }
+
+        traversalGraphHolder.AddTraversalLines(room.RoomInfo.TraversalGenerator);
+        return room;
+    }
+
+    private void ConnectCurrentRoomToNeighborRoom(RoomInformation room, RoomInformation neighbor, NavMeshEntrance entranceRoom, TraversalEntrance traversalEntranceRoom, NavMeshEntrance entranceNeighbor, TraversalEntrance traversalEntranceNeigbor)
+    {
+        roomGraph.AddChild(room, neighbor);
+
+        room.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
+        neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, traversalEntranceRoom.ID);
+
+        room.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
+        neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
+
+        room.AddConnectedRoom(entranceNeighbor.generator.containedRoom, entranceRoom);
+        entranceNeighbor.generator.containedRoom.AddConnectedRoom(room, entranceNeighbor);
+
+        entranceRoom.connectedEntrance = entranceNeighbor;
+        entranceNeighbor.connectedEntrance = entranceRoom;
     }
 
     private int GetWorkingRandomRoom(Vector3 position, List<RoomInformation> neighborRoomsForFirstDirectionTest)

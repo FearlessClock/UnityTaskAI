@@ -165,7 +165,6 @@ public class GenerationMap
         {
             RectInt rect = new RectInt(Mathf.Abs(upperLeft.x), Mathf.Abs(Mathf.Max(lowerRight.y, 0)), -Mathf.Abs(Mathf.Min(lowerRight.x, 0) - upperLeft.x), Mathf.Abs(upperLeft.y - Mathf.Max(lowerRight.y, 0)));
 
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.yellow);
             bool res = CheckForBlockedSquares(quadrentUpperLeft, rect);
             if (res)
             {
@@ -176,7 +175,7 @@ public class GenerationMap
         if (lowerRight.x >= 0 && upperLeft.y >= 0)
         {
             RectInt rect = new RectInt(Mathf.Max(upperLeft.x, 0), Mathf.Max(lowerRight.y, 0), lowerRight.x - Mathf.Max(upperLeft.x, 0), upperLeft.y - Mathf.Max(lowerRight.y, 0));
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.yellow);
+            
             bool res = CheckForBlockedSquares(quadrentUpperRight, rect);
             if (res)
             {
@@ -187,7 +186,7 @@ public class GenerationMap
         {
             RectInt rect = new RectInt(Mathf.Abs(upperLeft.x), Mathf.Abs(lowerRight.y), -Mathf.Abs(Mathf.Min(lowerRight.x, 0) - upperLeft.x), -Mathf.Abs(Mathf.Min(upperLeft.y, 0) - lowerRight.y));
 
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.yellow);
+            
             bool res = CheckForBlockedSquares(quadrentLowerLeft, rect);
             if (res)
             {
@@ -197,7 +196,7 @@ public class GenerationMap
         if (lowerRight.x >= 0 && lowerRight.y < 0)
         {
             RectInt rect = new RectInt(Mathf.Abs(Mathf.Max(upperLeft.x, 0)), Mathf.Abs(lowerRight.y), Mathf.Abs(lowerRight.x - Mathf.Max(upperLeft.x, 0)), -Mathf.Abs(Mathf.Min(upperLeft.y, 0) - Mathf.Min(lowerRight.y, 0)));
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.yellow);
+            
             bool res = CheckForBlockedSquares(quadrentLowerRight, rect);
             if (res)
             {
@@ -211,14 +210,12 @@ public class GenerationMap
     {
         Vector2Int lowerLeft = startingCell;
         Vector2Int upperRight = startingCell + (size);
-        Debug.DrawLine(new Vector3(lowerLeft.x, 0, lowerLeft.y), new Vector3(upperRight.x, 0, upperRight.y), Color.green, 2);
-
+        
         if (lowerLeft.x < 0 && upperRight.y >= 0)
         {
             // Transforming from world space to quadrent space
             RectInt rect = new RectInt(Mathf.Abs(lowerLeft.x), Mathf.Abs(Mathf.Max(lowerLeft.y, 0)), -Mathf.Abs(Mathf.Min(upperRight.x, 0) - lowerLeft.x), Mathf.Abs(upperRight.y - Mathf.Max(lowerLeft.y, 0)));
 
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.red, 2);
             bool res = CheckForBlockedSquares(quadrentUpperLeft, rect);
             if (res)
             {
@@ -230,7 +227,6 @@ public class GenerationMap
         {
             RectInt rect = new RectInt(Mathf.Max(lowerLeft.x, 0), Mathf.Max(lowerLeft.y, 0), upperRight.x - Mathf.Max(lowerLeft.x, 0), upperRight.y - Mathf.Max(lowerLeft.y, 0));
 
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.magenta, 2);
             bool res = CheckForBlockedSquares(quadrentUpperRight, rect);
             if (res)
             {
@@ -242,7 +238,6 @@ public class GenerationMap
         {
             RectInt rect = new RectInt(Mathf.Abs(lowerLeft.x), Mathf.Abs(lowerLeft.y), -Mathf.Abs(Mathf.Min(upperRight.x, 0) - lowerLeft.x), -Mathf.Abs(Mathf.Min(upperRight.y, 0) - lowerLeft.y));
 
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.yellow, 2);
             bool res = CheckForBlockedSquares(quadrentLowerLeft, rect);
             if (res)
             {
@@ -253,7 +248,6 @@ public class GenerationMap
         {
             RectInt rect = new RectInt(Mathf.Abs(Mathf.Max(lowerLeft.x, 0)), Mathf.Abs(lowerLeft.y), Mathf.Abs(upperRight.x - Mathf.Max(lowerLeft.x, 0)), -Mathf.Abs(Mathf.Min(upperRight.y, 0) - Mathf.Min(lowerLeft.y, 0)));
             
-            Debug.DrawLine(new Vector3(rect.min.x, 0, rect.min.y), new Vector3(rect.max.x, 0, rect.max.y), Color.blue, 2);
             bool res = CheckForBlockedSquares(quadrentLowerRight, rect);
             if (res)
             {

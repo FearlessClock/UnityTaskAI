@@ -123,7 +123,7 @@ namespace Pieter.GraphTraversal
                         continue;
                     }
 
-                    float cost = current.g + (current.vert.Position - current.vert.GetAdjacentVertex(i).Position).magnitude;
+                    float cost = current.g + (Mathf.Pow((current.vert.Position.x - current.vert.GetAdjacentVertex(i).Position.x), 2) + Mathf.Pow((current.vert.Position.y - current.vert.GetAdjacentVertex(i).Position.y), 2));
                     AStarPoint aStarPoint = open.Find((item) => item.vert.Equals(current.vert.GetAdjacentVertex(i)));
                     if (aStarPoint == null)
                     {

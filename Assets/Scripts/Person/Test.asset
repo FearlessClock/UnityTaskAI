@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fc0c43d5d0078544a2ff213786b610d, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  maxLines: 3000
+  maxLines: 1000
   debugText:
   - John is here
   - Then he is there

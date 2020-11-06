@@ -42,7 +42,7 @@ public class PersonBase : MonoBehaviour
     private Collider[] hits = new Collider[10];
 
     protected RoomInformation currentRoom = null;
-    private LevelGeneration levelGeneration = null;
+    private LevelGridGeneration levelGridGeneration = null;
     public bool isOnFire = false;
     public bool isCloseToFire = false;
     private bool hasCreatedFireTask = false;
@@ -71,7 +71,7 @@ public class PersonBase : MonoBehaviour
             Debug.LogError("Could not find Health component", this);
         }
         debugHolder = ScriptableObject.CreateInstance<PersonAIDebugHolder>();
-        levelGeneration = FindObjectOfType<LevelGeneration>();
+        levelGridGeneration = FindObjectOfType<LevelGridGeneration>();
 
         animatorController = GetComponent<AnimationCommandController>();
         traversalGraphHolder = FindObjectOfType<TraversalGraphHolder>();
@@ -80,23 +80,12 @@ public class PersonBase : MonoBehaviour
         personalTasks = ScriptableObject.CreateInstance<TaskListHolder>();
         currentState = GoToState(startingState);
 
-        FindCurrentRoom();
-    }
-
-    protected void FindCurrentRoom()
-    {
-        for (int i = 0; i < levelGeneration.GeneratedRooms.Count; i++)
-        {
-            if (levelGeneration.GeneratedRooms[i].IsInsideRoomArea(this.transform.position))
-            {
-                currentRoom = levelGeneration.GeneratedRooms[i];
-            }
-        }
+        currentRoom = GetRoomInformationForLocation(this.transform.position);
     }
 
     protected void CheckIfOnFire()
     {
-        FindCurrentRoom();
+        currentRoom = GetRoomInformationForLocation(this.transform.position);
 
         bool isFireClose = currentRoom.IsOnFire;
         if (isFireClose)
@@ -583,15 +572,7 @@ public class PersonBase : MonoBehaviour
 
     private RoomInformation GetRoomInformationForLocation(Vector3 position)
     {
-        for (int i = 0; i < levelGeneration.GeneratedRooms.Count; i++)
-        {
-            if (levelGeneration.GeneratedRooms[i].IsInsideRoomArea(position))
-            {
-                return levelGeneration.GeneratedRooms[i];
-            }
-        }
-        
-        return null;
+        return levelGridGeneration.GetRoomAtWorldPosition(position); 
     }
 
     protected void PersonBaseOnDrawGizmos()

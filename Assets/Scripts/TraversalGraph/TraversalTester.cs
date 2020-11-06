@@ -11,7 +11,7 @@ public class TraversalTester : MonoBehaviour
     private TraversalAStarNavigation navMesh = null;
     [SerializeField] private Transform end = null;
     [SerializeField] private bool getRandomPoint = false;
-    private TraversalGenerator gen = null;
+    private TraversalGenerator endingGenerator = null;
     List<NavMeshMovementLine> path;
 
     private Vector3 target;
@@ -27,20 +27,39 @@ public class TraversalTester : MonoBehaviour
     }
     private void Update()
     {
-        if (startingGenerator == null)
-        {
-            startingGenerator = FindObjectOfType<TraversalGenerator>();
-        }
         if (getRandomPoint)
         {
             selectedLine = traversalHolder.GetRandomLine();
         }
 
-        gen = traversalHolder.GetClosestGenerator(end.position);
-        if (gen)
+        endingGenerator = traversalHolder.GetClosestGenerator(end.position);
+        startingGenerator = traversalHolder.GetClosestGenerator(this.transform.position);
+
+        if (endingGenerator)
         {
-            Vertex vert = traversalHolder.GetMiddleLineForCurrentGenerator(gen).vertex;
-            path = navMesh.GetPathFromTo(traversalHolder.GetMiddleLineForCurrentGenerator(startingGenerator).vertex, vert);
+            float closest = Vector3.Distance(end.position, endingGenerator.TraversalLines[0].vertex.Position);
+            int index = 0;
+            for (int i = 0; i < endingGenerator.TraversalLines.Length; i++)
+            {
+                if(closest > Vector3.Distance(end.position, endingGenerator.TraversalLines[i].vertex.Position))
+                {
+                    closest = Vector3.Distance(end.position, endingGenerator.TraversalLines[i].vertex.Position);
+                    index = i;
+                }
+            }
+            Vertex endVert = endingGenerator.TraversalLines[index].vertex;
+
+            closest = Vector3.Distance(this.transform.position, startingGenerator.TraversalLines[0].vertex.Position);
+            index = 0;
+            for (int i = 0; i < startingGenerator.TraversalLines.Length; i++)
+            {
+                if (closest > Vector3.Distance(this.transform.position, startingGenerator.TraversalLines[i].vertex.Position))
+                {
+                    closest = Vector3.Distance(this.transform.position, startingGenerator.TraversalLines[i].vertex.Position);
+                    index = i;
+                }
+            }
+            path = navMesh.GetPathFromTo(startingGenerator.TraversalLines[index].vertex, endVert);
         }
     }
 

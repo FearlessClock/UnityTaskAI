@@ -162,7 +162,6 @@ public class LevelGridGeneration : MonoBehaviour
                 if (levelBlocks[randomRoomIndex].RoomInfo.EntrancePoints.HasEntranceInDirection(-dir))
                 {
                     doesThisBlockWork = true;
-                    Debug.Log("Found working room: " + position.ToString() + " " + -dir + " RandIndex " + randomRoomIndex);
                     break;
                 }
             }
@@ -208,6 +207,12 @@ public class LevelGridGeneration : MonoBehaviour
         }
 
         return surroundingRooms;
+    }
+
+    public RoomInformation GetRoomAtWorldPosition(Vector3 position)
+    {
+        Vector3 vec = position / tileSize;
+        return gridWorldMap.At(new Vector2Int((int)vec.x, (int)vec.z));
     }
 
     private Vector3 Vec2IntToVec3D(Vector2Int vec)

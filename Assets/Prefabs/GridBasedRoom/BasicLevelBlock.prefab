@@ -339,9 +339,9 @@ MonoBehaviour:
   doorController: {fileID: 458693785957938557}
   adjacent:
   - {fileID: 8029565722638920627}
-  - {fileID: 1622546525360652975}
   - {fileID: 1304820090787066780}
   - {fileID: 2840486887029126761}
+  - {fileID: 1622546525360652975}
   containedRoom: {fileID: 6314187691320887384}
 --- !u!1 &5213388933601517209
 GameObject:
@@ -492,8 +492,8 @@ MonoBehaviour:
   adjacent:
   - {fileID: 8029565722638920627}
   - {fileID: 1622546525360652975}
-  - {fileID: 4520328619291650281}
   - {fileID: 1131429094645421560}
+  - {fileID: 4520328619291650281}
   containedRoom: {fileID: 6314187691320887384}
 --- !u!1 &8591377040994976282
 GameObject:
@@ -541,9 +541,9 @@ MonoBehaviour:
   ID: 4
   doorController: {fileID: 6901153996527550525}
   adjacent:
-  - {fileID: 4520328619291650281}
-  - {fileID: 1304820090787066780}
   - {fileID: 8029565722638920627}
+  - {fileID: 1304820090787066780}
+  - {fileID: 4520328619291650281}
   - {fileID: 3870558812743042076}
   containedRoom: {fileID: 6314187691320887384}
 --- !u!1 &8747053761489106664
@@ -642,10 +642,10 @@ MonoBehaviour:
   ID: 0
   doorController: {fileID: 503701163230434485}
   adjacent:
-  - {fileID: 4520328619291650281}
+  - {fileID: 8257984937777501221}
   - {fileID: 1304820090787066780}
   - {fileID: 1622546525360652975}
-  - {fileID: 8257984937777501221}
+  - {fileID: 4520328619291650281}
   containedRoom: {fileID: 6314187691320887384}
 --- !u!1001 &440486474884526713
 PrefabInstance:
@@ -2133,7 +2133,7 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].adjacentVertexes.Array.size
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
@@ -2143,7 +2143,7 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[4].adjacentVertexes.Array.size
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
@@ -2193,13 +2193,13 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].name
-      value: BasicLevelBlockVertex4
+      value: BasicLevelBlockVertex1
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].vertex
       value: 
-      objectReference: {fileID: 1622546525360652975}
+      objectReference: {fileID: 8257984937777501221}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[2].generator
@@ -2208,13 +2208,13 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[2].name
-      value: BasicLevelBlockVertex6
+      value: BasicLevelBlockVertex2
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[2].vertex
       value: 
-      objectReference: {fileID: 4520328619291650281}
+      objectReference: {fileID: 1304820090787066780}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[3].generator
@@ -2223,13 +2223,13 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[3].name
-      value: BasicLevelBlockVertex2
+      value: BasicLevelBlockVertex6
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[3].vertex
       value: 
-      objectReference: {fileID: 1304820090787066780}
+      objectReference: {fileID: 4520328619291650281}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: middleVertex
@@ -2239,12 +2239,12 @@ PrefabInstance:
         type: 3}
       propertyPath: traversalLines.Array.data[0].adjacentVertexes.Array.data[0]
       value: 
-      objectReference: {fileID: 4520328619291650281}
+      objectReference: {fileID: 8257984937777501221}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].adjacentVertexes.Array.data[0]
       value: 
-      objectReference: {fileID: 4520328619291650281}
+      objectReference: {fileID: 8029565722638920627}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].adjacentVertexes.Array.data[1]
@@ -2263,13 +2263,13 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[4].name
-      value: BasicLevelBlockVertex1
+      value: BasicLevelBlockVertex4
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[4].vertex
       value: 
-      objectReference: {fileID: 8257984937777501221}
+      objectReference: {fileID: 1622546525360652975}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[4].adjacentVertexes.Array.data[0]
@@ -2299,22 +2299,22 @@ PrefabInstance:
         type: 3}
       propertyPath: traversalLines.Array.data[4].adjacentVertexes.Array.data[1]
       value: 
-      objectReference: {fileID: 1622546525360652975}
+      objectReference: {fileID: 1304820090787066780}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[2].adjacentVertexes.Array.data[2]
       value: 
-      objectReference: {fileID: 1304820090787066780}
+      objectReference: {fileID: 1131429094645421560}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[3].adjacentVertexes.Array.data[1]
       value: 
-      objectReference: {fileID: 1622546525360652975}
+      objectReference: {fileID: 1304820090787066780}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[3].adjacentVertexes.Array.data[2]
       value: 
-      objectReference: {fileID: 4520328619291650281}
+      objectReference: {fileID: 2840486887029126761}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[0].adjacentVertexes.Array.data[2]
@@ -2329,7 +2329,7 @@ PrefabInstance:
         type: 3}
       propertyPath: traversalLines.Array.data[0].adjacentVertexes.Array.data[3]
       value: 
-      objectReference: {fileID: 8257984937777501221}
+      objectReference: {fileID: 4520328619291650281}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: entrances.Array.data[0].vertex
@@ -2459,7 +2459,7 @@ PrefabInstance:
         type: 3}
       propertyPath: traversalLines.Array.data[3].adjacentVertexes.Array.data[3]
       value: 
-      objectReference: {fileID: 1131429094645421560}
+      objectReference: {fileID: 1622546525360652975}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].adjacentVertexes.Array.data[4]
@@ -2474,12 +2474,37 @@ PrefabInstance:
         type: 3}
       propertyPath: traversalLines.Array.data[2].adjacentVertexes.Array.data[3]
       value: 
-      objectReference: {fileID: 2840486887029126761}
+      objectReference: {fileID: 4520328619291650281}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: entrances.Array.data[4].vertex
       value: 
       objectReference: {fileID: 2840486887029126761}
+    - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: traversalLines.Array.data[4].adjacentVertexes.Array.data[3]
+      value: 
+      objectReference: {fileID: 3870558812743042076}
+    - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: traversalLines.Array.data[1].isDoorway
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: traversalLines.Array.data[5].isDoorway
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: traversalLines.Array.data[6].isDoorway
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: traversalLines.Array.data[7].isDoorway
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8290725201652843561, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -65,12 +65,7 @@ public class MovementHandler : MonoBehaviour
         Path = null;
         if (startingRoom != null && endingRoom != null)
         {
-            Path = LevelOfDetailNavigationSolver.GetLODPath(posA, posB, startingRoom, endingRoom, traversalNav);
-            if(Path.Count > 0)
-            {
-                // Remove zero as we don't want the starting node
-                Path.RemoveAt(0);
-            }
+            Path = LevelOfDetailNavigationSolver.GetLODPath(posA, posB, startingRoom, endingRoom, traversalNav, false);
             SetPathIndexToZero();
         }
         if (Path != null && Path.Count > 0)

@@ -129,8 +129,10 @@ public class LevelGridGeneration : MonoBehaviour
         room.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
         neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, traversalEntranceRoom.ID);
 
-        room.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
-        neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
+        room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator);
+        //neighbor.TraversalGenerator.RemoveNode(traversalEntranceNeigbor.vertex);
+        //room.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
+        //neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
 
         room.AddConnectedRoom(entranceNeighbor.generator.containedRoom, entranceRoom);
         entranceNeighbor.generator.containedRoom.AddConnectedRoom(room, entranceNeighbor);

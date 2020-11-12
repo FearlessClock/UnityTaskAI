@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using Pieter.NavMesh;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Serialization;
 
 namespace Pieter.GraphTraversal
@@ -15,7 +16,8 @@ namespace Pieter.GraphTraversal
         public Vertex vertex;
         public List<Vertex> adjacentVertexes;
         [HideInInspector] public TraversalGenerator generator;
-
+        [SerializeField] private bool isDoorway = false;
+        public bool IsDoorway => isDoorway;
         public override string ToString()
         {
             return name +" " + vertex;
@@ -44,6 +46,10 @@ namespace Pieter.GraphTraversal
             int index = 0;
             for (int i = 0; i < traversalLines.Length; i++)
             {
+                if(traversalLines[i].IsDoorway)
+                {
+                    continue;
+                }
                 if (closest > Vector3.Distance(position, traversalLines[i].vertex.Position))
                 {
                     closest = Vector3.Distance(position, traversalLines[i].vertex.Position);
@@ -156,6 +162,95 @@ namespace Pieter.GraphTraversal
             a.AddAdjacentNode(b);
         }
 
+        public void FuseNode(Vertex vertex1, Vertex vertex2, TraversalGenerator neighborGenerator)
+        {
+            UpdateGeneratorWithFusedNode(this, vertex1, vertex2);
+
+            for (int i = 0; i < neighborGenerator.traversalLines.Length; i++)
+            {
+                if (neighborGenerator.traversalLines[i].vertex == vertex2)
+                {
+                    List<TraversalLine> updated = new List<TraversalLine>();
+                    updated.AddRange(neighborGenerator.traversalLines);
+                    updated.RemoveAt(i);
+                    neighborGenerator.traversalLines = updated.ToArray();
+                }
+                else
+                {
+                    for (int j = 0; j < vertex2.Adjacent.Count; j++)
+                    {
+                        if (neighborGenerator.traversalLines[i].vertex == vertex2.Adjacent[j])
+                        {
+                            neighborGenerator.traversalLines[i].adjacentVertexes.Remove(vertex2);
+                        }
+                    }
+                }
+            }
+
+            neighborGenerator.AddEntranceNode(vertex1);
+            for (int i = 0; i < vertex2.Adjacent.Count; i++)
+            {
+                vertex1.AddAdjacentNode(vertex2.Adjacent[i]);
+            }
+        }
+
+        private void UpdateGeneratorWithFusedNode(TraversalGenerator generator, Vertex vertex1, Vertex vertex2)
+        {
+            for (int i = 0; i < generator.traversalLines.Length; i++)
+            {
+                if (generator.traversalLines[i].vertex == vertex1)
+                {
+                    for (int j = 0; j < vertex2.Adjacent.Count; j++)
+                    {
+                        if (!generator.traversalLines[i].adjacentVertexes.Contains(vertex2.Adjacent[j]))
+                        {
+                            generator.traversalLines[i].adjacentVertexes.Add(vertex2.Adjacent[j]);
+                            vertex2.Adjacent[j].RemoveAdjacentVertex(vertex2);
+                            vertex2.Adjacent[j].AddAdjacentNode(vertex1);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void AddEntranceNode(Vertex vertex)
+        {
+            List<TraversalEntrance> updatedEntrance = new List<TraversalEntrance>();
+            updatedEntrance.AddRange(entrances);
+            updatedEntrance.Add(new TraversalEntrance() { vertex = vertex });
+            entrances = updatedEntrance.ToArray();
+        }
+
+        public void RemoveNode(Vertex vertex)
+        {
+            List<TraversalLine> updated = new List<TraversalLine>(); 
+            for (int i = 0; i < traversalLines.Length; i++)
+            {
+                if (!traversalLines[i].vertex.Equals(vertex))
+                {
+                    updated.Add(traversalLines[i]);
+                }
+                traversalLines[i].adjacentVertexes.Remove(vertex);
+            }
+            traversalLines = updated.ToArray();
+
+            List<TraversalEntrance> updatedEntrance = new List<TraversalEntrance>();
+            for (int i = 0; i < entrances.Length; i++)
+            {
+                if (!entrances[i].vertex.Equals(vertex))
+                {
+                    updatedEntrance.Add(entrances[i]);
+                }
+            }
+            entrances = updatedEntrance.ToArray();
+            for (int i = 0; i < vertex.Adjacent.Count; i++)
+            {
+                vertex.Adjacent[i].RemoveAdjacentVertex(vertex);
+            }
+            vertex.ResetAdjacentLists();
+        }
+
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
@@ -175,6 +270,7 @@ namespace Pieter.GraphTraversal
             Gizmos.color = Color.grey;
             Gizmos.DrawSphere(MiddleOfRoom, 0.4f);
         }
+
 
         public TraversalEntrance GetEntrance(int id)
         {

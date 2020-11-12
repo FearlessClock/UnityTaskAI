@@ -47,9 +47,9 @@ namespace Pieter.NavMesh
             }
         }
 
-        private AStarPoint GetPointValue(int id)
+        private AStarPoint GetPointValue(int index)
         {
-            return actualPoints[id];
+            return actualPoints[index];
         }
 
         public List<NavMeshMovementLine> GetPathFromTo(Vector3 from, Vector3 to, bool keepStartingNode = true, bool keepEndingNode= true)

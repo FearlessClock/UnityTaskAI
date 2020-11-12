@@ -23,13 +23,13 @@ public class LODNavigationTester : MonoBehaviour
         startingRoom = GetRoomInformationForLocation(this.transform.position);
         if(startingRoom == null)
         {
-            startingRoom = traversalGraphHolder.GetClosestGenerator(this.transform.position)?.containedRoom;
+            startingRoom = traversalGraphHolder.GetClosestGenerator(end.position)?.containedRoom;
         }
         RoomInformation endingRoom = null;
         endingRoom = GetRoomInformationForLocation(end.position);
         if (endingRoom == null)
         {
-            endingRoom = traversalGraphHolder.GetClosestGenerator(end.position)?.containedRoom;
+            endingRoom = traversalGraphHolder.GetClosestGenerator(this.transform.position)?.containedRoom;
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
@@ -37,7 +37,7 @@ public class LODNavigationTester : MonoBehaviour
             // ReSharper disable once HeuristicUnreachableCode
         {
             path = LevelOfDetailNavigationSolver.GetLODPath(this.transform.position, end.position,
-                startingRoom, endingRoom, graphNavigation);
+                startingRoom, endingRoom, graphNavigation, true, true);
         }
 
     }

@@ -75,7 +75,7 @@ namespace Pieter.NavMesh
         public override bool Equals(object other)
         {
             Vertex vert = (Vertex)other;
-            return vert.Position == Position;
+            return vert.Position == Position && vert.ID == ID;
         }
 
         public override string ToString()
@@ -130,6 +130,11 @@ namespace Pieter.NavMesh
         {
             adjacent = new List<Vertex>();
             adjacentInformation = new List<AdjacentVertex>();
+        }
+
+        public void RemoveAdjacentVertex(Vertex vertex)
+        {
+            adjacent.Remove(vertex);
         }
     }
 }

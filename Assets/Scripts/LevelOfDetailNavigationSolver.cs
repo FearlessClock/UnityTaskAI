@@ -8,7 +8,7 @@ namespace Assets.Scripts
 {
     class LevelOfDetailNavigationSolver
     {
-        public static List<NavMeshMovementLine> GetLODPath(Vector3 playerPosition, Vector3 endPosition, RoomInformation startingRoom, RoomInformation arrivalRoom, TraversalAStarNavigation graphNavigation)
+        public static List<NavMeshMovementLine> GetLODPath(Vector3 playerPosition, Vector3 endPosition, RoomInformation startingRoom, RoomInformation arrivalRoom, TraversalAStarNavigation graphNavigation, bool keepStartingNode = false, bool keepEndingNode = true)
         {
             if (startingRoom == null || arrivalRoom == null)
             {
@@ -29,10 +29,10 @@ namespace Assets.Scripts
                 return null;
             }
 
-            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, closestToPlayerTraversalVertex.Position, false, false));
+            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, closestToPlayerTraversalVertex.Position, keepStartingNode, false));
             
             path.AddRange(traversalMovementList);
-            path.AddRange(arrivalRoom.NavMeshNavigation.GetPathFromTo(closestToEndTraversalVertex.Position, endPosition, false));
+            path.AddRange(arrivalRoom.NavMeshNavigation.GetPathFromTo(closestToEndTraversalVertex.Position, endPosition, false, keepEndingNode));
 
             return path;
         }

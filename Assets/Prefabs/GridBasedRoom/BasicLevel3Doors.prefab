@@ -145,9 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   doorController: {fileID: 0}
-  adjacent:
-  - {fileID: 2609592641055174052}
-  - {fileID: 704209419745741874}
+  adjacent: []
   containedRoom: {fileID: 5444200196495786824}
 --- !u!1 &3071901510657082424
 GameObject:
@@ -245,9 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 2
   doorController: {fileID: 0}
-  adjacent:
-  - {fileID: 8875126356826149611}
-  - {fileID: 2609592641055174052}
+  adjacent: []
   containedRoom: {fileID: 5444200196495786824}
 --- !u!1 &3254641601675443023
 GameObject:
@@ -294,9 +290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 1
   doorController: {fileID: 0}
-  adjacent:
-  - {fileID: 8875126356826149611}
-  - {fileID: 704209419745741874}
+  adjacent: []
   containedRoom: {fileID: 5444200196495786824}
 --- !u!1 &5804011408454792195
 GameObject:
@@ -1329,17 +1323,17 @@ PrefabInstance:
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[0].adjacentVertexes.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[1].adjacentVertexes.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: traversalLines.Array.data[2].adjacentVertexes.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8128590873398532913, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}

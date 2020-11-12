@@ -161,7 +161,7 @@ namespace Pieter.Grid
             {
                 if (entranceIds[i] == id)
                 {
-                    return entrancePoints[id];
+                    return entrancePoints[i];
                 }
             }
 

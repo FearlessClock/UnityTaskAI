@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class PersonAIDebugHolder : ScriptableObject
     
     public void Log(string text, eDebugImportance importance)
     {
+        text = "(" + Time.realtimeSinceStartup + ") " + text;
         if(debugText.Count >= maxLines)
         {
             debugText.RemoveAt(0);
@@ -41,5 +43,10 @@ public class PersonAIDebugHolder : ScriptableObject
             default:
                 return Color.gray;
         }
+    }
+
+    internal void Log(object p, eDebugImportance unimportant)
+    {
+        throw new NotImplementedException();
     }
 }

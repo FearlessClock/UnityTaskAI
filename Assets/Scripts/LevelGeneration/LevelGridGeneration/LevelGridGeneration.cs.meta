@@ -3,7 +3,10 @@ guid: 9ecef449e7b32784995afaa02497c281
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - gridWorldHolder: {fileID: 11400000, guid: ff4eaa2cfa1a9f841a22b914df0a6282, type: 2}
+  - traversalGraphHolder: {instanceID: 0}
+  - roomGraph: {instanceID: 0}
   executionOrder: -10
   icon: {instanceID: 0}
   userData: 

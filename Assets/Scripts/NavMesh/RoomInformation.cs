@@ -199,4 +199,14 @@ public class RoomInformation : MonoBehaviour
                 position.y > adjustedCorner1.y && position.y < adjustedCorner2.y &&
                 position.z > adjustedCorner1.z && position.z < adjustedCorner2.z;
     }
+
+    public override int GetHashCode()
+    {
+        int hashCode = 780059485;
+        hashCode = hashCode * -1521134295 + base.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
+        hashCode = hashCode * -1521134295 + roomID.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<Vertex>.Default.GetHashCode(centerVertex);
+        return hashCode;
+    }
 }

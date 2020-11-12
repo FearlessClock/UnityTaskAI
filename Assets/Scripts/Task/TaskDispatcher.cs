@@ -16,7 +16,7 @@ public class TaskDispatcher : MonoBehaviour
     }
     private void Update()
     {
-        foreach (TaskBase task in taskList.GetAllTasks)
+        foreach (BasicTask task in taskList.GetAllTasks)
         {
             task.UpdateTimeLimit(Time.deltaTime);
         }

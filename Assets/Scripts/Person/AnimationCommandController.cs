@@ -11,6 +11,17 @@ public class AnimationCommandController : MonoBehaviour
 
     private eAnimationType currentState = eAnimationType.Idle;
 
+    [SerializeField] private string commandsDebug = "";
+
+    private void Update()
+    {
+        commandsDebug = commandList.Count + " ";
+        foreach (eAnimationType ani in commandList)
+        {
+            commandsDebug += ani.ToString();
+        }
+    }
+
     public void ChangeState(eAnimationType type)
     {
         commandList.Enqueue(type);
@@ -33,6 +44,10 @@ public class AnimationCommandController : MonoBehaviour
             if(currentCommand != currentState)
             {
                 animator.SetTrigger(currentCommand.ToString());
+            }
+            else
+            {
+                UpdateCommand();
             }
         }
     }

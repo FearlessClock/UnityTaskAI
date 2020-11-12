@@ -21,16 +21,7 @@ public class EntrancePoints : MonoBehaviour
 
     public void UpdateEntranceValues()
     {
-        UpdateVertexInfo();
         UpdateEntranceDoorDirections();
-    }
-
-    private void UpdateVertexInfo()
-    {
-        for (int i = 0; i < entrancePoints.Length; i++)
-        {
-            entrancePoints[i].ID = i;
-        }
     }
 
     public int Length
@@ -76,6 +67,7 @@ public class EntrancePoints : MonoBehaviour
         directions.Clear();
         foreach (NavMeshEntrance entrance in entrancePoints)
         {
+            Debug.DrawLine(entrance.entrance.Position + Vector3.up * 2, generator.containedRoom.center + Vector3.up * 2, Color.white, 3);
             Vector2 direction = new Vector2((entrance.entrance.Position - generator.containedRoom.center).x, (entrance.entrance.Position - generator.containedRoom.center).z);
 
             direction.Normalize();
@@ -109,6 +101,7 @@ public class EntrancePoints : MonoBehaviour
                 directions.Add(Vector2Int.down);
             }
 
+            entrance.entrance.SetDoorController(entrance.GetDoorController);
             entrance.generator = generator;
         }
     }

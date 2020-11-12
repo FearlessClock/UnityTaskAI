@@ -19,12 +19,8 @@ public class LevelGeneration : MonoBehaviour
 
     [SerializeField] private LayerMask navMeshMask = 0;
     private List<NavMeshEntrance> availableEntrances = new List<NavMeshEntrance>();
-    [SerializeField] private Transform test = null;
-
-    [SerializeField] private Transform test2 = null;
 
     private GenerationMap generationMap = new GenerationMap(1);
-    [SerializeField] private float startingAngle = 0;
 
     private List<RoomInformation> generatedRooms = new List<RoomInformation>();
     public List<RoomInformation> GeneratedRooms => generatedRooms;

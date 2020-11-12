@@ -9,6 +9,7 @@ public class WalkTask : ITask
 {
     private TaskScope taskScope = TaskScope.Global;
     private Vector3 target;
+    private RoomInformation containedRoom = null;
 
     private eAnimationType workAnimationType = eAnimationType.Idle;
     private float workTime = 0;
@@ -16,12 +17,14 @@ public class WalkTask : ITask
     private float timeLimit = 0;
     private float timeLimitTimer = 0;
     private float priority = 0;
-    private List<TaskBase> followUpTasks = new List<TaskBase>();
+    private List<BasicTask> followUpTasks = new List<BasicTask>();
     private bool isinterruptible = true;
     private bool isValid = true;
     private int urgencyLevel = 1;
     private Func<bool> onDoneFunction = null;
-    public WalkTask(string name, TaskScope scope, Vector3 position, float timeLimit, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction)
+    private Action OnTaskInvalidate = null;
+
+    public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLimit, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction)
     {
         this.urgencyLevel = urgencyLevel;
         this.taskName = name;
@@ -31,16 +34,17 @@ public class WalkTask : ITask
         this.priority = priority;
         this.isinterruptible = isinterruptible;
         this.onDoneFunction = onDoneFunction;
+        this.containedRoom = containedRoom;
     }
 
-    public WalkTask(string name, TaskScope scope, Vector3 position, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type) : 
-        this(name, scope, position, timeLim, priority, isinterruptible, urgencyLevel, onDoneFunction)
+    public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type) : 
+        this(name, scope, position, containedRoom, timeLim, priority, isinterruptible, urgencyLevel, onDoneFunction)
     {
         this.workAnimationType = type;
     }
 
-    public WalkTask(string name, TaskScope scope, Vector3 position, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type, List<TaskBase> followUpTasks) : 
-        this(name, scope, position, timeLim, priority, isinterruptible, urgencyLevel, onDoneFunction, type)
+    public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type, List<BasicTask> followUpTasks) : 
+        this(name, scope, position, containedRoom, timeLim, priority, isinterruptible, urgencyLevel, onDoneFunction, type)
     {
         this.followUpTasks = followUpTasks;
     }
@@ -59,9 +63,9 @@ public class WalkTask : ITask
     public bool IsWorkDone => true;
     public bool DoesWork => false;
 
-    public List<TaskBase> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<TaskBase>(); } } }
+    public List<BasicTask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<BasicTask>(); } } }
 
-    public bool Isinterruptible => isinterruptible;
+    public bool IsInterruptible => isinterruptible;
 
     public string GetTaskInformation { get => "Walk Task: " + taskName + " " + GetInteractionPosition; set => taskName = value; }
 
@@ -73,7 +77,11 @@ public class WalkTask : ITask
     public string taskName = "";
     public System.Func<bool> GetWorkDoneFunction => onDoneFunction;
 
-    public TaskBase GetRandomFollowUpTask()
+    public Action onTaskInvalidate => OnTaskInvalidate;
+
+    public RoomInformation GetInteractionRoom => containedRoom;
+
+    public BasicTask GetRandomFollowUpTask()
     {
         if (followUpTasks != null && followUpTasks.Count > 0)
         {

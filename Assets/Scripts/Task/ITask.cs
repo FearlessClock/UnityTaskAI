@@ -9,8 +9,10 @@ public interface ITask
     int GetTaskUrgencyLevel { get; }
     bool DoesWork { get; }
     bool IsTaskValid { get; }
+    Action onTaskInvalidate { get; }
     string GetTaskInformation { get; set; }
-    bool Isinterruptible { get; }
+    bool IsInterruptible { get; }
+    RoomInformation GetInteractionRoom { get; }
     Vector3 GetInteractionPosition { get; }
     Quaternion GetInteractionRotation { get; }
     TaskScope GetTaskScope { get; }
@@ -19,9 +21,9 @@ public interface ITask
     void SetWorkTimer(float time);
     float GetWorkTime { get; }
     bool IsWorkDone { get; }
-    List<TaskBase> FollowUpTasks { get; }
+    List<BasicTask> FollowUpTasks { get; }
 
-    TaskBase GetRandomFollowUpTask();
+    BasicTask GetRandomFollowUpTask();
 
 
     void UpdateTimeLimit(float deltaTime);

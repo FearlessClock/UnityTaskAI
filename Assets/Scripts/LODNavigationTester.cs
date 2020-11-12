@@ -9,14 +9,9 @@ public class LODNavigationTester : MonoBehaviour
 {
     [SerializeField] private TraversalGraphHolder traversalGraphHolder = null;
 
-    private AStarNavMeshNavigation navMesh = null;
     private TraversalAStarNavigation graphNavigation = null;
     [SerializeField] private Transform end = null;
-    [SerializeField] private bool getRandomPoint = false;
     private List<NavMeshMovementLine> path;
-
-    [SerializeField] private LayerMask roomsMask = 0;
-    private Collider[] hits = new Collider[100];
 
     private void Start()
     {
@@ -48,22 +43,8 @@ public class LODNavigationTester : MonoBehaviour
     }
 
     private RoomInformation GetRoomInformationForLocation(Vector3 position)
-    {
-        RoomInformation startingRoom = null;
-        int nmbrOfHits = Physics.OverlapSphereNonAlloc(position, 1, hits, roomsMask);
-        if (nmbrOfHits > 0)
-        {
-            for (int i = 0; i < nmbrOfHits; i++)
-            {
-                startingRoom = hits[i].GetComponent<RoomInformation>();
-                if (startingRoom != null)
-                {
-                    break;
-                }
-            }
-        }
-
-        return startingRoom;
+    {       
+        return traversalGraphHolder.GetClosestGenerator(position).containedRoom;
     }
 
     private void OnDrawGizmos()

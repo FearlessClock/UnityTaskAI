@@ -12,6 +12,7 @@ namespace Pieter.NavMesh
     {
         [SerializeField] private NavMeshTriangle[] triangles = new NavMeshTriangle[0];
         [SerializeField] private Vertex[] vertexes = new Vertex[0];
+        [SerializeField] private float distanceFromEdgeOfTriangleForRandomPos = 0.1f;
 
         public NavMeshTriangle[] Triangles { get { return triangles; } }
 
@@ -71,11 +72,6 @@ namespace Pieter.NavMesh
                 collectedTriangels.AddRange(navMesh.Triangles);
             }
             triangles = collectedTriangels.ToArray();
-            int counter = 0;
-            for (int i = 0; i < triangles.Length; i++)
-            {
-                //triangles[i].ID = counter++;
-            }
         }
 
         public void AddTriangles(NavMeshGenerator generators)
@@ -84,11 +80,6 @@ namespace Pieter.NavMesh
             collectedTriangles.AddRange(triangles);
             collectedTriangles.AddRange(generators.Triangles);
             triangles = collectedTriangles.ToArray();
-            int counter = 0;
-            for (int i = 0; i < triangles.Length; i++)
-            {
-                //triangles[i].ID = counter++;
-            }
         }
 
         public void AddVertexes(NavMeshGenerator generators)
@@ -97,11 +88,6 @@ namespace Pieter.NavMesh
             collectedVertexes.AddRange(vertexes);
             collectedVertexes.AddRange(generators.Vertexes);
             vertexes = collectedVertexes.ToArray();
-            int counter = 0;
-            for(int i = 0; i < vertexes.Length; i++)
-            {
-                //vertexes[i].ID = counter++;
-            }
         }
 
         public NavMeshTriangle GetContainingTriangle(Vector3 pos)
@@ -158,7 +144,7 @@ namespace Pieter.NavMesh
         {
             float x = Random.value;
             float y = Random.value;
-            while (x + y > 1)
+            while (x + y > (1 - distanceFromEdgeOfTriangleForRandomPos))
             {
                 x = Random.value;
                 y = Random.value;

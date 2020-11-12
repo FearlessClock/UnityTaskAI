@@ -33,21 +33,52 @@ namespace Pieter.GraphTraversal
         public RoomInformation containedRoom;
         [SerializeField] private TraversalLine[] traversalLines = null;
         [SerializeField] private TraversalEntrance[] entrances = null;
-        
 
+        private Vector3 middleOfTheRoom;
+        public Vector3 MiddleOfRoom => middleOfTheRoom;
         public TraversalLine[] TraversalLines => traversalLines;
-        [SerializeField] private Vertex middleVertex = null;
-        public Vertex MiddleVertex => middleVertex;
+
+        public Vertex ClosestVertex(Vector3 position)
+        {
+            float closest = Vector3.Distance(position, traversalLines[0].vertex.Position);
+            int index = 0;
+            for (int i = 0; i < traversalLines.Length; i++)
+            {
+                if (closest > Vector3.Distance(position, traversalLines[i].vertex.Position))
+                {
+                    closest = Vector3.Distance(position, traversalLines[i].vertex.Position);
+                    index = i;
+                }
+            }
+
+            return traversalLines[index].vertex;
+        }
         
         private void OnValidate()
         {
+            Debug.Log("Update info for Traversal Generator");
             UpdateInfo();
+        }
+        private void Start()
+        {
+            UpdateRoomMiddle();
         }
 
         public void UpdateInfo()
         {
             RenameVertexes();
             UpdateAdjacencyLists();
+            UpdateRoomMiddle();
+        }
+
+        private void UpdateRoomMiddle()
+        {
+            middleOfTheRoom = new Vector3();
+            foreach (TraversalLine line in traversalLines)
+            {
+                middleOfTheRoom += line.vertex.Position;
+            }
+            middleOfTheRoom /= traversalLines.Length;
         }
 
         private int RenameVertexes(int counterDefault = 0)
@@ -61,6 +92,7 @@ namespace Pieter.GraphTraversal
                 {
                     vert = item.gameObject.AddComponent<Vertex>();
                 }
+                vert.containedRoom = containedRoom;
                 vert.ID = counter - 1;
                 vert.ResetAdjacentLists();
             }
@@ -140,6 +172,8 @@ namespace Pieter.GraphTraversal
                     }
                 }
             }
+            Gizmos.color = Color.grey;
+            Gizmos.DrawSphere(MiddleOfRoom, 0.4f);
         }
 
         public TraversalEntrance GetEntrance(int id)

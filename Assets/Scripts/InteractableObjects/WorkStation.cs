@@ -28,8 +28,8 @@ public class WorkStation : InteractableObject
             taskList.AddTask(GenerateTask());
         }
     }
-    public override TaskBase GenerateTask()
+    public override BasicTask GenerateTask()
     {
-        return new TaskBase("WorkStation-"+this.name, TaskScope.Global, interactionPoint, 10, 1, 3, true, 1, null, eAnimationType.Work, this) ;
+        return new BasicTask("WorkStation-"+this.name, TaskScope.Global, interactionPoint, roomGraphHolder.FindRoomAtLocation(interactionPoint.position), 10, 1, 3, true, 1, null, eAnimationType.Work, this) ;
     }
 }

@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class Human : PersonBase
 {
-    [SerializeField] Bed bed = null;
-    private float tiredLevel = 10;
-    private float tiredBecoming = 0.1f;
-    private TaskBase sleepTask = null;
 
     private void OnDestroy()
     {
-        currentTask = null;    
+        taskHandler.DestroyTask();    
     }
 
     private void Awake()
@@ -26,37 +22,32 @@ public class Human : PersonBase
             return;
         }
         CheckIfOnFire();
-        if (currentTask != null)
+        if (taskHandler.IsActiveTaskValid)
         {
             WorkOnTask();
         }
         else
         {
-            currentTask = GetNewTask();
+            WanderTask task = new WanderTask("Wander " + movementHandler.GetCurrentRoom.name, TaskScope.Personal, movementHandler.GetCurrentRoom.GetRandomSpotInsideRoom, movementHandler.GetCurrentRoom, null, 2, 5, true, 1, 3);
+            taskHandler.SetNewActiveTask(movementHandler.GetCurrentRoom.TraversalGenerator, this.transform.position, traversalAStar, task); ;
+            
         }
 
         UpdateDebug();
-        if (bed != null)
-        {
-            tiredLevel -= tiredBecoming;
-            if (tiredLevel < 5)
-            {
-                if (sleepTask == null)
-                {
-                    sleepTask = bed.GenerateTask();
-                    AddNewTask(sleepTask);
-                }
-            }
-        }
+    }
+
+    public void AddNewTask(ITask basicTask)
+    {
+        taskHandler.AddNewTask(basicTask);
     }
 
     private void OnDrawGizmos()
     {
-        if(currentTask != null)
+        if(taskHandler != null && taskHandler.IsActiveTaskValid)
         {
             Gizmos.color = Color.red;
             
-            Gizmos.DrawWireSphere(currentTask.GetInteractionPosition, 0.2f);
+            Gizmos.DrawWireSphere(taskHandler.ActiveTask.GetInteractionPosition, 0.2f);
         }
 
         base.PersonBaseOnDrawGizmos();

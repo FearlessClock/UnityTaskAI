@@ -7,14 +7,13 @@ using UnityEngine;
 public class LevelGridGeneration : MonoBehaviour
 {
     [SerializeField] private GridLevelSquareInformation[] levelBlocks = null;
-    [SerializeField] private GridWorldMap gridWorldMap = null;
+    [SerializeField] private GridMapHolder gridWorldHolder = null;
+    private GridWorldMap gridWorldMap => gridWorldHolder.gridWorldMap;
     [SerializeField] private int tileSize = 1;
 
     [SerializeField] private int numberOfRooms = 30;
     [Space]
     [SerializeField] private TraversalGraphHolder traversalGraphHolder = null;
-
-    [SerializeField] private RoomInformation initialRoom = null;
 
     [SerializeField] private RoomGraphHolder roomGraph = null;
     public System.Action OnDoneLevelGeneration = null;
@@ -22,10 +21,10 @@ public class LevelGridGeneration : MonoBehaviour
 
     private void Awake()
     {
-        gridWorldMap = new GridWorldMap(tileSize);
+        gridWorldHolder.gridWorldMap = new GridWorldMap(tileSize);
         roomGraph.Clear();
         UpdateEntrancePointsForLevelBlocks();
-        GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0, 0) });
+        StartCoroutine(GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0, 0) }));
     }
 
     private void UpdateEntrancePointsForLevelBlocks()
@@ -36,7 +35,7 @@ public class LevelGridGeneration : MonoBehaviour
         }
     }
 
-    private void GenerateBuilding(int maxBuildings, int numberOfBuildings, List<Vector2Int> availableSpots)
+    private IEnumerator GenerateBuilding(int maxBuildings, int numberOfBuildings, List<Vector2Int> availableSpots)
     {
         Vector2Int currentGridPoint;
         if (availableSpots.Count > 0)
@@ -44,37 +43,34 @@ public class LevelGridGeneration : MonoBehaviour
             int randomIndex = Random.Range(0, availableSpots.Count);
             currentGridPoint = availableSpots[randomIndex];
             availableSpots.RemoveAt(randomIndex);
-        }
-        else
-        {
-            return;
-        }
 
-        List<RoomInformation> neighborRoomsForFirstDirectionTest = GetNeighbouringRooms(currentGridPoint, new Vector2Int[4] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right });
-        //Build the first room
-        Vector3 pos = Vec2IntToVec3D(currentGridPoint * tileSize);
-        int randomRoomIndex = GetWorkingRandomRoom(pos, neighborRoomsForFirstDirectionTest);
+            List<RoomInformation> neighborRoomsForFirstDirectionTest = GetNeighbouringRooms(currentGridPoint, new Vector2Int[4] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right });
+            //Build the first room
+            Vector3 pos = Vec2IntToVec3D(currentGridPoint * tileSize);
+            int randomRoomIndex = GetWorkingRandomRoom(pos, neighborRoomsForFirstDirectionTest);
 
-        if (randomRoomIndex < 0)
-        {
-            GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
-            return;
-        }
-        GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, levelBlocks[randomRoomIndex]);
-        numberOfBuildings--;
-
-        if (numberOfBuildings > 0)
-        {
-            Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
-            foreach (Vector2Int dir in availableDirections)
+            if (randomRoomIndex < 0)
             {
-                if (!availableSpots.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
-                {
-                    availableSpots.Add(currentGridPoint + dir);
-                }
+                yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+                //return null;
             }
+            GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, levelBlocks[randomRoomIndex]);
+            yield return new WaitForEndOfFrame();
+            numberOfBuildings--;
 
-            GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+            if (numberOfBuildings > 0)
+            {
+                Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
+                foreach (Vector2Int dir in availableDirections)
+                {
+                    if (!availableSpots.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
+                    {
+                        availableSpots.Add(currentGridPoint + dir);
+                    }
+                }
+
+                yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+            }
         }
     }
 
@@ -118,7 +114,7 @@ public class LevelGridGeneration : MonoBehaviour
             }
             else
             {
-                Debug.Log("-- Could not find entrance " + entranceRoom.ID);
+                Debug.Log("-- Could not find entrance " + entranceRoom.ID + " In direction " + dir + " From room " + room.RoomInfo.ID);
             }
         }
 
@@ -207,12 +203,6 @@ public class LevelGridGeneration : MonoBehaviour
         }
 
         return surroundingRooms;
-    }
-
-    public RoomInformation GetRoomAtWorldPosition(Vector3 position)
-    {
-        Vector3 vec = position / tileSize;
-        return gridWorldMap.At(new Vector2Int((int)vec.x, (int)vec.z));
     }
 
     private Vector3 Vec2IntToVec3D(Vector2Int vec)

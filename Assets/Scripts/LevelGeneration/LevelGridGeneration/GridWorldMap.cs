@@ -1,22 +1,64 @@
-﻿using System;
+﻿using Pieter.NavMesh;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridWorldMap 
+public class Quadrent
 {
-    /*
+    private List<List<RoomInformation>> quad = new List<List<RoomInformation>>();
+
+    public int JaggedCount(int i)
+    {
+        return quad[i].Count;
+    }
+    public int Count => quad.Count;
+
+    private Vector2Int offset = new Vector2Int(0, 0);
+
+    public Quadrent(int xOffset, int yOffset)
+    {
+        offset = new Vector2Int(xOffset, yOffset);
+    }
+
+    public void IncreaseQuadrentWidth(int newSize)
+    {
+        int initSize = quad.Count;
+        for (int i = 0; i < newSize - initSize; i++)
+        {
+            quad.Add(new List<RoomInformation>());
+        }
+    }
+
+    public void IncreaseQuadrentHeight(int column, int height)
+    {
+        quad[column].AddRange(new RoomInformation[height - quad[column].Count]);
+    }
+
+    public RoomInformation At(int i, int j)
+    {
+        return quad[i][j];
+    }
+
+    public void At(int i, int j, RoomInformation roomAtGridPoint)
+    {
+        quad[i][j] = roomAtGridPoint ;
+    }
+}
+public class GridWorldMap
+{
+    /*                  |
     QuadrentUpperLeft   | QuadrentUpperRight
                         |
-                 ----------------
+             -------------------------
                         |
     QuadrentLowerLeft   | QuadrentLowerRight
                         |
     */
-    List<List<RoomInformation>> quadrentUpperRight = new List<List<RoomInformation>>();
-    List<List<RoomInformation>> quadrentLowerRight = new List<List<RoomInformation>>();
-    List<List<RoomInformation>> quadrentUpperLeft = new List<List<RoomInformation>>();
-    List<List<RoomInformation>> quadrentLowerLeft = new List<List<RoomInformation>>();
+    private Quadrent quadrentUpperRight = new Quadrent(0, 0);
+    private Quadrent quadrentUpperLeft = new Quadrent(1, 0);
+    private Quadrent quadrentLowerRight = new Quadrent(0, 1);
+    private Quadrent quadrentLowerLeft = new Quadrent(1, 1);
 
     public int tileSize = 1;
     public GridWorldMap(int tileSize)
@@ -73,59 +115,68 @@ public class GridWorldMap
         }
     }
 
-    public RoomInformation At(Vector2Int pos)
+    public RoomInformation At(Vector2 pos)
     {
-        List<List<RoomInformation>> quad = GetQuadForPosition(pos, out pos);
-        if (quad.Count > Mathf.Abs(pos.x) && quad[Mathf.Abs(pos.x)].Count > Mathf.Abs(pos.y))
+        Vector2Int adjustedPos;
+        Quadrent quad = GetQuadForPosition(pos, out adjustedPos);
+        if (quad.Count > Mathf.Abs(adjustedPos.x) && quad.JaggedCount(Mathf.Abs(adjustedPos.x)) > Mathf.Abs(adjustedPos.y))
         {
-            return quad[Mathf.Abs(pos.x)][Mathf.Abs(pos.y)];
+            return quad.At(Mathf.Abs(adjustedPos.x), Mathf.Abs(adjustedPos.y));
         }
         return null;
     }
 
-    private List<List<RoomInformation>> GetQuadForPosition(Vector2Int position, out Vector2Int updatedPosition)
+    private Quadrent GetQuadForPosition(Vector2 position, out Vector2Int updatedPosition)
     {
-        updatedPosition = position;
+        updatedPosition = new Vector2Int() ;
         if (position.x < 0 && position.y >= 0)
         {
-            updatedPosition = new Vector2Int(position.x+1, position.y);
+            updatedPosition = new Vector2Int((int)(position.x + 1), (int)position.y);
             return quadrentUpperLeft;
         }
         else if (position.x >= 0 && position.y >= 0)
         {
+            updatedPosition = new Vector2Int((int)position.x, (int)position.y);
             return quadrentUpperRight;
         }
         else if (position.x < 0 && position.y < 0)
         {
-            updatedPosition = new Vector2Int(position.x+1, position.y+1);
+            float X = position.x;
+            float Y = position.y;
+            Y = position.y + 1;
+            X = position.x + 1;
+            updatedPosition = new Vector2Int((int)X, (int)Y);
             return quadrentLowerLeft;
         }
         else if (position.x >= 0 && position.y < 0)
         {
-            updatedPosition = new Vector2Int(position.x, position.y+1);
+            float X = position.x;
+            float Y = position.y;
+            Y = position.y + 1;
+            updatedPosition = new Vector2Int((int)X, (int)Y);
             return quadrentLowerRight;
         }
         return null;
     }
 
-    private void UpdateQuadrentAvailablity(List<List<RoomInformation>> quad, RectInt rect, RoomInformation roomAtGridPoint)
+    private void UpdateQuadrentAvailablity(Quadrent quad, RectInt rect, RoomInformation roomAtGridPoint)
     {
         for (int i = rect.xMin; i < rect.xMax; i++)
         {
             for (int j = rect.yMin; j < rect.yMax; j++)
             {
-                quad[i][j] = roomAtGridPoint;
+                quad.At(i, j, roomAtGridPoint);
             }
         }
     }
 
-    private bool CheckForBlockedSquares(List<List<RoomInformation>> quad, RectInt rect)
+    private bool CheckForBlockedSquares(Quadrent quad, RectInt rect)
     {
         for (int i = rect.xMin; i < rect.xMax; i++)
         {
             for (int j = rect.yMin; j < rect.yMax; j++)
             {
-                if (quad.Count > i && quad[i].Count > j && quad[i][j] != null)
+                if (quad.Count > i && quad.JaggedCount(i) > j && quad.At(i,j) != null)
                 {
                     return true;
                 }
@@ -134,36 +185,22 @@ public class GridWorldMap
         return false;
     }
 
-    private void UpdateQuadrentSize(List<List<RoomInformation>> quad, RectInt rect)
+    private void UpdateQuadrentSize(Quadrent quad, RectInt rect)
     {
         if (quad.Count <= rect.xMax)
         {
-            IncreaseQuadrentWidth(quad, rect.xMax);
+            quad.IncreaseQuadrentWidth(rect.xMax);
         }
 
         for (int i = rect.xMin; i < rect.xMax; i++)
         {
-            if (quad[i].Count <= rect.yMax)
+            if (quad.JaggedCount(i) <= rect.yMax)
             {
-                IncreaseQuadrentHeight(quad, i, rect.yMax);
+                quad.IncreaseQuadrentHeight(i, rect.yMax);
             }
         }
     }
 
-    public void IncreaseQuadrentWidth(List<List<RoomInformation>> list, int newSize)
-    {
-        int initSize = list.Count;
-        for (int i = 0; i < newSize - initSize; i++)
-        {
-            list.Add(new List<RoomInformation>());
-        }
-    }
-
-
-    public void IncreaseQuadrentHeight(List<List<RoomInformation>> list, int column, int height)
-    {
-        list[column].AddRange(new RoomInformation[height - list[column].Count]);
-    }
 
     public void DrawDebug(Color color)
     {
@@ -229,23 +266,23 @@ public class GridWorldMap
         }
         return true;
     }
-    private void DebugDrawQuadrent(List<List<RoomInformation>> list, Color color, Vector2 inversionMatrix)
+    private void DebugDrawQuadrent(Quadrent quad, Color color, Vector2 inversionMatrix)
     {
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < quad.Count; i++)
         {
-            for (int j = 0; j < list[i].Count; j++)
+            for (int j = 0; j < quad.JaggedCount(i); j++)
             {
                 if (i == 0 && j == 0)
                 {
                     //Gizmos.color = Color.gray;
                 }
-                else if (i == list.Count - 1 && j == list[i].Count - 1)
+                else if (i == quad.Count - 1 && j == quad.JaggedCount(i) - 1)
                 {
                     //Gizmos.color = Color.blue;
                 }
                 else
                 {
-                    if (list[i][j] == null)
+                    if (quad.At(i,j) == null)
                     {
                         Gizmos.color = Color.magenta;
                     }

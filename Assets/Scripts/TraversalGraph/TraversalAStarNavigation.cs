@@ -154,7 +154,7 @@ namespace Pieter.GraphTraversal
             current = lastPoint.parent;
             while (current != null)
             {
-                reconstructedPath.Add(new NavMeshMovementLine { point = current.vert.Position, associatedVertex = lastPoint.vert });
+                reconstructedPath.Add(new NavMeshMovementLine { point = current.vert.Position, associatedVertex = current.vert });
                 lastPoint = current;
                 current = lastPoint.parent;
             }

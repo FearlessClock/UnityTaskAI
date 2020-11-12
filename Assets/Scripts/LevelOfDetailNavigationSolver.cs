@@ -20,18 +20,19 @@ namespace Assets.Scripts
                 return startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, endPosition);
             }
             List<NavMeshMovementLine> path = new List<NavMeshMovementLine>();
-
+            Vertex closestToPlayerTraversalVertex = startingRoom.TraversalGenerator.ClosestVertex(endPosition);
+            Vertex closestToEndTraversalVertex = arrivalRoom.TraversalGenerator.ClosestVertex(playerPosition);
             List<NavMeshMovementLine> traversalMovementList = graphNavigation.GetPathFromTo(
-                startingRoom.TraversalGenerator.MiddleVertex, arrivalRoom.TraversalGenerator.MiddleVertex);
+               closestToPlayerTraversalVertex, closestToEndTraversalVertex);
             if(traversalMovementList.Count == 0)
             {
                 return null;
             }
 
-            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, startingRoom.TraversalGenerator.MiddleVertex.Position));
+            path.AddRange(startingRoom.NavMeshNavigation.GetPathFromTo(playerPosition, closestToPlayerTraversalVertex.Position, false, false));
             
             path.AddRange(traversalMovementList);
-            path.AddRange(arrivalRoom.NavMeshNavigation.GetPathFromTo(arrivalRoom.TraversalGenerator.MiddleVertex.Position, endPosition));
+            path.AddRange(arrivalRoom.NavMeshNavigation.GetPathFromTo(closestToEndTraversalVertex.Position, endPosition, false));
 
             return path;
         }

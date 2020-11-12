@@ -1,4 +1,5 @@
 ﻿using Pieter.NavMesh;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,20 @@ public class RoomGraphHolder : ScriptableObject
         }
         roomsNew[roomsNew.Length - 1] = nextRoom;
         rooms = roomsNew;
+    }
+
+    public RoomInformation FindRoomAtLocation(Vector3 position)
+    {
+        RoomInformation room = null;
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if((rooms[i].payload as RoomInformation).IsInsideRoomArea(position))
+            {
+                room = (rooms[i].payload as RoomInformation);
+                break;
+            }
+        }
+        return room;
     }
 
     public void AddChild(RoomInformation selectedRoom, RoomInformation child)

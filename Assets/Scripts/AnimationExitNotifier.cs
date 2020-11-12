@@ -14,11 +14,11 @@ public class AnimationExitNotifier : StateMachineBehaviour
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        AnimatorEventActivator eventActivator = animator.gameObject.GetComponent<AnimatorEventActivator>();
-        if (eventActivator)
-        {
-            eventActivator.EventStringReceived(exitStringEventName);
-        }
+        //AnimatorEventActivator eventActivator = animator.gameObject.GetComponent<AnimatorEventActivator>();
+        //if (eventActivator)
+        //{
+        //    eventActivator.EventStringReceived(exitStringEventName);
+        //}
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

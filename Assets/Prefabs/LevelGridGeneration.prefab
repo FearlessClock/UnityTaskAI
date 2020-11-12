@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2677810432399626595}
   - component: {fileID: 2677810432399626597}
   m_Layer: 0
-  m_Name: LevelGeneration
+  m_Name: LevelGridGeneration
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,11 +47,10 @@ MonoBehaviour:
   levelBlocks:
   - {fileID: 9067046901041903100, guid: b4b3e9df347e56542891eca0eb319e69, type: 3}
   - {fileID: 7059867841906196204, guid: f9eaf021c59e2e549af53cd6fb2d0197, type: 3}
+  gridWorldHolder: {fileID: 11400000, guid: ff4eaa2cfa1a9f841a22b914df0a6282, type: 2}
   tileSize: 20
   numberOfRooms: 30
   traversalGraphHolder: {fileID: 2677810432399626597}
-  initialRoom: {fileID: 6314187691320887384, guid: b4b3e9df347e56542891eca0eb319e69,
-    type: 3}
   roomGraph: {fileID: 11400000, guid: ccd9c7b5050250a4eb51b93e3a7ca598, type: 2}
 --- !u!114 &2677810432399626597
 MonoBehaviour:

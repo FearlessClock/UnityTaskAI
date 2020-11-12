@@ -52,7 +52,7 @@ namespace Pieter.NavMesh
             return actualPoints[id];
         }
 
-        public List<NavMeshMovementLine> GetPathFromTo(Vector3 from, Vector3 to)
+        public List<NavMeshMovementLine> GetPathFromTo(Vector3 from, Vector3 to, bool keepStartingNode = true, bool keepEndingNode= true)
         {
             if(actualPoints.Length == 0)
             {
@@ -81,8 +81,14 @@ namespace Pieter.NavMesh
             // If the points are on the same triangle, send back a straight line between both points
             if (triStart.ID == triEnd.ID)
             {
-                path.Add(new NavMeshMovementLine { point =from });
-                path.Add(new NavMeshMovementLine { point = to });
+                if (keepStartingNode)
+                {
+                    path.Add(new NavMeshMovementLine { point = from });
+                }
+                if (keepEndingNode)
+                {
+                    path.Add(new NavMeshMovementLine { point = to });
+                }
                 return path;
             }
 
@@ -103,7 +109,7 @@ namespace Pieter.NavMesh
                    current.vert.ID == (triEnd.vertex2.ID) ||
                    current.vert.ID == (triEnd.vertex3.ID))
                 {
-                    return ReconstructPath(current, to, from);
+                    return ReconstructPath(current, to, from, keepStartingNode, keepEndingNode);
                 }
 
                 open.RemoveAt(0);
@@ -144,10 +150,13 @@ namespace Pieter.NavMesh
         }
 
         private List<NavMeshMovementLine> reconstructedPath = new List<NavMeshMovementLine>();
-        private List<NavMeshMovementLine> ReconstructPath(AStarPoint lastPoint, Vector3 end, Vector3 start)
+        private List<NavMeshMovementLine> ReconstructPath(AStarPoint lastPoint, Vector3 end, Vector3 start, bool keepStartingNode, bool keepEndingNode)
         {
             reconstructedPath = new List<NavMeshMovementLine>();
-            reconstructedPath.Add(new NavMeshMovementLine {point = end});
+            if (keepEndingNode)
+            {
+                reconstructedPath.Add(new NavMeshMovementLine { point = end });
+            }
             reconstructedPath.Add(new NavMeshMovementLine { point = lastPoint.vert.Position });
             current = lastPoint.parent;
             while(current != null)
@@ -156,7 +165,10 @@ namespace Pieter.NavMesh
                 lastPoint = current;
                 current = lastPoint.parent;
             }
-            reconstructedPath.Add(new NavMeshMovementLine { point = start });
+            if (keepStartingNode)
+            {
+                reconstructedPath.Add(new NavMeshMovementLine { point = start });
+            }
             reconstructedPath.Reverse();
             reconstructedPath = SmoothPath(reconstructedPath);
             return reconstructedPath;

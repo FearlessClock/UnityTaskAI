@@ -49,6 +49,7 @@ MonoBehaviour:
   - {fileID: 1723339333393570870}
   - {fileID: 8578553573213759653}
   - {fileID: 1819684049316945428}
+  containedRoom: {fileID: 0}
 --- !u!1 &193163903110478015
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,6 +99,7 @@ MonoBehaviour:
   - {fileID: 4519855957434378531}
   - {fileID: 7621751027122972644}
   - {fileID: 6308090750592203843}
+  containedRoom: {fileID: 0}
 --- !u!1 &235334337548791982
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,6 +149,7 @@ MonoBehaviour:
   - {fileID: 5028309595261822054}
   - {fileID: 6790996868516200597}
   - {fileID: 3453078812947311334}
+  containedRoom: {fileID: 0}
 --- !u!1 &249930962983976807
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,6 +199,7 @@ MonoBehaviour:
   - {fileID: 3247254811622781195}
   - {fileID: 6342521623410940464}
   - {fileID: 5260783821159086843}
+  containedRoom: {fileID: 0}
 --- !u!1 &254901855415370206
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,6 +249,7 @@ MonoBehaviour:
   - {fileID: 3247254811622781195}
   - {fileID: 4022192723115142636}
   - {fileID: 2163627460743177001}
+  containedRoom: {fileID: 0}
 --- !u!1 &303813984365579800
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,6 +297,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 6450868240091976947}
   - {fileID: 8414638361127375338}
+  containedRoom: {fileID: 3023625305814469235}
 --- !u!1 &732276512650263314
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,6 +346,7 @@ MonoBehaviour:
   - {fileID: 4966008304560673475}
   - {fileID: 1491114222423084692}
   - {fileID: 5028309595261822054}
+  containedRoom: {fileID: 0}
 --- !u!1 &782770168353993256
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,6 +396,7 @@ MonoBehaviour:
   - {fileID: 1062999876479245079}
   - {fileID: 6837232337464765624}
   - {fileID: 7792321295508986828}
+  containedRoom: {fileID: 0}
 --- !u!1 &811489358010884623
 GameObject:
   m_ObjectHideFlags: 0
@@ -437,6 +445,7 @@ MonoBehaviour:
   - {fileID: 3424907726454956940}
   - {fileID: 1062999876479245079}
   - {fileID: 4532318181310799785}
+  containedRoom: {fileID: 0}
 --- !u!1 &951745017369618591
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,6 +497,7 @@ MonoBehaviour:
   - {fileID: 3371048033697337816}
   - {fileID: 2163627460743177001}
   - {fileID: 3453078812947311334}
+  containedRoom: {fileID: 0}
 --- !u!1 &1039126570603222861
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +549,7 @@ MonoBehaviour:
   - {fileID: 1062999876479245079}
   - {fileID: 3424907726454956940}
   - {fileID: 2666490170317136760}
+  containedRoom: {fileID: 0}
 --- !u!1 &1278875567104720999
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,6 +600,7 @@ MonoBehaviour:
   - {fileID: 3371048033697337816}
   - {fileID: 4011776749523592008}
   - {fileID: 3453078812947311334}
+  containedRoom: {fileID: 0}
 --- !u!1 &2193735360681862090
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,6 +695,7 @@ MonoBehaviour:
   - {fileID: 2974086422830658688}
   - {fileID: 2669659546494529174}
   - {fileID: 3102649449780749013}
+  containedRoom: {fileID: 0}
 --- !u!1 &2570269514822008593
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,6 +746,7 @@ MonoBehaviour:
   - {fileID: 4519855957434378531}
   - {fileID: 8632240696526793067}
   - {fileID: 7621751027122972644}
+  containedRoom: {fileID: 0}
 --- !u!1 &2880370686652715303
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +799,7 @@ MonoBehaviour:
   - {fileID: 4532318181310799785}
   - {fileID: 4384993877941077874}
   - {fileID: 6837232337464765624}
+  containedRoom: {fileID: 0}
 --- !u!1 &2902898263662880650
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,6 +850,7 @@ MonoBehaviour:
   - {fileID: 2669659546494529174}
   - {fileID: 3102649449780749013}
   - {fileID: 8424794802897075121}
+  containedRoom: {fileID: 0}
 --- !u!1 &3133491072423018939
 GameObject:
   m_ObjectHideFlags: 0
@@ -886,6 +902,7 @@ MonoBehaviour:
   - {fileID: 3371048033697337816}
   - {fileID: 6002454619630154085}
   - {fileID: 6342521623410940464}
+  containedRoom: {fileID: 0}
 --- !u!1 &3206461036019153811
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,6 +953,7 @@ MonoBehaviour:
   - {fileID: 3453078812947311334}
   - {fileID: 6790996868516200597}
   - {fileID: 2669659546494529174}
+  containedRoom: {fileID: 0}
 --- !u!1 &3230418117452009123
 GameObject:
   m_ObjectHideFlags: 0
@@ -984,6 +1002,7 @@ MonoBehaviour:
   - {fileID: 509182166469101099}
   - {fileID: 949003370675439042}
   - {fileID: 1062999876479245079}
+  containedRoom: {fileID: 0}
 --- !u!1 &3308847282522891823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,6 +1052,7 @@ MonoBehaviour:
   - {fileID: 1723339333393570870}
   - {fileID: 1192755741215204053}
   - {fileID: 1819684049316945428}
+  containedRoom: {fileID: 0}
 --- !u!1 &3605354728415171663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,6 +1098,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 39
   adjacent: []
+  containedRoom: {fileID: 0}
 --- !u!1 &3648138633602228744
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,6 +1147,7 @@ MonoBehaviour:
   - {fileID: 1062999876479245079}
   - {fileID: 6322251633340504447}
   - {fileID: 4384993877941077874}
+  containedRoom: {fileID: 0}
 --- !u!1 &3791077712152945664
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,6 +1197,7 @@ MonoBehaviour:
   - {fileID: 3183651934911520197}
   - {fileID: 3698009919441554618}
   - {fileID: 2669659546494529174}
+  containedRoom: {fileID: 0}
 --- !u!1 &3858236792241582153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,6 +1246,7 @@ MonoBehaviour:
   - {fileID: 7792321295508986828}
   - {fileID: 8632240696526793067}
   - {fileID: 6308090750592203843}
+  containedRoom: {fileID: 0}
 --- !u!1 &3957977916451054569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1270,6 +1294,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 1192755741215204053}
   - {fileID: 1723339333393570870}
+  containedRoom: {fileID: 0}
 --- !u!1 &4026263687135966744
 GameObject:
   m_ObjectHideFlags: 0
@@ -1319,6 +1344,7 @@ MonoBehaviour:
   - {fileID: 810559993103487450}
   - {fileID: 509182166469101099}
   - {fileID: 6753764582814351256}
+  containedRoom: {fileID: 0}
 --- !u!1 &4060647829997678297
 GameObject:
   m_ObjectHideFlags: 0
@@ -1370,6 +1396,7 @@ MonoBehaviour:
   - {fileID: 3183651934911520197}
   - {fileID: 746587202406935221}
   - {fileID: 3698009919441554618}
+  containedRoom: {fileID: 0}
 --- !u!1 &4229521148618900211
 GameObject:
   m_ObjectHideFlags: 0
@@ -1420,6 +1447,7 @@ MonoBehaviour:
   - {fileID: 810559993103487450}
   - {fileID: 3574728705661097445}
   - {fileID: 2666490170317136760}
+  containedRoom: {fileID: 0}
 --- !u!1 &4330274771663896410
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,6 +1498,7 @@ MonoBehaviour:
   - {fileID: 5312152681854350334}
   - {fileID: 1192755741215204053}
   - {fileID: 8578553573213759653}
+  containedRoom: {fileID: 0}
 --- !u!1 &4386672159790486067
 GameObject:
   m_ObjectHideFlags: 0
@@ -1520,6 +1549,7 @@ MonoBehaviour:
   - {fileID: 2974086422830658688}
   - {fileID: 6790996868516200597}
   - {fileID: 4022192723115142636}
+  containedRoom: {fileID: 0}
 --- !u!1 &4624151445372328648
 GameObject:
   m_ObjectHideFlags: 0
@@ -1569,6 +1599,7 @@ MonoBehaviour:
   - {fileID: 3247254811622781195}
   - {fileID: 6002454619630154085}
   - {fileID: 4011776749523592008}
+  containedRoom: {fileID: 0}
 --- !u!1 &4716049575491941853
 GameObject:
   m_ObjectHideFlags: 0
@@ -1616,6 +1647,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 6159207245290304775}
   - {fileID: 1491114222423084692}
+  containedRoom: {fileID: 0}
 --- !u!1 &4924646936114962007
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,6 +1697,7 @@ MonoBehaviour:
   - {fileID: 4384993877941077874}
   - {fileID: 7792321295508986828}
   - {fileID: 4519855957434378531}
+  containedRoom: {fileID: 0}
 --- !u!1 &5129869636095957013
 GameObject:
   m_ObjectHideFlags: 0
@@ -1712,6 +1745,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 8022826878740548685}
   - {fileID: 6303000026649458288}
+  containedRoom: {fileID: 0}
 --- !u!1 &5541168201027967714
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,6 +1828,7 @@ MonoBehaviour:
   - {fileID: 2666490170317136760}
   - {fileID: 6303000026649458288}
   - {fileID: 6790996868516200597}
+  containedRoom: {fileID: 0}
 --- !u!1 &6300768439413050544
 GameObject:
   m_ObjectHideFlags: 0
@@ -1841,6 +1876,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 1192755741215204053}
   - {fileID: 5312152681854350334}
+  containedRoom: {fileID: 0}
 --- !u!1 &6859060338222843542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1920,6 +1956,7 @@ MonoBehaviour:
   ID: 1
   adjacent:
   - {fileID: 4440959139887064492}
+  containedRoom: {fileID: 0}
 --- !u!1 &7495840481142535775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1970,6 +2007,7 @@ MonoBehaviour:
   - {fileID: 4011776749523592008}
   - {fileID: 746587202406935221}
   - {fileID: 2974086422830658688}
+  containedRoom: {fileID: 0}
 --- !u!1 &7654131737688700863
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,6 +2059,7 @@ MonoBehaviour:
   - {fileID: 3247254811622781195}
   - {fileID: 8233617618015797758}
   - {fileID: 4022192723115142636}
+  containedRoom: {fileID: 0}
 --- !u!1 &7714190575360196757
 GameObject:
   m_ObjectHideFlags: 0
@@ -2068,6 +2107,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 3424907726454956940}
   - {fileID: 3700457154562423581}
+  containedRoom: {fileID: 0}
 --- !u!1 &7735574578132365019
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,6 +2157,7 @@ MonoBehaviour:
   - {fileID: 6303000026649458288}
   - {fileID: 6282299302635330786}
   - {fileID: 810559993103487450}
+  containedRoom: {fileID: 0}
 --- !u!1 &7798169791093976276
 GameObject:
   m_ObjectHideFlags: 0
@@ -2166,6 +2207,7 @@ MonoBehaviour:
   - {fileID: 6002454619630154085}
   - {fileID: 3183651934911520197}
   - {fileID: 4011776749523592008}
+  containedRoom: {fileID: 0}
 --- !u!1 &7965969567546559259
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,6 +2259,7 @@ MonoBehaviour:
   - {fileID: 8424794802897075121}
   - {fileID: 1723339333393570870}
   - {fileID: 5312152681854350334}
+  containedRoom: {fileID: 0}
 --- !u!1 &7992906002119453954
 GameObject:
   m_ObjectHideFlags: 0
@@ -2265,6 +2308,7 @@ MonoBehaviour:
   - {fileID: 7792321295508986828}
   - {fileID: 6837232337464765624}
   - {fileID: 8632240696526793067}
+  containedRoom: {fileID: 0}
 --- !u!1 &8044706929819570749
 GameObject:
   m_ObjectHideFlags: 0
@@ -2314,6 +2358,7 @@ MonoBehaviour:
   - {fileID: 6282299302635330786}
   - {fileID: 949003370675439042}
   - {fileID: 509182166469101099}
+  containedRoom: {fileID: 0}
 --- !u!1 &8184446561313855839
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,6 +2406,7 @@ MonoBehaviour:
   ID: 0
   adjacent:
   - {fileID: 4440959139887064492}
+  containedRoom: {fileID: 0}
 --- !u!1 &8213757619628460423
 GameObject:
   m_ObjectHideFlags: 0
@@ -2411,6 +2457,7 @@ MonoBehaviour:
   - {fileID: 509182166469101099}
   - {fileID: 6282299302635330786}
   - {fileID: 6303000026649458288}
+  containedRoom: {fileID: 0}
 --- !u!1 &8235423260596623386
 GameObject:
   m_ObjectHideFlags: 0
@@ -2462,6 +2509,7 @@ MonoBehaviour:
   - {fileID: 8831108404554504162}
   - {fileID: 3700457154562423581}
   - {fileID: 2666490170317136760}
+  containedRoom: {fileID: 0}
 --- !u!1 &8258322194708709198
 GameObject:
   m_ObjectHideFlags: 0
@@ -2512,6 +2560,7 @@ MonoBehaviour:
   - {fileID: 6790996868516200597}
   - {fileID: 2974086422830658688}
   - {fileID: 3102649449780749013}
+  containedRoom: {fileID: 0}
 --- !u!1 &8390689589977285987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2563,6 +2612,7 @@ MonoBehaviour:
   - {fileID: 4966008304560673475}
   - {fileID: 3874169522213885158}
   - {fileID: 5028309595261822054}
+  containedRoom: {fileID: 0}
 --- !u!1 &8499060564300559020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2615,6 +2665,7 @@ MonoBehaviour:
   - {fileID: 3700457154562423581}
   - {fileID: 6790996868516200597}
   - {fileID: 6159207245290304775}
+  containedRoom: {fileID: 0}
 --- !u!1 &8627537393528036804
 GameObject:
   m_ObjectHideFlags: 0
@@ -2664,6 +2715,7 @@ MonoBehaviour:
   - {fileID: 6282299302635330786}
   - {fileID: 3574728705661097445}
   - {fileID: 949003370675439042}
+  containedRoom: {fileID: 0}
 --- !u!1 &8888114572215478419
 GameObject:
   m_ObjectHideFlags: 0
@@ -2711,6 +2763,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 3874169522213885158}
   - {fileID: 1491114222423084692}
+  containedRoom: {fileID: 0}
 --- !u!1 &8991577222896001401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2759,6 +2812,7 @@ MonoBehaviour:
   - {fileID: 3698009919441554618}
   - {fileID: 3102649449780749013}
   - {fileID: 1723339333393570870}
+  containedRoom: {fileID: 0}
 --- !u!1 &9115364744442532565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2806,6 +2860,7 @@ MonoBehaviour:
   adjacent:
   - {fileID: 8632240696526793067}
   - {fileID: 7621751027122972644}
+  containedRoom: {fileID: 0}
 --- !u!1 &9125208376266429965
 GameObject:
   m_ObjectHideFlags: 0
@@ -2855,6 +2910,7 @@ MonoBehaviour:
   - {fileID: 6303000026649458288}
   - {fileID: 7291467369967342934}
   - {fileID: 1491114222423084692}
+  containedRoom: {fileID: 0}
 --- !u!1001 &233204841084403178
 PrefabInstance:
   m_ObjectHideFlags: 0

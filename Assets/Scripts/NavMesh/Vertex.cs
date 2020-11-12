@@ -20,6 +20,15 @@ namespace Pieter.NavMesh
         {
             return vertex.Equals(obj);
         }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 780059485;
+            hashCode = hashCode * -1521134295 + base.GetHashCode(); 
+            hashCode = hashCode * -1521134295 + name.GetHashCode();
+            hashCode = hashCode * -1521134295 + vertex.ID.GetHashCode();
+            return hashCode;
+        }
     }
     public class Vertex : MonoBehaviour
     {
@@ -29,59 +38,24 @@ namespace Pieter.NavMesh
         }
 
         public int ID = -1;
-        private Vector3 lastSavedPosition = Vector3.zero;
-        private Vector3 lastSavedLocalPosition = Vector3.zero;
-        private int transformUpdateCounter = 0;
-        private DoorController doorController = null;
+
+        [SerializeField] private DoorController doorController = null;
         public bool isPassable => (doorController == null) || (doorController != null && doorController.IsPassable);
-        public Vector3 Position
-        {
-            get
-            {
-                if (transformUpdateCounter++ % 50 == 0)
-                {
-                    transformUpdateCounter = 0;
-                    try
-                    {
-                        lastSavedPosition = this.transform.position;
-                    }
-                    catch
-                    {
+        public Vector3 Position => this.transform.position;
 
-                    }
-                }
-                return lastSavedPosition;
-            }
-        }
-
-        public Vector3 LocalPosition
-        {
-            get
-            {
-                if (transformUpdateCounter++ % 50 == 0)
-                {
-                    transformUpdateCounter = 0;
-                    try
-                    {
-                        lastSavedPosition = this.transform.localPosition;
-                    }
-                    catch
-                    {
-
-                    }
-                }
-                return lastSavedPosition;
-            }
-        }
+        public Vector3 LocalPosition => this.transform.localPosition;
         [SerializeField] private List<Vertex> adjacent;
         public List<Vertex> Adjacent => adjacent;
         private List<AdjacentVertex> adjacentInformation = new List<AdjacentVertex>();
         public List<AdjacentVertex> AdjacentInformation => adjacentInformation;
+        public RoomInformation containedRoom = null;
 
         public int Count
         {
             get { return adjacent.Count; }
         }
+
+        public DoorController GetDoorController => doorController;
 
         public Vertex GetAdjacentVertex(int index)
         {
@@ -93,12 +67,10 @@ namespace Pieter.NavMesh
         }
         private void Awake()
         {
-            doorController = GetComponentInChildren<DoorController>();
             if (adjacentInformation == null)
             {
                 adjacentInformation = new List<AdjacentVertex>();
             }
-            lastSavedPosition = this.transform.position;
         }
         public override bool Equals(object other)
         {
@@ -140,6 +112,11 @@ namespace Pieter.NavMesh
                 adjacent.Add(adjacentVertex);
                 adjacentInformation.Add(new AdjacentVertex(){vertex = adjacentVertex});
             }
+        }
+
+        public void SetDoorController(DoorController doorCont)
+        {
+            doorController = doorCont;
         }
 
         public void UpdateAdjacentNode(int index, string name = "", Vertex vert = null, float distance = 0)

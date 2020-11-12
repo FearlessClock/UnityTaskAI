@@ -13,12 +13,13 @@ namespace Pieter.NavMesh
     [System.Serializable]
     public class NavMeshEntrance
     {
-        public int ID = 0;
+        public int ID => entrance.ID;
         public Vertex entrance;
         [HideInInspector] public NavMeshGenerator generator;
         public NavMeshEntrance connectedEntrance = null;
         public bool IsPassable => IsOpen && IsConnectedOpen;
         [SerializeField] private DoorController doorController = null;
+        public DoorController GetDoorController => doorController;
 
         public bool IsConnectedOpen
         {
@@ -153,6 +154,7 @@ namespace Pieter.NavMesh
                 {
                     vert = item.gameObject.AddComponent<Vertex>();
                 }
+                vert.containedRoom = containedRoom;
                 vert.ID = counter - 1;
                 vert.ResetAdjacentLists();
             }

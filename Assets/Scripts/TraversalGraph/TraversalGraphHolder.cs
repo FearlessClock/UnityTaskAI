@@ -57,18 +57,6 @@ namespace Pieter.GraphTraversal
             return traversalLines[index];
         }
 
-        public TraversalLine GetMiddleLineForCurrentGenerator(TraversalGenerator generator)
-        {
-            for (int i = 0; i < generator.TraversalLines.Length; i++)
-            {
-                if (generator.TraversalLines[i].vertex.Equals(generator.MiddleVertex))
-                {
-                    return generator.TraversalLines[i];
-                }
-            }
-            return null;
-        }
-
         public TraversalGenerator GetClosestGenerator(Vector3 pos)
         {
             if (generators == null || generators.Length == 0)
@@ -91,9 +79,9 @@ namespace Pieter.GraphTraversal
 
         private float DistanceToGenerator(Vector3 pos, TraversalGenerator gen)
         {
-            return Mathf.Pow(pos.x - gen.MiddleVertex.Position.x, 2) +
-                   Mathf.Pow(pos.y - gen.MiddleVertex.Position.y, 2) +
-                   Mathf.Pow(pos.z - gen.MiddleVertex.Position.z, 2);
+            return Mathf.Pow(pos.x - gen.MiddleOfRoom.x, 2) +
+                   Mathf.Pow(pos.y - gen.MiddleOfRoom.y, 2) +
+                   Mathf.Pow(pos.z - gen.MiddleOfRoom.z, 2);
         }
 
         public void AddTraversalGraph(TraversalGenerator traversalGenerator)

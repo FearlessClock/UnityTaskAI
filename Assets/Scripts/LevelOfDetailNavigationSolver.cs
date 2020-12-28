@@ -22,8 +22,10 @@ namespace Assets.Scripts
             List<NavMeshMovementLine> path = new List<NavMeshMovementLine>();
             Vertex closestToPlayerTraversalVertex = startingRoom.TraversalGenerator.ClosestVertex(endPosition);
             Vertex closestToEndTraversalVertex = arrivalRoom.TraversalGenerator.ClosestVertex(playerPosition);
+
             List<NavMeshMovementLine> traversalMovementList = graphNavigation.GetPathFromTo(
                closestToPlayerTraversalVertex, closestToEndTraversalVertex);
+
             if(traversalMovementList.Count == 0)
             {
                 return null;

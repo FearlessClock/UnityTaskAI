@@ -42,6 +42,9 @@ namespace Pieter.NavMesh
                 }
             } 
         }
+
+        private bool isDoorUsed = false;
+        public bool IsUsed { set { isDoorUsed = value; if(doorController != null) doorController.isDoorActive = value; } }
     }
 
     public class NavMeshGenerator : MonoBehaviour
@@ -157,6 +160,7 @@ namespace Pieter.NavMesh
                 vert.containedRoom = containedRoom;
                 vert.ID = counter - 1;
                 vert.ResetAdjacentLists();
+                vert.UpdateSavedPosition();
             }
             return counter;
         }

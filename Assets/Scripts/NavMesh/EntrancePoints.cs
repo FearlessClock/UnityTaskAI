@@ -106,6 +106,19 @@ public class EntrancePoints : MonoBehaviour
         }
     }
 
+    public void SwapVertexWithAnother(Vertex oldVert, Vertex newVert)
+    {
+        foreach (Direction key in doorDirections.Keys)
+        {
+            if(doorDirections[key].entrance.ID == oldVert.ID)
+            {
+                Debug.Log("Changed entrace " + doorDirections[key].entrance.ID + " " + newVert.ID + " " + this.transform.parent.name);
+                doorDirections[key].entrance = newVert;
+                break;
+            }
+        }
+    }
+
     public bool HasEntranceInDirection(Vector2 dir)
     {
         return GetEntranceFromDirection(dir) != null;

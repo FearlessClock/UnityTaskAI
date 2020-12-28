@@ -39,7 +39,6 @@ public class LODNavigationTester : MonoBehaviour
             path = LevelOfDetailNavigationSolver.GetLODPath(this.transform.position, end.position,
                 startingRoom, endingRoom, graphNavigation, true, true);
         }
-
     }
 
     private RoomInformation GetRoomInformationForLocation(Vector3 position)

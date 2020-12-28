@@ -126,11 +126,11 @@ namespace Pieter.NavMesh
                         continue;
                     }
 
-                    float cost = current.g + (current.vert.Position - current.vert.GetAdjacentVertex(i).Position).magnitude;
+                    float cost = current.g + GetSquareDistance(current.vert.Position, current.vert.GetAdjacentVertex(i).Position);
                     AStarPoint aStarPoint = open.Find((item) => item.vert.Equals(current.vert.GetAdjacentVertex(i)));
                     if (aStarPoint == null)
                     {
-                        aStarPoint = UpdateAStarPoint(aStarPointExisting, current.g, (Mathf.Pow((current.vert.Position.x - current.vert.GetAdjacentVertex(i).Position.x), 2)+ Mathf.Pow((current.vert.Position.y - current.vert.GetAdjacentVertex(i).Position.y), 2)), to, current);
+                        aStarPoint = UpdateAStarPoint(aStarPointExisting, current.g, cost, to, current);
 
                         open.Add(aStarPoint);
                     }
@@ -247,19 +247,24 @@ namespace Pieter.NavMesh
 
         private static AStarPoint CreateAStarPoint(float oldG, float distance, Vertex current, Vector3 end, AStarPoint parent = null)
         {
-            float h = (Mathf.Pow((current.Position.x - end.x), 2) + Mathf.Pow((current.Position.y - end.y), 2));
+            float h = GetSquareDistance(current.Position, end);
             float g = oldG + distance;
             return new AStarPoint() { vert = current, g = g, h = h, f = h+g, parent = parent };
         }
         private static AStarPoint UpdateAStarPoint(AStarPoint value, float oldG, float distance, Vector3 end, AStarPoint parent = null)
         {
-            float h = (Mathf.Pow((value.vert.Position.x - end.x), 2) + Mathf.Pow((value.vert.Position.y - end.y), 2));
+            float h = GetSquareDistance(value.vert.Position, end);
             float g = oldG + distance;
             value.g = g;
             value.h = h;
             value.f = h + g;
             value.parent = parent;
             return value;
+        }
+
+        private static float GetSquareDistance(Vector3 value, Vector3 end)
+        {
+            return (Mathf.Pow((value.x - end.x), 2) + Mathf.Pow((value.z - end.z), 2));
         }
     }
 }

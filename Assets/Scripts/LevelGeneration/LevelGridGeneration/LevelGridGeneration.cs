@@ -48,28 +48,30 @@ public class LevelGridGeneration : MonoBehaviour
             //Build the first room
             Vector3 pos = Vec2IntToVec3D(currentGridPoint * tileSize);
             int randomRoomIndex = GetWorkingRandomRoom(pos, neighborRoomsForFirstDirectionTest);
-
             if (randomRoomIndex < 0)
             {
                 yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
                 //return null;
             }
-            GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, levelBlocks[randomRoomIndex]);
-            yield return new WaitForEndOfFrame();
-            numberOfBuildings--;
-
-            if (numberOfBuildings > 0)
+            else
             {
-                Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
-                foreach (Vector2Int dir in availableDirections)
-                {
-                    if (!availableSpots.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
-                    {
-                        availableSpots.Add(currentGridPoint + dir);
-                    }
-                }
+                GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, levelBlocks[randomRoomIndex]);
+                yield return new WaitForEndOfFrame();
+                numberOfBuildings--;
 
-                yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+                if (numberOfBuildings > 0)
+                {
+                    Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
+                    foreach (Vector2Int dir in availableDirections)
+                    {
+                        if (!availableSpots.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
+                        {
+                            availableSpots.Add(currentGridPoint + dir);
+                        }
+                    }
+
+                    yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+                }
             }
         }
     }
@@ -129,7 +131,7 @@ public class LevelGridGeneration : MonoBehaviour
         room.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
         neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, traversalEntranceRoom.ID);
 
-        room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator);
+        room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator, neighbor.EntrancePoints);
         //neighbor.TraversalGenerator.RemoveNode(traversalEntranceNeigbor.vertex);
         //room.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
         //neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
@@ -137,8 +139,13 @@ public class LevelGridGeneration : MonoBehaviour
         room.AddConnectedRoom(entranceNeighbor.generator.containedRoom, entranceRoom);
         entranceNeighbor.generator.containedRoom.AddConnectedRoom(room, entranceNeighbor);
 
+        entranceNeighbor.IsUsed = true;
+        entranceRoom.IsUsed = true;
+
         entranceRoom.connectedEntrance = entranceNeighbor;
         entranceNeighbor.connectedEntrance = entranceRoom;
+
+
     }
 
     private int GetWorkingRandomRoom(Vector3 position, List<RoomInformation> neighborRoomsForFirstDirectionTest)

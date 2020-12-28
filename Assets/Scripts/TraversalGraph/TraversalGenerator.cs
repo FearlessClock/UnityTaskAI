@@ -32,6 +32,7 @@ namespace Pieter.GraphTraversal
     }
     public class TraversalGenerator : MonoBehaviour
     {
+        [SerializeField] private bool dontUpdate = false;
         public RoomInformation containedRoom;
         [SerializeField] private TraversalLine[] traversalLines = null;
         [SerializeField] private TraversalEntrance[] entrances = null;
@@ -62,8 +63,10 @@ namespace Pieter.GraphTraversal
         
         private void OnValidate()
         {
-            Debug.Log("Update info for Traversal Generator");
-            UpdateInfo();
+            if (!dontUpdate)
+            {
+                UpdateInfo();
+            }
         }
         private void Start()
         {
@@ -162,7 +165,7 @@ namespace Pieter.GraphTraversal
             a.AddAdjacentNode(b);
         }
 
-        public void FuseNode(Vertex vertex1, Vertex vertex2, TraversalGenerator neighborGenerator)
+        public void FuseNode(Vertex vertex1, Vertex vertex2, TraversalGenerator neighborGenerator, EntrancePoints entrancePoints)
         {
             UpdateGeneratorWithFusedNode(this, vertex1, vertex2);
 
@@ -186,12 +189,22 @@ namespace Pieter.GraphTraversal
                     }
                 }
             }
-
+            List<TraversalEntrance> updatedEntrances = new List<TraversalEntrance>();
+            for (int i = 0; i < neighborGenerator.entrances.Length; i++)
+            {
+                if(neighborGenerator.entrances[i].vertex.ID != vertex2.ID)
+                {
+                    updatedEntrances.Add(neighborGenerator.entrances[i]);
+                }
+            }
+            neighborGenerator.entrances = updatedEntrances.ToArray();
+            entrancePoints.SwapVertexWithAnother(vertex2, vertex1);
             neighborGenerator.AddEntranceNode(vertex1);
             for (int i = 0; i < vertex2.Adjacent.Count; i++)
             {
                 vertex1.AddAdjacentNode(vertex2.Adjacent[i]);
             }
+            vertex2.gameObject.SetActive(false);
         }
 
         private void UpdateGeneratorWithFusedNode(TraversalGenerator generator, Vertex vertex1, Vertex vertex2)

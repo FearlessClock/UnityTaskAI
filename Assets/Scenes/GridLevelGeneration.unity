@@ -786,7 +786,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796772895}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cade220eff46684db8c283176975827, type: 3}
   m_Name: 
@@ -1371,18 +1371,31 @@ PrefabInstance:
     - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}
       propertyPath: levelBlocks.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}
       propertyPath: numberOfRooms
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}
       propertyPath: levelBlocks.Array.data[1]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 9067046901041903100, guid: b4b3e9df347e56542891eca0eb319e69,
+        type: 3}
+    - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
+        type: 3}
+      propertyPath: levelBlocks.Array.data[0]
+      value: 
+      objectReference: {fileID: 7145850455372209982, guid: f14395383ce471c44bd463b80ff31626,
+        type: 3}
+    - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
+        type: 3}
+      propertyPath: levelBlocks.Array.data[2]
+      value: 
+      objectReference: {fileID: 7059867841906196204, guid: f9eaf021c59e2e549af53cd6fb2d0197,
+        type: 3}
     - target: {fileID: 2677810432399626596, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -42,7 +42,7 @@ namespace Pieter.NavMesh
         [SerializeField] private DoorController doorController = null;
         public bool isPassable => (doorController == null) || (doorController != null && doorController.IsPassable);
         public Vector3 Position => this.transform.position;
-
+        public Vector3 savedPosition = new Vector3();
         public Vector3 LocalPosition => this.transform.localPosition;
         [SerializeField] private List<Vertex> adjacent;
         public List<Vertex> Adjacent => adjacent;
@@ -72,10 +72,21 @@ namespace Pieter.NavMesh
                 adjacentInformation = new List<AdjacentVertex>();
             }
         }
+
+        private void Start()
+        {
+            savedPosition = this.transform.position;
+        }
+
+        public void UpdateSavedPosition()
+        {
+            savedPosition = this.transform.position;
+        }
+
         public override bool Equals(object other)
         {
             Vertex vert = (Vertex)other;
-            return vert.Position == Position && vert.ID == ID;
+            return vert.savedPosition == savedPosition && vert.ID == ID;
         }
 
         public override string ToString()

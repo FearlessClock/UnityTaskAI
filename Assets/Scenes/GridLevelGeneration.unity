@@ -1226,9 +1226,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drag: 0.98
   maxSpeed: 13
+  dragSpeed: 10000
   cameraSpeed: 2
   percentageToEdge: 0.07
   maxRotationSpeed: 250
+  useDragMovement: 1
+  useKeyMovement: 1
+  useEdgeMovement: 0
+  timeTillDeactivatingMouse: 0.2
 --- !u!4 &1712838156
 Transform:
   m_ObjectHideFlags: 0
@@ -1420,7 +1425,7 @@ PrefabInstance:
     - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}
       propertyPath: numberOfRooms
-      value: 3
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2677810432399626595, guid: ab9c3bdab6e057a4aa42afe8dbd745df,
         type: 3}

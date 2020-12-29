@@ -6,9 +6,40 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 public enum InputDirection { Up, Down, Left, Right }
-public class InputManager
+public class InputManager: MonoBehaviour
 {
-    public static bool InputExistsContinuous()
+    private static InputManager instance = null;
+    public static InputManager Instance
+    {
+        get { 
+            if (instance == null)
+            {
+                GameObject obj = new GameObject();
+                instance = obj.AddComponent<InputManager>();
+                instance.name = "Input Manager";
+                DontDestroyOnLoad(obj);
+            }
+            return instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    private bool isMouseFree = true;
+    public bool IsMouseFree { get { return isMouseFree; } set { isMouseFree = value; } }
+
+    public bool InputExistsContinuous()
     {
         return (Input.GetMouseButton(0)) ||
                 (Input.touchCount > 0 &&
@@ -18,7 +49,7 @@ public class InputManager
                 !EventSystem.current.IsPointerOverGameObject(Input.touches[0].fingerId));
     }
 
-    public static bool InputExistsMoved()
+    public bool InputExistsMoved()
     {
         return (Input.GetMouseButton(0)) ||
                 (Input.touchCount > 0 &&
@@ -26,7 +57,7 @@ public class InputManager
                 !EventSystem.current.IsPointerOverGameObject(Input.touches[0].fingerId));
     }
 
-    public static bool InputExistsUp()
+    public bool InputExistsUp()
     {
         return (Input.GetMouseButtonUp(0)) ||
                 (Input.touchCount > 0 &&
@@ -34,7 +65,7 @@ public class InputManager
                 !EventSystem.current.IsPointerOverGameObject(Input.touches[0].fingerId));   // IsPointerOverGameobject only works with touchPhase Begin, workaround in playerController.cs
     }
 
-    public static bool InputExistsDown()
+    public bool InputExistsDown()
     {
 #if UNITY_EDITOR
         return (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0)) || 
@@ -50,7 +81,7 @@ public class InputManager
 
 
 
-    public static Vector3 GetInput(int id)
+    public Vector3 GetInput(int id)
     {
         if (Application.isMobilePlatform)
         {
@@ -62,7 +93,7 @@ public class InputManager
         }
     }
 
-    public static bool GetButtonDown(InputDirection dir)
+    public bool GetButtonDown(InputDirection dir)
     {
         switch (dir)
         {
@@ -78,7 +109,19 @@ public class InputManager
         return false;
     }
 
-    public static bool IsPressing(int id = 0)
+    public static bool HasReleased(int id)
+    {
+        if (Application.isMobilePlatform)
+        {
+            return Input.touches[0].phase == TouchPhase.Ended;
+        }
+        else
+        {
+            return Input.GetMouseButtonUp(id);
+        }
+    }
+
+    public bool IsPressing(int id = 0)
     {
         if (Application.isMobilePlatform)
         {

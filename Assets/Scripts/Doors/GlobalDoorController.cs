@@ -15,10 +15,10 @@ public class GlobalDoorController : MonoBehaviour
 
     private void Update()
     {
-        if (InputManager.InputExistsUp())
+        if (InputManager.Instance.InputExistsUp() && InputManager.Instance.IsMouseFree)
         {
             RaycastHit[] results = new RaycastHit[10];
-            int size = Physics.RaycastNonAlloc(camera.ScreenPointToRay(InputManager.GetInput(0)), results, 1000, doorMask);
+            int size = Physics.RaycastNonAlloc(camera.ScreenPointToRay(InputManager.Instance.GetInput(0)), results, 1000, doorMask);
             if (size > 0)
             {
                 for (int i = 0; i < size; i++)  

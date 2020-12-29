@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
     private Vector3 velocity;
     [SerializeField] private float drag = 0.9f;
     [SerializeField] private float maxSpeed = 3;
+    [SerializeField] private float dragSpeed = 3;
     [SerializeField] private float cameraSpeed = 1;
     private new Camera camera = null;
     [SerializeField] private float percentageToEdge = 0.1f;
@@ -15,9 +16,19 @@ public class CameraController : MonoBehaviour
     private bool isMovingDown = false;
     private bool isMovingLeft = false;
     private bool isTurning = false;
-    private Vector2 pressPosition;
+    private bool isMovingWithMouseDown = false;
+    private Vector3 pressPosition;
     [SerializeField] private float maxRotationSpeed = 1;
 
+    [Space]
+    [SerializeField] private bool useDragMovement = true;
+    [SerializeField] private bool useKeyMovement = true;
+    [SerializeField] private bool useEdgeMovement = true;
+    private Vector3 worldPos;
+
+    [SerializeField] private float timeTillDeactivatingMouse = 0.5f;
+    private float timer = 0;
+    private bool isTiming = false;
 
     private void Awake()
     {
@@ -26,21 +37,26 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        if (isTiming)
+        {
+            timer -= Time.deltaTime ;
+            if(timer <= 0)
+            {
+                InputManager.Instance.IsMouseFree = false;
+                isTiming = false;
+            }
+        }
         acceleration = Vector3.zero;
 
         Vector2 mousePos = Input.mousePosition;
         Vector2 screenPos = camera.ScreenToViewportPoint(mousePos);
 
-        if (InputManager.IsPressing(1))
+        if (InputManager.Instance.IsPressing(1) && !isMovingWithMouseDown)
         {
             if (Input.GetMouseButtonDown(1))
             {
                 isTurning = true;
                 pressPosition = screenPos;
-            }
-            else if(Input.GetMouseButtonUp(1))
-            {
-                isTurning = false;
             }
 
             if (isTurning)
@@ -49,10 +65,41 @@ public class CameraController : MonoBehaviour
                 this.transform.rotation = this.transform.rotation * Quaternion.Euler(0, maxRotationSpeed * delta* Time.deltaTime, 0);
             }
         }
+        else if (InputManager.HasReleased(1))
+        {
+            isTurning = false;
+        }
+        else if (useDragMovement && InputManager.Instance.IsPressing(0) && !isTurning )
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                isMovingWithMouseDown = true;
+                timer = timeTillDeactivatingMouse;
+                isTiming = true;
+                worldPos = camera.ScreenToViewportPoint(mousePos);
+                pressPosition = worldPos;
+            }
+
+            if (isMovingWithMouseDown)
+            {
+                worldPos = camera.ScreenToViewportPoint(mousePos);
+                float deltaX = worldPos.x - pressPosition.x;
+                float deltaZ = worldPos.y - pressPosition.y;
+
+                this.transform.position += this.transform.rotation  * new Vector3(-dragSpeed * deltaX, 0, -dragSpeed * deltaZ) * Time.deltaTime;
+                pressPosition = worldPos;
+            }
+        }
+        else if (useDragMovement && InputManager.HasReleased(0))
+        {
+            isTiming = false;
+            InputManager.Instance.IsMouseFree = true;
+            isMovingWithMouseDown = false;
+        }
         else
         {
-            if (InputManager.GetButtonDown(InputDirection.Down) || 
-                ((canMove || isMovingDown || isMovingRight || isMovingLeft) && (screenPos.y >= 0 - percentageToEdge && screenPos.y < percentageToEdge)))
+            if (InputManager.Instance.GetButtonDown(InputDirection.Down) && useKeyMovement || 
+                (useEdgeMovement&&(canMove || isMovingDown || isMovingRight || isMovingLeft) && (screenPos.y >= 0 - percentageToEdge && screenPos.y < percentageToEdge)))
             {
                 isMovingDown = true;
                 acceleration -= this.gameObject.transform.forward;
@@ -61,8 +108,8 @@ public class CameraController : MonoBehaviour
             {
                 isMovingDown = false;
             }
-            if (InputManager.GetButtonDown(InputDirection.Up) || 
-                ((canMove || isMovingUp || isMovingRight || isMovingLeft) && screenPos.y <= 1 + percentageToEdge && screenPos.y > 1 - percentageToEdge))
+            if (InputManager.Instance.GetButtonDown(InputDirection.Up) && useKeyMovement || 
+                (useEdgeMovement && (canMove || isMovingUp || isMovingRight || isMovingLeft) && screenPos.y <= 1 + percentageToEdge && screenPos.y > 1 - percentageToEdge))
             {
                 isMovingUp = true;
                 acceleration += this.gameObject.transform.forward;
@@ -72,7 +119,7 @@ public class CameraController : MonoBehaviour
                 isMovingUp = false;
             }
 
-            if (InputManager.GetButtonDown(InputDirection.Left) || ((canMove || isMovingLeft || isMovingDown || isMovingUp) && screenPos.x >= 0 - percentageToEdge && screenPos.x < percentageToEdge))
+            if (InputManager.Instance.GetButtonDown(InputDirection.Left) && useKeyMovement || (useEdgeMovement && (canMove || isMovingLeft || isMovingDown || isMovingUp) && screenPos.x >= 0 - percentageToEdge && screenPos.x < percentageToEdge))
             {
                 isMovingLeft = true;
                 acceleration -= this.gameObject.transform.right;
@@ -81,7 +128,7 @@ public class CameraController : MonoBehaviour
             {
                 isMovingLeft = false;
             }
-            if (InputManager.GetButtonDown(InputDirection.Right) || ((canMove || isMovingRight || isMovingDown || isMovingUp) && screenPos.x <= 1 + percentageToEdge && screenPos.x > 1 - percentageToEdge))
+            if (InputManager.Instance.GetButtonDown(InputDirection.Right) && useKeyMovement || (useEdgeMovement && (canMove || isMovingRight || isMovingDown || isMovingUp) && screenPos.x <= 1 + percentageToEdge && screenPos.x > 1 - percentageToEdge))
             {
                 isMovingRight = true;
                 acceleration += this.gameObject.transform.right;

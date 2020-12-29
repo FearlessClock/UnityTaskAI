@@ -6,8 +6,18 @@ public class CameraController : MonoBehaviour
     private Vector3 velocity;
     [SerializeField] private float drag = 0.9f;
     [SerializeField] private float maxSpeed = 3;
-    [SerializeField] private float dragSpeed = 3;
+    [SerializeField] private float dragXSpeed = 3;
+    private float updatedDragXSpeed = 1;
+    [SerializeField] private float dragZSpeed = 3;
+    private float updatedDragZSpeed = 1;
     [SerializeField] private float cameraSpeed = 1;
+    [SerializeField] private Vector2 refScreenSize = new Vector2(1920, 1080);
+    [Range(0, 1)]
+    [SerializeField] private float cameraMovementLerpAmount = 0.5f;
+    [SerializeField] private float scrollZoomSpeed = 1;
+    [SerializeField] private float zoomMinHeight = 4;
+    [SerializeField] private float zoomMaxHeight = 15;
+
     private new Camera camera = null;
     [SerializeField] private float percentageToEdge = 0.1f;
     private bool canMove = false;
@@ -29,14 +39,19 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float timeTillDeactivatingMouse = 0.5f;
     private float timer = 0;
     private bool isTiming = false;
+    Vector3 targetPosition;
 
     private void Awake()
     {
+        targetPosition = this.transform.position;
         camera = GetComponentInChildren<Camera>();
     }
 
     private void Update()
     {
+        updatedDragXSpeed = dragXSpeed * (Screen.width / refScreenSize.x);
+        updatedDragZSpeed = dragZSpeed * (Screen.height / refScreenSize.y);
+
         if (isTiming)
         {
             timer -= Time.deltaTime ;
@@ -46,6 +61,7 @@ public class CameraController : MonoBehaviour
                 isTiming = false;
             }
         }
+
         acceleration = Vector3.zero;
 
         Vector2 mousePos = Input.mousePosition;
@@ -86,7 +102,7 @@ public class CameraController : MonoBehaviour
                 float deltaX = worldPos.x - pressPosition.x;
                 float deltaZ = worldPos.y - pressPosition.y;
 
-                this.transform.position += this.transform.rotation  * new Vector3(-dragSpeed * deltaX, 0, -dragSpeed * deltaZ) * Time.deltaTime;
+                targetPosition = targetPosition + this.transform.rotation  * new Vector3(-updatedDragXSpeed * deltaX, 0, -updatedDragZSpeed * deltaZ) * Time.deltaTime;
                 pressPosition = worldPos;
             }
         }
@@ -141,8 +157,18 @@ public class CameraController : MonoBehaviour
             velocity = (velocity + acceleration) * drag;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
-            this.transform.position += velocity * Time.deltaTime * cameraSpeed;
+            targetPosition = targetPosition + velocity * Time.deltaTime * cameraSpeed;
         }
+
+        float zoomDelta = Input.mouseScrollDelta.y * scrollZoomSpeed * Time.deltaTime;
+        Debug.Log(zoomDelta);
+        Vector3 zoomAmount = targetPosition + camera.transform.forward * zoomDelta;
+        if ((zoomAmount).y >= zoomMinHeight && (zoomAmount).y <= zoomMaxHeight)
+        {
+            targetPosition = zoomAmount;
+        }
+
+        this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, cameraMovementLerpAmount);
 
         // Check if we can move the camera with the mouse
         if (screenPos.y > percentageToEdge && screenPos.x > percentageToEdge && screenPos.y < 1 - percentageToEdge && screenPos.x < 1 - percentageToEdge)

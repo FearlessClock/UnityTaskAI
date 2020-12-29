@@ -1226,8 +1226,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drag: 0.98
   maxSpeed: 13
-  dragSpeed: 10000
+  dragXSpeed: 4500
+  dragZSpeed: 4500
   cameraSpeed: 2
+  refScreenSize: {x: 1920, y: 1080}
+  cameraMovementLerpAmount: 0.233
+  scrollZoomSpeed: 100
+  zoomMinHeight: 4
+  zoomMaxHeight: 15
   percentageToEdge: 0.07
   maxRotationSpeed: 250
   useDragMovement: 1

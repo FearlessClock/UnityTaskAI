@@ -5631,6 +5631,11 @@ PrefabInstance:
       propertyPath: triangles.Array.data[34].adjacentTriangles.Array.data[0]
       value: 33
       objectReference: {fileID: 0}
+    - target: {fileID: 3350532850852941733, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3919748098284699566, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: m_Name

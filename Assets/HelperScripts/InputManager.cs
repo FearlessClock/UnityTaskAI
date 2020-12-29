@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
+public enum InputDirection { Up, Down, Left, Right }
 public class InputManager
 {
-
     public static bool InputExistsContinuous()
     {
         return (Input.GetMouseButton(0)) ||
@@ -62,7 +62,23 @@ public class InputManager
         }
     }
 
-    public static bool IsPressing()
+    public static bool GetButtonDown(InputDirection dir)
+    {
+        switch (dir)
+        {
+            case InputDirection.Up:
+                return Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.Z);
+            case InputDirection.Down:
+                return Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S);
+            case InputDirection.Left:
+                return Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.Q);
+            case InputDirection.Right:
+                return Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D);
+        }
+        return false;
+    }
+
+    public static bool IsPressing(int id = 0)
     {
         if (Application.isMobilePlatform)
         {
@@ -70,7 +86,7 @@ public class InputManager
         }
         else
         {
-            return Input.GetMouseButton(0);
+            return Input.GetMouseButton(id);
         }
     }
 }

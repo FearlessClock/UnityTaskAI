@@ -18,9 +18,17 @@ public class LevelGridGeneration : MonoBehaviour
     [SerializeField] private RoomGraphHolder roomGraph = null;
     public System.Action OnDoneLevelGeneration = null;
 
+    [SerializeField] private FloatVariable maxPositionX;
+    [SerializeField] private FloatVariable maxPositionY;
+    [SerializeField] private FloatVariable minPositionX;
+    [SerializeField] private FloatVariable minPositionY;
 
     private void Awake()
     {
+        maxPositionX.SetValue(0);
+        maxPositionY.SetValue(0);
+        minPositionX.SetValue(0);
+        minPositionY.SetValue(0);
         gridWorldHolder.gridWorldMap = new GridWorldMap(tileSize);
         roomGraph.Clear();
         UpdateEntrancePointsForLevelBlocks();
@@ -78,6 +86,24 @@ public class LevelGridGeneration : MonoBehaviour
 
     private GridLevelSquareInformation GenerateRoom(int maxBuildings, int numberOfBuildings, Vector2Int gridPosition, Vector3 worldSpacePosition, GridLevelSquareInformation randomRoom)
     {
+        if (worldSpacePosition.x >= maxPositionX.value )
+        {
+            maxPositionX.SetValue(worldSpacePosition.x + tileSize);
+        }
+        else if( worldSpacePosition.x < minPositionX.value)
+        {
+            minPositionX.SetValue(worldSpacePosition.x);
+        }
+        
+        if (worldSpacePosition.z >= maxPositionY.value )
+        {
+            maxPositionY.SetValue(worldSpacePosition.z + tileSize);
+        }
+        else if( worldSpacePosition.z < minPositionY.value)
+        {
+            minPositionY.SetValue(worldSpacePosition.z);
+        }
+
         GridLevelSquareInformation room = Instantiate<GridLevelSquareInformation>(randomRoom, this.transform);
         room.RoomInfo.SetID(maxBuildings - numberOfBuildings);
         room.transform.position = worldSpacePosition;
@@ -221,6 +247,10 @@ public class LevelGridGeneration : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.DrawLine(new Vector3(minPositionX.value, 0, minPositionY.value), new Vector3(minPositionX.value, 0, maxPositionY.value));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, maxPositionY.value), new Vector3(minPositionX.value, 0, maxPositionY.value));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, maxPositionY.value), new Vector3(maxPositionX.value, 0, minPositionY.value));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, minPositionY.value), new Vector3(minPositionX.value, 0, minPositionY.value));
         if(gridWorldMap != null)
         {
             gridWorldMap.DrawDebug(Color.green);

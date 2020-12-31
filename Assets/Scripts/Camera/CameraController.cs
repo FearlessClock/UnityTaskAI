@@ -41,6 +41,11 @@ public class CameraController : MonoBehaviour
     private bool isTiming = false;
     Vector3 targetPosition;
 
+    [SerializeField] private FloatVariable maxPositionX;
+    [SerializeField] private FloatVariable maxPositionZ;
+    [SerializeField] private FloatVariable minPositionX;
+    [SerializeField] private FloatVariable minPositionZ;
+
     private void Awake()
     {
         targetPosition = this.transform.position;
@@ -161,12 +166,14 @@ public class CameraController : MonoBehaviour
         }
 
         float zoomDelta = Input.mouseScrollDelta.y * scrollZoomSpeed * Time.deltaTime;
-        Debug.Log(zoomDelta);
+
         Vector3 zoomAmount = targetPosition + camera.transform.forward * zoomDelta;
         if ((zoomAmount).y >= zoomMinHeight && (zoomAmount).y <= zoomMaxHeight)
         {
             targetPosition = zoomAmount;
         }
+
+        targetPosition = new Vector3(Mathf.Min(Mathf.Max(targetPosition.x, minPositionX.value), maxPositionX.value), targetPosition.y, Mathf.Min(Mathf.Max(targetPosition.z, minPositionZ.value), maxPositionZ.value));
 
         this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, cameraMovementLerpAmount);
 

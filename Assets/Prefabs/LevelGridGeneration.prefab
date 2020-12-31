@@ -52,6 +52,10 @@ MonoBehaviour:
   numberOfRooms: 30
   traversalGraphHolder: {fileID: 2677810432399626597}
   roomGraph: {fileID: 11400000, guid: ccd9c7b5050250a4eb51b93e3a7ca598, type: 2}
+  maxPositionX: {fileID: 11400000, guid: 6b05dd4480621024b9ae2dba4c42ef58, type: 2}
+  maxPositionY: {fileID: 11400000, guid: 9e30c8b096378894a855f92b63a15216, type: 2}
+  minPositionX: {fileID: 11400000, guid: dc4e3485e5c65ef4aad5acde90f50fe3, type: 2}
+  minPositionY: {fileID: 11400000, guid: abdf0b1e3a19f8d409ad83c43cb8461d, type: 2}
 --- !u!114 &2677810432399626597
 MonoBehaviour:
   m_ObjectHideFlags: 0

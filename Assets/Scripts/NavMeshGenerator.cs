@@ -13,7 +13,9 @@ namespace Pieter.NavMesh
     [System.Serializable]
     public class NavMeshEntrance
     {
-        public int ID => entrance.ID;
+        [SerializeField] private int id = -1;
+        // Entrance ID seperated from vertex ID
+        public int ID { get { return id; } set { id = value; } }
         public Vertex entrance;
         [HideInInspector] public NavMeshGenerator generator;
         public NavMeshEntrance connectedEntrance = null;
@@ -44,7 +46,7 @@ namespace Pieter.NavMesh
         }
 
         private bool isDoorUsed = false;
-        public bool IsUsed { set { isDoorUsed = value; if(doorController != null) doorController.isDoorActive = value; } }
+        public bool IsUsed { set { isDoorUsed = value; if(doorController != null) doorController.IsDoorActive = value; } }
     }
 
     public class NavMeshGenerator : MonoBehaviour

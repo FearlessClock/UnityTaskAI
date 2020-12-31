@@ -3,6 +3,7 @@ using Pieter.NavMesh;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelGridGeneration : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class LevelGridGeneration : MonoBehaviour
     [SerializeField] private FloatVariable maxPositionY;
     [SerializeField] private FloatVariable minPositionX;
     [SerializeField] private FloatVariable minPositionY;
+
+    [SerializeField] private UnityEvent OnLevelGenerationFinished = null;
 
     private void Awake()
     {

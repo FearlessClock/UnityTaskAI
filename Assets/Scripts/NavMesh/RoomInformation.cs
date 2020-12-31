@@ -104,16 +104,7 @@ public class RoomInformation : MonoBehaviour
 
     public RoomInformation GetConnectedRoomFromEntranceWithID(int connectedEntranceID)
     {
-        RoomInformation roomInformation = null;
-        try
-        {
-            connectedRooms.TryGetValue(connectedEntranceID, out roomInformation);
-        }
-        catch
-        {
-
-        }
-        return roomInformation;
+        return connectedRooms[connectedEntranceID];
     }
 
     public override bool Equals(object other)
@@ -173,15 +164,16 @@ public class RoomInformation : MonoBehaviour
         }
     }
 
-    public void AddConnectedRoom(RoomInformation containedRoom, NavMeshEntrance randomEntrance)
+    public void AddConnectedRoom(RoomInformation containedRoom, NavMeshEntrance entrance)
     {
         try
         {
-            connectedRooms.Add(randomEntrance.ID, containedRoom);
+            Debug.Log("Adding connected room information in room: " + ID + " connected to room: " + containedRoom.ID + " by entrance " + entrance.ID);
+            connectedRooms.Add(entrance.ID, containedRoom);
         }
         catch(Exception ex)
         {
-            Debug.Log("Connected Room Failed " + this.name + " to " + containedRoom.name + " from entrance " + randomEntrance.ID);
+            Debug.Log("Connected Room Failed " + this.name + " to " + containedRoom.name + " from entrance " + entrance.ID);
             Debug.Log("Error: " + ex.Message);
         }
     }

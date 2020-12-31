@@ -8,11 +8,14 @@ public class DoorController : MonoBehaviour
     [SerializeField] private Animator doorAnimator = null;
     private bool isDoorOpen = false;
     [SerializeField] private bool defaultOpenState = true;
-    public bool isDoorActive = false;
+    [SerializeField] private ToggleDoorsWithWalls toggleDoorsWithWalls = null;
+    private bool isDoorActive = false;
+    public bool IsDoorActive { get { return isDoorActive; } set { isDoorActive = value; toggleDoorsWithWalls.ToggleDoors(value); } }
     public bool IsPassable => isDoorOpen;
 
     private void Awake()
     {
+        GetComponent<ToggleDoorsWithWalls>();
         if(defaultOpenState != isDoorOpen && isDoorActive)
         {
             ToggleDoor();

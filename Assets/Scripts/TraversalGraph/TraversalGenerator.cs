@@ -27,8 +27,9 @@ namespace Pieter.GraphTraversal
     public class TraversalEntrance
     {
         [HideInInspector] public string name;
-        public int ID => vertex.ID;
+        public int ID => navMeshEntrance.ID;
         public Vertex vertex;
+        public NavMeshEntrance navMeshEntrance = null;
     }
     public class TraversalGenerator : MonoBehaviour
     {
@@ -78,6 +79,21 @@ namespace Pieter.GraphTraversal
             RenameVertexes();
             UpdateAdjacencyLists();
             UpdateRoomMiddle();
+            UpdateConnectedNavMeshEntrances();
+        }
+
+        private void UpdateConnectedNavMeshEntrances()
+        {
+            foreach (TraversalEntrance ent in entrances)
+            {
+                for (int i = 0; i < containedRoom.EntrancePoints.Length; i++)
+                {
+                    if (containedRoom.EntrancePoints.Entrances[i].entrance.ID == ent.vertex.ID)
+                    {
+                        ent.navMeshEntrance = containedRoom.EntrancePoints.Entrances[i];
+                    }
+                }
+            }
         }
 
         private void UpdateRoomMiddle()

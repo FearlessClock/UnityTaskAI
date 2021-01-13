@@ -46,7 +46,7 @@ public class RoomInformation : MonoBehaviour
 
     public Vector3 RoomCenter => centerVertex.Position;
 
-    public bool IsOnFire => fireGenerator.IsOnFire;
+    public bool IsOnFire { get { if (fireGenerator == null) return false; else return fireGenerator.IsOnFire; } }
 
     public void GetRotatedCenter(out Vector3 center, out Vector3 extents)
     {

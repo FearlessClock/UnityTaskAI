@@ -15,4 +15,8 @@ public static class ExtensionVector3
     {
         return new Vector3(vec.x, 0, vec.z);
     }
+    public static Vector2 ThreeDTo2DVector(this Vector3 vec)
+    {
+        return new Vector2(vec.x, vec.z);
+    }
 }

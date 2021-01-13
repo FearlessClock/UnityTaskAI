@@ -1,4 +1,5 @@
 ﻿using Pieter.GraphTraversal;
+using Pieter.Grid;
 using Pieter.NavMesh;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ public class LevelGridGeneration : MonoBehaviour
 {
     [SerializeField] private GridLevelSquareInformation[] levelBlocks = null;
     [SerializeField] private GridMapHolder gridWorldHolder = null;
+    [SerializeField] private RoomGridHolder roomGridHolder = null;
     private GridWorldMap gridWorldMap => gridWorldHolder.gridWorldMap;
     [SerializeField] private int tileSize = 1;
 
@@ -24,7 +26,6 @@ public class LevelGridGeneration : MonoBehaviour
     [SerializeField] private FloatVariable minPositionX;
     [SerializeField] private FloatVariable minPositionY;
 
-    [SerializeField] private UnityEvent OnLevelGenerationFinished = null;
 
     private void Awake()
     {
@@ -33,6 +34,7 @@ public class LevelGridGeneration : MonoBehaviour
         minPositionX.SetValue(0);
         minPositionY.SetValue(0);
         gridWorldHolder.gridWorldMap = new GridWorldMap(tileSize);
+        roomGridHolder.Reset();
         roomGraph.Clear();
         UpdateEntrancePointsForLevelBlocks();
         StartCoroutine(GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0, 0) }));
@@ -85,6 +87,7 @@ public class LevelGridGeneration : MonoBehaviour
                 }
             }
         }
+        OnDoneLevelGeneration.Invoke();
     }
 
     private GridLevelSquareInformation GenerateRoom(int maxBuildings, int numberOfBuildings, Vector2Int gridPosition, Vector3 worldSpacePosition, GridLevelSquareInformation randomRoom)
@@ -113,6 +116,8 @@ public class LevelGridGeneration : MonoBehaviour
         gridWorldMap.AddRectangle(gridPosition, Vector2Int.one, room.RoomInfo);
 
         roomGraph.AddRoom(room.RoomInfo);
+        room.RoomInfo.roomGrid.Initialize(worldSpacePosition, Quaternion.identity);
+        roomGridHolder.AddRoom(room.RoomInfo.roomGrid);
 
         List<RoomInformation> surroundingRooms = GetNeighbouringRooms(gridPosition, room.RoomInfo.EntrancePoints.Directions);
 
@@ -158,7 +163,7 @@ public class LevelGridGeneration : MonoBehaviour
         roomGraph.AddChild(room, neighbor);
 
         room.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
-        neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, traversalEntranceRoom.ID);
+        neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, entranceRoom.ID);
 
         room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator, neighbor.EntrancePoints);
         //neighbor.TraversalGenerator.RemoveNode(traversalEntranceNeigbor.vertex);

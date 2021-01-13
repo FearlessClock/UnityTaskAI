@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pieter.Grid;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -8,6 +9,7 @@ using UnityEngine;
 public class FireControllerEditor : Editor
 {
     private FireController fireController = null;
+
     private void OnEnable()
     {
         fireController = (FireController)target;
@@ -18,7 +20,10 @@ public class FireControllerEditor : Editor
 
         if (GUILayout.Button("Start Fire"))
         {
-            fireController.StartFire();
+            RoomInformation room = fireController.GetRandomRoom();
+            GridPoint point = room.roomGrid.GetRandomGridPoint();
+            Vector2Int pos = new Vector2Int((int)point.gridPosition.x, (int)point.gridPosition.y);
+            fireController.StartFire(pos, room);
         }
     }
 }

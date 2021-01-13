@@ -9,8 +9,9 @@ namespace Pieter.Grid
 {
     public class GridPoint
     {
-        public RoomGrid room;
+        public RoomGrid roomgrid;
         public Vector3 center;
+        public Vector2Int gridPosition;
         public Vector2Int[] adjacentPointsXY;
         public RoomGrid adjacentRoom;
         public Vector2Int adjacentRoomPointXY;
@@ -23,6 +24,8 @@ namespace Pieter.Grid
         public NavMeshEntrance entrance;
         public bool isEntrance;
 
+        public bool isInside;
+
         public GridPoint GetAjacentRoomGridPoint()
         {
             return adjacentRoom.GetGridPoint(adjacentRoomPointXY);
@@ -32,9 +35,9 @@ namespace Pieter.Grid
         public GridPoint[] GetAllAdjacentGridPoints()
         {
             List<GridPoint> adjPoints = new List<GridPoint>();
-            foreach (Vector2Int vector2Int in this.adjacentPointsXY)
+            foreach (Vector2Int adjPoint in this.adjacentPointsXY)
             {
-                adjPoints.Add(room.GetGridPoint(vector2Int));
+                adjPoints.Add(roomgrid.GetGridPoint(adjPoint));
             }
 
             if (this.adjacentRoom != null && isEntrance && entrance.IsOpen)
@@ -46,22 +49,42 @@ namespace Pieter.Grid
             }
             return adjPoints.ToArray();
         }
-    }
 
+        public override string ToString()
+        {
+            return gridPosition.ToString() + " Ent? " + isEntrance;
+        }
+    }
+    public struct AdjacentRoomGridInfo
+    {
+        public int entranceId;
+        public int exitId;
+        public RoomGrid room;
+    }
     [RequireComponent(typeof(RoomInformation))]
     public class RoomGrid : MonoBehaviour
     {
         private RoomInformation roomInfo = null;
-        private Vector2Int[] entrancePoints = null;
+        public int ID => roomInfo.ID;
+
+        public int GetTotalGridPoints => grid.Length;
+
+        public int GetGridWidth => grid.GetLength(0);
+
+        private Vector2Int[] entrancePoints = new Vector2Int[0];
         private int[] entranceIds = null;
         [SerializeField] private float tileSize = 1;
+        [SerializeField] private LayerMask outlineMask = 0; 
         private GridPoint[,] grid = new GridPoint[0, 0];
 
-        private void Awake()
+        private List<AdjacentRoomGridInfo> toAddAdjacentRooms = new List<AdjacentRoomGridInfo>();
+        private bool hasBeenInit = false;
+        RaycastHit[] hits = new RaycastHit[50];
+
+        public void Initialize(Vector3 position, Quaternion rotation)
         {
             roomInfo = GetComponent<RoomInformation>();
 
-            // The extents are actaully halfExtents
             float x = roomInfo.extents.x;
             float z = roomInfo.extents.z;
 
@@ -69,54 +92,74 @@ namespace Pieter.Grid
             int numberOfZTiles = Mathf.CeilToInt(z / tileSize);
 
             grid = new GridPoint[numberOfXTiles, numberOfZTiles];
-            Quaternion rot = this.transform.rotation;
-            Vector3 transPos = this.transform.position;
+
+            Quaternion rot = rotation;
+            Vector3 transPos = roomInfo.center - roomInfo.extents/2;
             for (int i = 0; i < grid.GetLength(0); i++)
             {
                 for (int j = 0; j < grid.GetLength(1); j++)
                 {
+                    Vector3 pos = transPos + rot * new Vector3((i * tileSize) + tileSize / 2, this.transform.position.y, (j * tileSize) + tileSize / 2);
                     grid[i, j] = new GridPoint();
-                    grid[i, j].room = this;
-                    Vector3 pos = transPos + rot * new Vector3((i * tileSize) + tileSize / 2, 0, (j * tileSize) + tileSize / 2);
-                    grid[i,j].center = pos;
+                    grid[i, j].roomgrid = this;
+                    grid[i, j].center = position + pos;
+                    grid[i, j].gridPosition = new Vector2Int(i, j);
                     grid[i, j].adjacentPointsXY = GetAdjacentXY(i, j, grid.GetLength(0), grid.GetLength(1));
+                    int hitCount = Physics.RaycastNonAlloc(pos+Vector3.up*10, Vector3.down, hits, 30, outlineMask);
+                    bool res = false;
+                    for (int k = 0; k < hitCount; k++)
+                    {
+                        if (hits[k].collider.transform.parent.parent.gameObject.Equals(this.gameObject))
+                        {
+                            res = true;
+                            break;
+                        }
+                    }
+                    grid[i, j].isInside = res;
                 }
             }
             entrancePoints = new Vector2Int[roomInfo.GetEntrances.Length];
             entranceIds = new int[roomInfo.GetEntrances.Length];
             for (int i = 0; i < roomInfo.GetEntrances.Length; i++)
             {
-                Vector3 entrancePos = ( roomInfo.GetEntrance(i).entrance.transform.localPosition) / tileSize;
-                int xPos = Mathf.FloorToInt(entrancePos.x);
-                if(xPos >= grid.GetLength(0))
-                {
-                    xPos = grid.GetLength(0) - 1;
-                }
-                else if (xPos < 0)
-                {
-                    xPos = 0;
-                }
+                Vector2Int entrancePos = FindGridPointClosestToPosition(roomInfo.GetEntrance(i).entrance.transform.position);//( roomInfo.GetEntrance(i).entrance.transform.localPosition) / tileSize;
 
-                int zPos = Mathf.FloorToInt(entrancePos.z);
-                if (zPos >= grid.GetLength(1))
-                {
-                    zPos = grid.GetLength(1) - 1;
-                }
-                else if (zPos < 0)
-                {
-                    zPos = 0;
-                }
-
-                grid[xPos, zPos].entrance = roomInfo.GetEntrance(i);
-                grid[xPos, zPos].isEntrance = true;
-                entrancePoints[i] = new Vector2Int(xPos, zPos);
+                grid[entrancePos.x, entrancePos.y].entrance = roomInfo.GetEntrance(i);
+                grid[entrancePos.x, entrancePos.y].isEntrance = true;
+                entrancePoints[i] = new Vector2Int(entrancePos.x, entrancePos.y);
                 entranceIds[i] = roomInfo.GetEntrance(i).ID;
             }
+            for (int i = toAddAdjacentRooms.Count-1; i >= 0; i--)
+            {
+                AddGrid(toAddAdjacentRooms[i]);
+                toAddAdjacentRooms.RemoveAt(i);
+            }
+            hasBeenInit = true;
         }
 
-        private void Start()
+        private Vector2Int FindGridPointClosestToPosition(Vector3 pos)
         {
-            Awake();
+            float closest = SqrDistance(grid[0, 0].center, pos);
+            float testClosest = 0;
+            Vector2Int position = new Vector2Int(0, 0);
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
+                {
+                    testClosest = SqrDistance(grid[i, j].center, pos);
+                    if(testClosest < closest)
+                    {
+                        closest = testClosest;
+                        position = new Vector2Int(i, j);
+                    }
+                }
+            }
+            return position;
+        }
+
+        private float SqrDistance(Vector3 a, Vector3 b)
+        {
+            return Mathf.Pow(a.x - b.x, 2) + Mathf.Pow(a.z - b.z, 2);
         }
 
         private Vector2Int[] GetAdjacentXY(int x, int z, int gridMaxX, int gridMaxZ)
@@ -138,21 +181,32 @@ namespace Pieter.Grid
 
         public void AddGrid(RoomGrid nextRoomGrid, int idRoom1, int idRoom2)
         {
-            Vector2Int room1GridPoint = GetGridPointFromEntranceID(idRoom1);
+            if (hasBeenInit)
+            {
+                AddGrid(new AdjacentRoomGridInfo() { entranceId = idRoom1, exitId = idRoom2, room = nextRoomGrid });
+            }
+            else
+            {
+                toAddAdjacentRooms.Add(new AdjacentRoomGridInfo() { entranceId = idRoom1, exitId = idRoom2, room = nextRoomGrid });
+            }
+        }
+
+        private void AddGrid(AdjacentRoomGridInfo info)
+        {
+            Vector2Int room1GridPoint = GetGridPointFromEntranceID(info.entranceId);
             if (room1GridPoint.x < 0 || room1GridPoint.y < 0)
             {
                 return;
             }
 
-            Vector2Int room2GridPoint = nextRoomGrid.GetGridPointFromEntranceID(idRoom2);
+            Vector2Int room2GridPoint = info.room.GetGridPointFromEntranceID(info.exitId);
             if (room2GridPoint.x < 0 || room2GridPoint.y < 0)
             {
                 return;
             }
 
-            grid[room1GridPoint.x, room1GridPoint.y].adjacentRoom = nextRoomGrid;
+            grid[room1GridPoint.x, room1GridPoint.y].adjacentRoom = info.room;
             grid[room1GridPoint.x, room1GridPoint.y].adjacentRoomPointXY = room2GridPoint;
-
         }
 
         public Vector2Int GetGridPointFromEntranceID(int id)
@@ -168,10 +222,25 @@ namespace Pieter.Grid
             return new Vector2Int(-1, -1);
         }
 
+        public GridPoint GetGridPoint(Vector2Int gridPointAdjacentRoomPointXy)
+        {
+            return grid[gridPointAdjacentRoomPointXy.x, gridPointAdjacentRoomPointXy.y];
+        }
+
+        public GridPoint GetRandomGridPoint()
+        {
+            return grid[Random.Range(0, grid.GetLength(0)), Random.Range(0, grid.GetLength(1))];
+        }
+
         private void OnDrawGizmos()
         {
             foreach (GridPoint gridPoint in grid)
             {
+                if(gridPoint == null)
+                {
+                    continue;
+                }
+                Gizmos.color = gridPoint.isInside ? Color.green : Color.yellow;
                 //Gizmos.DrawWireCube(gridPoint.center, (tileSize * Vector3.one) - (Vector3.one * 0.1f));
                 foreach (Vector2Int vector2Int in gridPoint.adjacentPointsXY)
                 {
@@ -193,16 +262,5 @@ namespace Pieter.Grid
                 }
             }
         }
-
-        public GridPoint GetGridPoint(Vector2Int gridPointAdjacentRoomPointXy)
-        {
-            return grid[gridPointAdjacentRoomPointXy.x, gridPointAdjacentRoomPointXy.y];
-        }
-
-        public GridPoint GetRandomGridPoint()
-        {
-            return grid[Random.Range(0, grid.GetLength(0)), Random.Range(0, grid.GetLength(1))];
-        }
-
     }
 }

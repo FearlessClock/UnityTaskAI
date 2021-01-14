@@ -17,21 +17,29 @@ public class FireBlock
     public bool IsBurnedOut => currentFuel <= 0;
     public bool CanLightOnFire => fireResistance <= 0;
     public bool IsSmoldered => smolderTime <= 0;
+    public long lastActivatedTick = 0;
 
-    public void Burn(float burnRate)
+    public void Burn(float burnRate, long currentTick)
     {
         if (isOnFire)
         {
-            currentFuel -= burnRate;
+            currentFuel -= burnRate *(currentTick - lastActivatedTick);
         }
         else
         {
-            fireResistance -= burnRate;
+            fireResistance -= burnRate * (currentTick - lastActivatedTick);
         }
+        lastActivatedTick = currentTick;
     }
 
-    public void Smolder(float burnRate)
+    public void Smolder(float burnRate, long currentTick)
     {
-        smolderTime -= burnRate;
+        smolderTime -= burnRate * (currentTick - lastActivatedTick);
+        lastActivatedTick = currentTick;
+    }
+
+    public override string ToString()
+    {
+        return "FB " + gridPoint.gridPosition + " FR " + fireResistance + " CF " + currentFuel + " ST " + smolderTime;
     }
 }

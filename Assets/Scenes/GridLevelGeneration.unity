@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePrefab: {fileID: 3033394605596178195, guid: 0ff4badc27f933a47b5abbecb3d29fdb,
     type: 3}
-  fuel: 25
+  fuel: 15
   varianceFuel: 5
   fireResistance: 2
   variancefireResistance: 5
@@ -162,9 +162,10 @@ MonoBehaviour:
   varianceSmolder: 0
   chanceToStartNewFire: 1
   gridGeneration: {fileID: 0}
-  burnRate: 1
+  burnRate: 0.1
   roomGridHolder: {fileID: 11400000, guid: 46edb6d342bb2a04b9c96d92dc34e519, type: 2}
   roomGraphHolder: {fileID: 11400000, guid: ccd9c7b5050250a4eb51b93e3a7ca598, type: 2}
+  stepsToCheck: 1000
 --- !u!4 &25600955
 Transform:
   m_ObjectHideFlags: 0
@@ -608,8 +609,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47ecab4c50b7854cb7a225045a7cf66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMask:
-    m_Bits: 2048
 --- !u!4 &477705590
 Transform:
   m_ObjectHideFlags: 0

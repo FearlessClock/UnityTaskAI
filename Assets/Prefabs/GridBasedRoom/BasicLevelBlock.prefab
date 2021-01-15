@@ -4550,6 +4550,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5184697638315814178}
     m_Modifications:
+    - target: {fileID: 2602786454930181980, guid: e9853dadae3de5941a2951adf59d7a3d,
+        type: 3}
+      propertyPath: room
+      value: 
+      objectReference: {fileID: 6314187691320887384}
     - target: {fileID: 7403334453865148486, guid: e9853dadae3de5941a2951adf59d7a3d,
         type: 3}
       propertyPath: m_Name

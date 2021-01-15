@@ -73,6 +73,11 @@ public class FireController : MonoBehaviour
         //Instantiate(firePrefab, startpoint.center, room.transform.rotation, this.transform);
     }
 
+    public void StartFire(Vector3 fireStartPos, RoomInformation room)
+    {
+        StartFire(room.roomGrid.GetIntPos(fireStartPos), room);
+    }
+
     private IEnumerator UpdateFire()
     {
         currentTick++;

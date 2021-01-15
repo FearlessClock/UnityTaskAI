@@ -10,6 +10,7 @@ public class WorkStation : InteractableObject
     [SerializeField] private float workstationPriority = 10;
     [SerializeField] private float workstationWorkTime = 10;
     [SerializeField] private bool generateOnStartup = false;
+    [SerializeField] private InteractableObjectExplosion interactableObjectExplosion = null;
     private void Start()
     {
         taskGenerateTimer = timeTillTaskGenerate;
@@ -31,5 +32,11 @@ public class WorkStation : InteractableObject
     public override BasicTask GenerateTask()
     {
         return new BasicTask("WorkStation-"+this.name, TaskScope.Global, interactionPoint, roomGraphHolder.FindRoomAtLocation(interactionPoint.position), 10, 1, 3, true, 1, null, eAnimationType.Work, this) ;
+    }
+
+    public override bool Work()
+    {
+        interactableObjectExplosion.CheckIfExplode();
+        return true;
     }
 }

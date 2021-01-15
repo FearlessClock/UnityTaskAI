@@ -17,7 +17,7 @@ public class WalkTask : ITask
     private float timeLimit = 0;
     private float timeLimitTimer = 0;
     private float priority = 0;
-    private List<BasicTask> followUpTasks = new List<BasicTask>();
+    private List<ITask> followUpTasks = new List<ITask>();
     private bool isinterruptible = true;
     private bool isValid = true;
     private int urgencyLevel = 1;
@@ -43,7 +43,7 @@ public class WalkTask : ITask
         this.workAnimationType = type;
     }
 
-    public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type, List<BasicTask> followUpTasks) : 
+    public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLim, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction, eAnimationType type, List<ITask> followUpTasks) : 
         this(name, scope, position, containedRoom, timeLim, priority, isinterruptible, urgencyLevel, onDoneFunction, type)
     {
         this.followUpTasks = followUpTasks;
@@ -63,7 +63,7 @@ public class WalkTask : ITask
     public bool IsWorkDone => true;
     public bool DoesWork => false;
 
-    public List<BasicTask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<BasicTask>(); } } }
+    public List<ITask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<ITask>(); } } }
 
     public bool IsInterruptible => isinterruptible;
 
@@ -81,7 +81,9 @@ public class WalkTask : ITask
 
     public RoomInformation GetInteractionRoom => containedRoom;
 
-    public BasicTask GetRandomFollowUpTask()
+    public InteractableObject GetInteractableObject => null;
+
+    public ITask GetRandomFollowUpTask()
     {
         if (followUpTasks != null && followUpTasks.Count > 0)
         {

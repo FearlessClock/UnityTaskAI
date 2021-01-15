@@ -112,7 +112,6 @@ public class EntrancePoints : MonoBehaviour
         {
             if(doorDirections[key].entrance.ID == oldVert.ID)
             {
-                Debug.Log("Changed entrace " + doorDirections[key].entrance.ID + " " + newVert.ID + " " + this.transform.parent.name);
                 doorDirections[key].entrance = newVert;
                 break;
             }

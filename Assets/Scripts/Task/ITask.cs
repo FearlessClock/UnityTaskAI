@@ -21,9 +21,10 @@ public interface ITask
     void SetWorkTimer(float time);
     float GetWorkTime { get; }
     bool IsWorkDone { get; }
-    List<BasicTask> FollowUpTasks { get; }
+    List<ITask> FollowUpTasks { get; }
+    InteractableObject GetInteractableObject { get; }
 
-    BasicTask GetRandomFollowUpTask();
+    ITask GetRandomFollowUpTask();
 
 
     void UpdateTimeLimit(float deltaTime);

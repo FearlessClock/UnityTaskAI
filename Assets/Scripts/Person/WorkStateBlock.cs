@@ -52,6 +52,10 @@ namespace Assets.Scripts.Person
             }
 
             taskHandler.ActiveTask.UpdateWorkTimer(Time.deltaTime);
+            if(taskHandler.ActiveTask.GetInteractableObject != null)
+            {
+                taskHandler.ActiveTask.GetInteractableObject.Work();
+            }
             if (taskHandler.ActiveTask.IsWorkDone)
             {
                 debugHolder.Log("Work is done", eDebugImportance.State);

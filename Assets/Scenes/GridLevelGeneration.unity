@@ -156,13 +156,13 @@ MonoBehaviour:
     type: 3}
   fuel: 15
   varianceFuel: 5
-  fireResistance: 2
+  fireResistance: 4
   variancefireResistance: 5
   smolderTime: 30
-  varianceSmolder: 0
+  varianceSmolder: 15
   chanceToStartNewFire: 1
   gridGeneration: {fileID: 0}
-  burnRate: 0.1
+  burnRate: 0.2
   roomGridHolder: {fileID: 11400000, guid: 46edb6d342bb2a04b9c96d92dc34e519, type: 2}
   roomGraphHolder: {fileID: 11400000, guid: ccd9c7b5050250a4eb51b93e3a7ca598, type: 2}
   stepsToCheck: 1000

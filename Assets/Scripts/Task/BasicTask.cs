@@ -22,7 +22,7 @@ public class BasicTask : ITask
     private float timeLimitTimer = 0;
     private float priority = 0;
     private InteractableObject interactableObject = null;
-    private List<BasicTask> followUpTasks = null;
+    private List<ITask> followUpTasks = null;
     private bool isinterruptible = true;
     private bool isValid = true;
     private int UrgencyLevel = 1;
@@ -75,19 +75,19 @@ public class BasicTask : ITask
         this.interactableObject = interObject;
     }
 
-    public BasicTask(string name, TaskScope scope, Transform transform, RoomInformation containedRoom, float timeLim, float prio, float workTime, bool isinterruptible, int urgency, Func<bool> OnDoneFunction, eAnimationType type, InteractableObject interObject, List<BasicTask> followUpTasks) : 
+    public BasicTask(string name, TaskScope scope, Transform transform, RoomInformation containedRoom, float timeLim, float prio, float workTime, bool isinterruptible, int urgency, Func<bool> OnDoneFunction, eAnimationType type, InteractableObject interObject, List<ITask> followUpTasks) : 
             this(name, scope, transform, containedRoom, timeLim, prio, workTime, isinterruptible, urgency, OnDoneFunction, type, interObject)
     {
         this.followUpTasks = followUpTasks;
     }
 
-    public List<BasicTask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<BasicTask>(); } } }
+    public List<ITask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<ITask>(); } } }
 
     public bool IsInterruptible => isinterruptible;
 
     public string GetTaskInformation { get => "Task Base: " + taskName + " " + GetInteractionPosition; set => taskName = value; }
 
-    public bool IsTaskValid => isValid;
+    public bool IsTaskValid => isValid && (interactableObject != null && interactableObject.IsWorking);
     public bool DoesWork => true;
 
     public int GetTaskUrgencyLevel => UrgencyLevel;
@@ -98,7 +98,9 @@ public class BasicTask : ITask
 
     public RoomInformation GetInteractionRoom => containedRoom;
 
-    public BasicTask GetRandomFollowUpTask()
+    public InteractableObject GetInteractableObject => interactableObject;
+
+    public ITask GetRandomFollowUpTask()
     {
         if(followUpTasks != null && followUpTasks.Count > 0)
         {

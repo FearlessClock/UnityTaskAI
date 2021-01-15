@@ -137,6 +137,11 @@ namespace Pieter.Grid
             hasBeenInit = true;
         }
 
+        public Vector2Int GetIntPos(Vector3 fireStartPos)
+        {
+            return FindGridPointClosestToPosition(fireStartPos);
+        }
+
         private Vector2Int FindGridPointClosestToPosition(Vector3 pos)
         {
             float closest = SqrDistance(grid[0, 0].center, pos);

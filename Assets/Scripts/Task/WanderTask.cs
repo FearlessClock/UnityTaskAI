@@ -18,7 +18,7 @@ public class WanderTask : ITask
     private float timeLimit = 0;
     private float timeLimitTimer = 0;
     private float priority = 0;
-    private List<BasicTask> followUpTasks = new List<BasicTask>();
+    private List<ITask> followUpTasks = new List<ITask>();
     private bool isinterruptible = true;
     private bool isValid = true;
     private int urgencyLevel = 1;
@@ -46,7 +46,7 @@ public class WanderTask : ITask
         this.workAnimationType = type;
     }
 
-    public WanderTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, Func<bool> isTaskStillValidFunction, float timeLim, float priority, bool isinterruptible, int urgencyLevel, float waitAroundTime, eAnimationType type, List<BasicTask> followUpTasks) :
+    public WanderTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, Func<bool> isTaskStillValidFunction, float timeLim, float priority, bool isinterruptible, int urgencyLevel, float waitAroundTime, eAnimationType type, List<ITask> followUpTasks) :
         this(name, scope, position, containedRoom, isTaskStillValidFunction, timeLim, priority, isinterruptible, urgencyLevel, waitAroundTime, type)
     {
         this.followUpTasks = followUpTasks;
@@ -72,7 +72,7 @@ public class WanderTask : ITask
     public bool IsWorkDone => workTimer < 0;
     public bool DoesWork => true;
 
-    public List<BasicTask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<BasicTask>(); } } }
+    public List<ITask> FollowUpTasks { get { if (followUpTasks != null) { return followUpTasks; } else { return new List<ITask>(); } } }
 
     public bool IsInterruptible => isinterruptible;
 
@@ -101,9 +101,11 @@ public class WanderTask : ITask
 
     public RoomInformation GetInteractionRoom => containedRoom;
 
+    public InteractableObject GetInteractableObject => null;
+
     public string taskName = "";
 
-    public BasicTask GetRandomFollowUpTask()
+    public ITask GetRandomFollowUpTask()
     {
         if (followUpTasks != null && followUpTasks.Count > 0)
         {

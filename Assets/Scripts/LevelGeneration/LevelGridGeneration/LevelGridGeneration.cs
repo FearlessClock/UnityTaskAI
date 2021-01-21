@@ -29,6 +29,11 @@ public class LevelGridGeneration : MonoBehaviour
 
     private void Awake()
     {
+        GenerateLevel();
+    }
+
+    public void GenerateLevel()
+    {
         maxPositionX.SetValue(0);
         maxPositionY.SetValue(0);
         minPositionX.SetValue(0);

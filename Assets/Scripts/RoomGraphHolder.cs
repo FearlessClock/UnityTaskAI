@@ -9,6 +9,7 @@ using UnityEngine.AI;
 public class RoomGraphHolder : ScriptableObject
 {
     public Node[] rooms;
+    private AStarRoomGraphNavigation roomGraphNavigation = null;
 
     public void AddRoom(RoomInformation room)
     {
@@ -19,6 +20,7 @@ public class RoomGraphHolder : ScriptableObject
         Node nextRoom = new Node();
         nextRoom.payload = room;
         nextRoom.id = room.ID;
+        nextRoom.position = room.transform.position.ThreeDTo2DVector() ;
         Node[] roomsNew = new Node[rooms.Length + 1];
         for (int i = 0; i < rooms.Length; i++)
         {
@@ -77,7 +79,7 @@ public class RoomGraphHolder : ScriptableObject
         }
 
         List<int> foundNodes = new List<int>();
-        Node node = DFSSearch(predicate, foundNodes, room, 0);
+        Node node = DFSSearchToFindRunAwayPoint(predicate, foundNodes, room, 0);
         if (node != null)
         {
             return node.payload as RoomInformation;
@@ -88,7 +90,43 @@ public class RoomGraphHolder : ScriptableObject
         }
     }
 
-    private Node DFSSearch(System.Func<int, bool> predicate, List<int> foundNodes, Node currentNode, int depth)
+    public List<Node> FindRouteToRoom(RoomInformation startingRoom, RoomInformation endingRoom)
+    {
+        if(roomGraphNavigation == null || roomGraphNavigation.NumberOfRooms < rooms.Length)
+        {
+            roomGraphNavigation = new AStarRoomGraphNavigation(rooms);
+        }
+        return roomGraphNavigation.GetPathFromTo(GetNodeFromRoom(startingRoom), GetNodeFromRoom(endingRoom), CheckIfDoorsAreOpen, false, false);
+    }
+
+    private bool CheckIfDoorsAreOpen(Node a, Node b)
+    {
+        RoomInformation aRoom = a.payload as RoomInformation;
+        RoomInformation bRoom = b.payload as RoomInformation;
+
+        for (int i = 0; i < aRoom.GetConnectedRooms.Length; i++)
+        {
+            if(aRoom.GetConnectedRooms[i].ID == bRoom.ID)
+            {
+                return aRoom.GetEntrance(aRoom.GetConnectedEntranceIds[i]).IsPassable;
+            }
+        }
+        return false;
+    }
+
+    private Node GetNodeFromRoom(RoomInformation startingRoom)
+    {
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if (startingRoom.Equals(rooms[i].payload))
+            {
+                return rooms[i];
+            }
+        }
+        return null;
+    }
+
+    private Node DFSSearchToFindRunAwayPoint(System.Func<int, bool> predicate, List<int> foundNodes, Node currentNode, int depth)
     {
         foundNodes.Add(currentNode.id);
 
@@ -108,7 +146,7 @@ public class RoomGraphHolder : ScriptableObject
             bool isPassable = true;//entranceToConnectedRoom != null ? entranceToConnectedRoom.IsPassable : true;
             if (!foundNodes.Contains(currentNode.connectedNodes[i].id) && !isOnFire && isPassable)
             {
-                return DFSSearch(predicate, foundNodes, currentNode.connectedNodes[i], ++depth);
+                return DFSSearchToFindRunAwayPoint(predicate, foundNodes, currentNode.connectedNodes[i], ++depth);
             }
         }
         // Found nothing

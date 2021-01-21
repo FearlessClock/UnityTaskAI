@@ -15,6 +15,16 @@ public class Human : PersonBase
         StartUp();
     }
 
+    private void OnEnable()
+    {
+        ScientistCounterController.instance.AddScientist();
+    }
+
+    protected override void OnDeath()
+    {
+        ScientistCounterController.instance.KillScientist();
+    }
+
     private void Update()
     {
         if (!CheckIfAlive())
@@ -28,9 +38,13 @@ public class Human : PersonBase
         }
         else
         {
-            WanderTask task = new WanderTask("Wander " + movementHandler.GetCurrentRoom.name, TaskScope.Personal, movementHandler.GetCurrentRoom.GetRandomSpotInsideRoom, movementHandler.GetCurrentRoom, null, 2, 5, true, 1, 3);
-            taskHandler.SetNewActiveTask(movementHandler.GetCurrentRoom.TraversalGenerator, this.transform.position, traversalAStar, task); ;
-            
+            if (!taskHandler.SetNewActiveTask(movementHandler.GetCurrentRoom.TraversalGenerator, this.transform.position, traversalAStar))
+            {
+                WanderTask task = new WanderTask("Wander " + movementHandler.GetCurrentRoom.name, TaskScope.Personal, movementHandler.GetCurrentRoom.GetRandomSpotInsideRoom, movementHandler.GetCurrentRoom, null, 2, 5, true, 1, 3);
+                debugHolder.Log("No active and available tasks found, setting wander as active", eDebugImportance.Unimportant);
+                taskHandler.SetActiveTask(task);
+            }
+
         }
 
         UpdateDebug();

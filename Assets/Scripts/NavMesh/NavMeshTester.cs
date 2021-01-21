@@ -14,8 +14,6 @@ namespace Pieter.NavMesh
 
         private Vector3 target;
         private NavMeshTriangle SelectedTriangle = null;
-        [SerializeField] private float movementSpeed = 1;
-        [SerializeField] private float rotationLerpAmount = 0.4f;
 
         private void Start()
         {
@@ -27,7 +25,7 @@ namespace Pieter.NavMesh
             }
 
         }
-        private void Update()
+        private void Update()   
         {
             if(getRandomPoint)
             {

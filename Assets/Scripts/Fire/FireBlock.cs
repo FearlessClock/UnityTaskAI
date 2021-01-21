@@ -12,23 +12,37 @@ public class FireBlock
     public float currentFuel = 1;
     public float currentOxygen = 1;
     public GridPoint gridPoint = null;
-    public bool isOnFire = false;
+    private bool isOnFire = false;
 
     public bool IsBurnedOut => currentFuel <= 0;
     public bool CanLightOnFire => fireResistance <= 0;
     public bool IsSmoldered => smolderTime <= 0;
+
+    public bool IsOnFire
+    { 
+        get => isOnFire; 
+        set 
+        { 
+            if(isOnFire != value)
+            {
+                isOnFire = value;
+                gridPoint.isOnFire = value;
+                gridPoint.roomgrid.UpdateBurningPoint(value);
+            }
+        } 
+    }
+
     public long lastActivatedTick = 0;
 
     public void Burn(float burnRate, long currentTick)
     {
-        if (isOnFire)
-        {
-            currentFuel -= burnRate *(currentTick - lastActivatedTick);
-        }
-        else
-        {
-            fireResistance -= burnRate * (currentTick - lastActivatedTick);
-        }
+        currentFuel -= burnRate * (currentTick - lastActivatedTick);
+        lastActivatedTick = currentTick;
+    }
+
+    public void ScorceUnburned(float burnRate, long currentTick)
+    {
+        fireResistance -= burnRate * (currentTick - lastActivatedTick);
         lastActivatedTick = currentTick;
     }
 

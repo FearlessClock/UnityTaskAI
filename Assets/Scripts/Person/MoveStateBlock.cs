@@ -48,6 +48,8 @@ public class MoveStateBlock : StateBlock
 
     public void Exit()
     {
+        debugHolder.Log("Clearing movement stack", eDebugImportance.Exit);
+        movementHandler.ClearPath();
         debugHolder.Log("GOTO Exit Called", eDebugImportance.Exit);
     }
 
@@ -60,6 +62,8 @@ public class MoveStateBlock : StateBlock
         if(movementHandler.CheckPathIsEmpty())
         {
             debugHolder.Log("Path was empty", eDebugImportance.Error);
+            debugHolder.Log("Returning active task " + taskHandler.ActiveTask.GetTaskInformation, eDebugImportance.Error);
+            taskHandler.ReturnActiveTask();
             return true;
         }
         // No path was found to the target task

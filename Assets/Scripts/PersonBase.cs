@@ -16,7 +16,7 @@ public class PersonBase : MonoBehaviour
     protected PersonTaskHandler taskHandler = null;
     protected StateHandler stateHandler = null;
     [SerializeField] protected MovementHandler movementHandler = null;
-    [SerializeField] private PersonAIDebugHolder debugHolder = null;
+    [SerializeField] protected PersonAIDebugHolder debugHolder = null;
 
     // The tasks that he can perform
     [SerializeField] private TaskListHolder globalTasks = null;
@@ -30,7 +30,7 @@ public class PersonBase : MonoBehaviour
     [SerializeField] private float minDistanceToTaskPosition = 0.1f;
 
     [Space]
-    private AnimationCommandController animatorController = null;
+    protected AnimationCommandController animatorController = null;
 
     [Space]
     protected TraversalAStarNavigation traversalAStar = null;
@@ -42,7 +42,6 @@ public class PersonBase : MonoBehaviour
 
     [SerializeField] private RoomGraphHolder roomGraph = null;
 
-    private Health health = null;
     [SerializeField] private float burningDamageAmount = 0.1f;
     [SerializeField] private Health healthController = null;
 
@@ -62,7 +61,7 @@ public class PersonBase : MonoBehaviour
         animatorController = GetComponent<AnimationCommandController>();
         traversalGraphHolder = FindObjectOfType<TraversalGraphHolder>();
         traversalAStar = new TraversalAStarNavigation(traversalGraphHolder);
-        taskHandler = new PersonTaskHandler(globalTasks, ScriptableObject.CreateInstance<TaskListHolder>());
+        taskHandler = new PersonTaskHandler(globalTasks, ScriptableObject.CreateInstance<TaskListHolder>(), roomGraph);
 
         stateHandler = new StateHandler(null);
         idleState = new IdleStateBlock(debugHolder, animatorController, taskHandler, stateHandler, minDistanceToTaskPosition, this.transform);
@@ -73,16 +72,24 @@ public class PersonBase : MonoBehaviour
         AddState(ePersonState.Work, workState);
         stateHandler.TransitionToState(startingState);
 
-        health = GetComponent<Health>();
-        if (health == null)
+        if (healthController == null)
         {
             Debug.LogError("Could not find Health component", this);
+        }
+        else
+        {
+            healthController.OnDeath += OnDeath;
         }
 
         void AddState(ePersonState state, StateBlock stateBlock)
         {
             stateHandler.AddState(state, stateBlock.Entry, stateBlock.Exit, stateBlock.Update);
         }
+    }
+
+    protected virtual void OnDeath()
+    {
+
     }
 
     protected void CheckIfOnFire()
@@ -92,9 +99,10 @@ public class PersonBase : MonoBehaviour
             return;
         }
         bool isFireClose = movementHandler.IsCurrentRoomOnFire;
-        if (isFireClose)
+        bool isOnFirePoint= movementHandler.IsCurrentGridPointOnFire;
+        if (isOnFirePoint)
         {
-            health.LoseHealth(burningDamageAmount);
+            healthController.LoseHealth(burningDamageAmount);
         }
 
         for (int i = 0; !isFireClose && i < movementHandler.GetCurrentRoom.GetEntrances.Length; i++)
@@ -105,6 +113,10 @@ public class PersonBase : MonoBehaviour
         }
         if (isFireClose)
         {
+            if (taskHandler.IsActiveTaskInterruptible)
+            {
+                taskHandler.InteruptActiveTask();
+            }
             if (!hasCreatedFireTask)
             {
                 CreateRunFromFireTask();
@@ -115,6 +127,7 @@ public class PersonBase : MonoBehaviour
         {
             isCloseToFire = false;
             isOnFire = false;
+            isOnFirePoint = false;
         }
     }
 
@@ -186,6 +199,11 @@ public class PersonBase : MonoBehaviour
 
     protected void PersonBaseOnDrawGizmos()
     {
-        
+        if(movementHandler != null && movementHandler.GetCurrentRoom != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(movementHandler.GetCurrentRoom.transform.position + movementHandler.GetCurrentRoom.center, 1);
+
+        }
     }
 }

@@ -113,6 +113,7 @@ namespace Pieter.GraphTraversal
                 }
                 for (int i = 0; i < current.vert.Count; i++)
                 {
+                    Debug.DrawLine(current.vert.Position, current.vert.GetAdjacentVertex(i).Position, Color.blue, 3);
                     if (!current.vert.GetAdjacentVertex(i).isPassable)
                     {
                         continue;

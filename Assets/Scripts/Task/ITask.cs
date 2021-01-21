@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ITask
+public interface ITask: IComparable<ITask>
 {
     Func<bool> GetWorkDoneFunction { get; }
     int GetTaskUrgencyLevel { get; }

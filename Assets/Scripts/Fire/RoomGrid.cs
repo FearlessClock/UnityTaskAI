@@ -71,6 +71,7 @@ namespace Pieter.Grid
 
         public int GetGridWidth => grid.GetLength(0);
 
+
         private Vector2Int[] entrancePoints = new Vector2Int[0];
         private int[] entranceIds = null;
         [SerializeField] private float tileSize = 1;
@@ -80,6 +81,31 @@ namespace Pieter.Grid
         private List<AdjacentRoomGridInfo> toAddAdjacentRooms = new List<AdjacentRoomGridInfo>();
         private bool hasBeenInit = false;
         RaycastHit[] hits = new RaycastHit[50];
+
+        private int pointsOnFire = 0;
+
+        public void AddBurningPoint()
+        {
+            pointsOnFire++;
+        }
+
+        public void RemoveBurningPoint()
+        {
+            pointsOnFire--;
+        }
+
+        public void UpdateBurningPoint(bool value)
+        {
+            if (value)
+            {
+                AddBurningPoint();
+            }
+            else
+            {
+                RemoveBurningPoint();
+            }
+        }
+        public bool IsOnFire => pointsOnFire > 0;
 
         public void Initialize(Vector3 position, Quaternion rotation)
         {
@@ -140,6 +166,11 @@ namespace Pieter.Grid
         public Vector2Int GetIntPos(Vector3 fireStartPos)
         {
             return FindGridPointClosestToPosition(fireStartPos);
+        }
+
+        public GridPoint GetGridPoint(Vector3 pos)
+        {
+            return GetGridPoint(GetIntPos(pos));
         }
 
         private Vector2Int FindGridPointClosestToPosition(Vector3 pos)

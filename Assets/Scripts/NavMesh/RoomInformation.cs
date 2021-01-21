@@ -40,13 +40,12 @@ public class RoomInformation : MonoBehaviour
     [FormerlySerializedAs("helfExtents")] public Vector3 extents;
 
     private Dictionary<int, RoomInformation> connectedRooms = new Dictionary<int, RoomInformation>();
-    [SerializeField] private FireGenerator fireGenerator = null;
     [SerializeField] private Vertex centerVertex = null;
     [SerializeField] private WorldSpaceTextDebug worldSpaceTextDebug = null;
 
     public Vector3 RoomCenter => centerVertex.Position;
 
-    public bool IsOnFire { get { if (fireGenerator == null) return false; else return fireGenerator.IsOnFire; } }
+    public bool IsOnFire { get { if (roomGrid == null) return false; else return roomGrid.IsOnFire; } }
 
     public void GetRotatedCenter(out Vector3 center, out Vector3 extents)
     {
@@ -89,19 +88,6 @@ public class RoomInformation : MonoBehaviour
         return null;
     }
 
-    public void StartFire()
-    {
-        fireGenerator.StartFire(this, 0);
-    }
-
-    public void StartFire(int TriangleID)
-    {
-        if (fireGenerator.CanBurn)
-        {
-            fireGenerator.StartFire(this, TriangleID);
-        }
-    }
-
     public RoomInformation GetConnectedRoomFromEntranceWithID(int connectedEntranceID)
     {
         return connectedRooms[connectedEntranceID];
@@ -134,6 +120,7 @@ public class RoomInformation : MonoBehaviour
     public int ID => roomID;
 
     public RoomInformation[] GetConnectedRooms => connectedRooms.Values.ToArray();
+    public int[] GetConnectedEntranceIds => connectedRooms.Keys.ToArray();
 
     public Vertex GetCenterVertex => centerVertex;
 
@@ -144,7 +131,7 @@ public class RoomInformation : MonoBehaviour
     {
         if (showOccupiedSpace)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = IsOnFire? Color.red :Color.yellow;
             Vector3 cent;
             Vector3 ext;
             GetRotatedCenter(out cent, out ext);
@@ -168,7 +155,6 @@ public class RoomInformation : MonoBehaviour
     {
         try
         {
-            Debug.Log("Adding connected room information in room: " + ID + " connected to room: " + containedRoom.ID + " by entrance " + entrance.ID);
             connectedRooms.Add(entrance.ID, containedRoom);
         }
         catch(Exception ex)

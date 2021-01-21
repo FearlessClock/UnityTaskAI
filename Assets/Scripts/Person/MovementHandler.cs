@@ -42,6 +42,13 @@ public class MovementHandler : MonoBehaviour
     public bool IsValid => Path != null;
 
     public bool IsCurrentRoomOnFire { get { if (GetCurrentRoom != null) return GetCurrentRoom.IsOnFire; else return false; } }
+    public bool IsCurrentGridPointOnFire 
+    { 
+        get
+        {
+            return GetCurrentRoom.roomGrid.GetGridPoint(this.transform.position).isOnFire;
+        } 
+    }
 
     private void Awake()
     {
@@ -77,6 +84,11 @@ public class MovementHandler : MonoBehaviour
             Path = null;
             return false;
         }
+    }
+
+    public void ClearPath()
+    {
+        Path = new List<NavMeshMovementLine>();
     }
 
     public bool CheckPathIsEmpty()

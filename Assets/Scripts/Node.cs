@@ -7,6 +7,7 @@ public class Node
     public Object payload;
     [HideInInspector]
     public Node[] connectedNodes = new Node[0];
+    public Vector2 position;
 
     public void AddNode(Node graph)
     {

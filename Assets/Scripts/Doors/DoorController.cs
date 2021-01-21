@@ -11,7 +11,7 @@ public class DoorController : MonoBehaviour
     [SerializeField] private ToggleDoorsWithWalls toggleDoorsWithWalls = null;
     private bool isDoorActive = false;
     public bool IsDoorActive { get { return isDoorActive; } set { isDoorActive = value; toggleDoorsWithWalls.ToggleDoors(value);  ToggleDoor(defaultOpenState); } }
-    public bool IsPassable => isDoorOpen;
+    public bool IsPassable => isDoorOpen || !isDoorActive;
 
     private void Awake()
     {

@@ -24,7 +24,7 @@ public class FireController : MonoBehaviour
     [Range(0,1)]
     [SerializeField] private float chanceToStartNewFire = 0.3f;
 
-    [SerializeField] private LevelGridGeneration gridGeneration = null;
+    private LevelGridGeneration gridGeneration = null;
     private bool fireIsSpreading = false;
     [SerializeField] private float burnRate = 0.1f;
     [SerializeField] private RoomGridHolder roomGridHolder = null;
@@ -69,7 +69,7 @@ public class FireController : MonoBehaviour
         Debug.Log("Fire started at " + room.ID + " " + fireStartPoint);
         fireIsSpreading = true;
         GridPoint startpoint = roomGridHolder.GetGridPoint(fireStartPoint, room);
-        CreateNewFirePoint(new FireBlock() { currentOxygen = 10, currentFuel = fuel + Random.Range(-varianceFuel, varianceFuel), maxFuel = fuel, gridPoint = startpoint, fireResistance = 0, isOnFire = true, smolderTime = smolderTime + Random.Range(-varianceSmolder, varianceSmolder) });
+        CreateNewFirePoint(new FireBlock() { currentOxygen = 10, currentFuel = fuel + Random.Range(-varianceFuel, varianceFuel), maxFuel = fuel, gridPoint = startpoint, fireResistance = 0, IsOnFire = true, smolderTime = smolderTime + Random.Range(-varianceSmolder, varianceSmolder) });
         //Instantiate(firePrefab, startpoint.center, room.transform.rotation, this.transform);
     }
 
@@ -99,7 +99,7 @@ public class FireController : MonoBehaviour
 
         for (int i = 0; i < stepsToCheck && adjacentGridPoints.Count > 0 && i + adjacentPositionCurrentStep < adjacentGridPoints.Count; i++)
         {
-            adjacentGridPoints[i + adjacentPositionCurrentStep].Burn(burnRate, currentTick);
+            adjacentGridPoints[i + adjacentPositionCurrentStep].ScorceUnburned(burnRate, currentTick);
             if (adjacentGridPoints[i + adjacentPositionCurrentStep].CanLightOnFire)
             {
                 CreateNewFirePoint(adjacentGridPoints[i + adjacentPositionCurrentStep]);
@@ -134,7 +134,7 @@ public class FireController : MonoBehaviour
     {
         if(roomsOnFire[point.gridPoint.roomgrid.ID][TwoDToOneD(point.gridPoint.gridPosition, point.gridPoint.roomgrid)] <= FireState.ADJACENT )
         {
-            point.isOnFire = true;
+            point.IsOnFire = true;
             currentFirePositions.Add(point);
             GridPoint[] adjacentRooms = point.gridPoint.GetAllAdjacentGridPoints();
             for (int i = 0; i < adjacentRooms.Length; i++)
@@ -155,6 +155,7 @@ public class FireController : MonoBehaviour
     }
     private void SmolderFire(FireBlock block)
     {
+        block.IsOnFire = false;
         roomsOnFire[block.gridPoint.roomgrid.ID][TwoDToOneD(block.gridPoint.gridPosition, block.gridPoint.roomgrid)] = FireState.SMOLDERING;
     }
 

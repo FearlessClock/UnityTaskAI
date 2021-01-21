@@ -136,4 +136,13 @@ public class WanderTask : ITask
     {
         workTimer -= deltaTime;
     }
+
+    public int CompareTo(ITask other)
+    {
+        if (other == null)
+            return 1;
+
+        else
+            return priority.CompareTo(other.GetPriority);
+    }
 }

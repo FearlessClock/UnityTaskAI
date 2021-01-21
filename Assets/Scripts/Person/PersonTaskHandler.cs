@@ -3,13 +3,17 @@ using Pieter.NavMesh;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class PersonTaskHandler
 {
     private TaskListHolder globalTasks = null;
     private TaskListHolder privateTasks = null;
+
+    private RoomGraphHolder graphHolder = null;
 
     public void DestroyTask()
     {
@@ -34,13 +38,19 @@ public class PersonTaskHandler
         } 
     }
 
-    public void SetNewActiveTask(TraversalGenerator traversalGenerator, Vector3 personLocation, TraversalAStarNavigation traversalNav, ITask fallbackTask)
+    public bool SetNewActiveTask(TraversalGenerator traversalGenerator, Vector3 personLocation, TraversalAStarNavigation traversalNav)
     {
         activeTask = GetNewTask(traversalGenerator, personLocation, traversalNav) ;
         if(activeTask == null)
         {
-            activeTask = fallbackTask;
+            return false;
         }
+        return true;
+    }
+
+    public void SetActiveTask(ITask task)
+    {
+        activeTask = task;
     }
 
     public bool IsActiveTaskValid 
@@ -74,10 +84,11 @@ public class PersonTaskHandler
     }
 
 
-    public PersonTaskHandler(TaskListHolder globalTasks, TaskListHolder privateTasks)
+    public PersonTaskHandler(TaskListHolder globalTasks, TaskListHolder privateTasks, RoomGraphHolder graphHolder)
     {
         this.globalTasks = globalTasks;
         this.privateTasks = privateTasks;
+        this.graphHolder = graphHolder;
     }
 
     public float DistanceToActiveTask(Vector3 pos)
@@ -146,10 +157,13 @@ public class PersonTaskHandler
                 allTasks.RemoveAt(i);
             }
         }
-
-        if(allTasks.Count > 0)
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        allTasks.Sort();
+        if (allTasks.Count > 0)
         {
-            List<NavMeshMovementLine> newPath = new List<NavMeshMovementLine>();
+            List<Node> newPath = new List<Node>();
+            RoomInformation currentRoom = graphHolder.FindRoomAtLocation(personLocation);
             for (int i = 0; i < allTasks.Count; i++)
             {
                 newPath.Clear();
@@ -157,19 +171,25 @@ public class PersonTaskHandler
                 RoomInformation targetRoom = allTasks[i].GetInteractionRoom;
                 if (targetRoom != null)
                 {
-                    Vertex targetVertex = targetRoom.TraversalGenerator.ClosestVertex(personLocation);
-                    newPath = navigation.GetPathFromTo(traversalGenerator.ClosestVertex(targetVertex.Position), targetVertex);
+                    newPath = graphHolder.FindRouteToRoom(currentRoom, targetRoom);
                 }
                 if (newPath != null && newPath.Count > 0)
                 {
                     ITask chosenTask = allTasks[i];
                     RemoveTaskInScopedHolder(allTasks[i]);
                     newPath.Clear();
+                    Debug.Log(sw.ElapsedMilliseconds);
                     return chosenTask;
                 }
             }
         }
+        Debug.Log(sw.ElapsedMilliseconds);
         return null;
+    }
+
+    public void InteruptActiveTask()
+    {
+        ReturnActiveTask();
     }
 
     /// <summary>

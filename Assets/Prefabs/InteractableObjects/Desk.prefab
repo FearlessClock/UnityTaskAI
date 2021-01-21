@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9f3fb48239e4494bad72695a43aee2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chanceToExplode: 1
+  chanceToExplode: 0
   room: {fileID: 0}
 --- !u!1 &7403334454517053130
 GameObject:

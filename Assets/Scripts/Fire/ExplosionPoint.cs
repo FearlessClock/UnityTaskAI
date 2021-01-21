@@ -13,10 +13,6 @@ public class ExplosionPoint : MonoBehaviour
 
     public void StartFire()
     {
-        if (!containedRoom.IsOnFire)
-        {
-            containedRoom.StartFire();
-        }
     }
 
     public Vector3 FireStartLocation => containedRoom.GetCenterVertex.Position;

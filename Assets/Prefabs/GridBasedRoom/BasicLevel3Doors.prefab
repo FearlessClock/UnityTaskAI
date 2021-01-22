@@ -1363,6 +1363,11 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[4].x
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 5271941321942359287, guid: d6e47b912a51ce64093bb0787b48589e,
+        type: 3}
+      propertyPath: blockID
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6010748676074583485, guid: d6e47b912a51ce64093bb0787b48589e,
         type: 3}
       propertyPath: entrancePoints.Array.size

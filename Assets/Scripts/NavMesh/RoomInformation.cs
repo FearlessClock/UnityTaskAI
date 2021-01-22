@@ -173,9 +173,9 @@ public class RoomInformation : MonoBehaviour
         Vector3 adjustedCorner1 = new Vector3(Mathf.Min(point1.x, point2.x), Mathf.Min(point1.y, point2.y), Mathf.Min(point1.z, point2.z));
         Vector3 adjustedCorner2 = new Vector3(Mathf.Max(point1.x, point2.x), Mathf.Max(point1.y, point2.y), Mathf.Max(point1.z, point2.z));
 
-        return position.x > adjustedCorner1.x && position.x < adjustedCorner2.x &&
-                position.y > adjustedCorner1.y && position.y < adjustedCorner2.y &&
-                position.z > adjustedCorner1.z && position.z < adjustedCorner2.z;
+        return position.x >= adjustedCorner1.x && position.x <= adjustedCorner2.x &&
+                position.y >= adjustedCorner1.y && position.y <= adjustedCorner2.y &&
+                position.z >= adjustedCorner1.z && position.z <= adjustedCorner2.z;
     }
 
     public override int GetHashCode()

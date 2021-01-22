@@ -6,4 +6,6 @@ public class GridLevelSquareInformation : MonoBehaviour
 {
     [SerializeField] private RoomInformation roomInformation = null;
     public RoomInformation RoomInfo => roomInformation;
+
+    public int blockID;
 }

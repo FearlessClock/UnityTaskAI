@@ -177,16 +177,19 @@ public class RoomGraphHolder : ScriptableObject
     {
         if (Application.isPlaying)
         {
-            foreach (Node node in rooms)
+            if(rooms != null)
             {
-                RoomInformation roomInfo = (RoomInformation)node.payload;
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(roomInfo.GetCenterVertex.Position, 0.5f);
-                foreach (Node child in node.connectedNodes)
+                foreach (Node node in rooms)
                 {
-                    RoomInformation childRoomInfo = (RoomInformation)child.payload;
+                    RoomInformation roomInfo = (RoomInformation)node.payload;
                     Gizmos.color = Color.green;
-                    Gizmos.DrawLine(childRoomInfo.GetCenterVertex.Position, roomInfo.GetCenterVertex.Position);
+                    Gizmos.DrawSphere(roomInfo.GetCenterVertex.Position, 0.5f);
+                    foreach (Node child in node.connectedNodes)
+                    {
+                        RoomInformation childRoomInfo = (RoomInformation)child.payload;
+                        Gizmos.color = Color.green;
+                        Gizmos.DrawLine(childRoomInfo.GetCenterVertex.Position, roomInfo.GetCenterVertex.Position);
+                    }
                 }
             }
         }

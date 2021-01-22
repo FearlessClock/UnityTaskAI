@@ -25,6 +25,12 @@ namespace Pieter.GraphTraversal
         {
             OnValueUpdated -= call;
         }
+
+        public void Clear()
+        {
+            ResetData();
+        }
+
         public void Notify()
         {
             OnValueUpdated?.Invoke();
@@ -92,6 +98,7 @@ namespace Pieter.GraphTraversal
         public void ResetData()
         {
             traversalLines = new TraversalLine[0];
+            generators = new TraversalGenerator[0];
         }
     }
 }

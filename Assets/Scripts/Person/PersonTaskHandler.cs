@@ -178,7 +178,7 @@ public class PersonTaskHandler
                     ITask chosenTask = allTasks[i];
                     RemoveTaskInScopedHolder(allTasks[i]);
                     newPath.Clear();
-                    Debug.Log(sw.ElapsedMilliseconds);
+                    //Debug.Log(sw.ElapsedMilliseconds);
                     return chosenTask;
                 }
             }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - RoomContainer
+  - ScientistSpawn
   layers:
   - Default
   - TransparentFX

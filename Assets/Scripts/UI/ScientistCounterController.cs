@@ -17,24 +17,23 @@ public class ScientistCounterController : MonoBehaviour
         {
             Destroy(this);
         }
-
+        current.value = 0;
         UpdateText();
     }
 
-    private int total = 0;
-    private int current = 0;
+    [SerializeField] private IntVariable total = null;
+    [SerializeField] private IntVariable current = null;
     [SerializeField] private TextMeshProUGUI textMesh = null;
 
     public void AddScientist()
     {
-        total++;
-        current++;
+        current.value = current.value+1;
         UpdateText();
     }
 
     public void KillScientist()
     {
-        current--;
+        current.value = current.value - 1;
         UpdateText();
     }
 

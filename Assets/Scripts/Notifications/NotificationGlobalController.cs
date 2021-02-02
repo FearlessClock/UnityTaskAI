@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NotificationGlobalController : MonoBehaviour
 {
+    public static NotificationGlobalController instance = null;
     [SerializeField] private LayerMask notificationMask = 0;
     [SerializeField] private NotificationController notification = null;
     [SerializeField] private UINotificationController uINotificationPrefab = null;
@@ -15,6 +16,14 @@ public class NotificationGlobalController : MonoBehaviour
 
     private void Awake()
     {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
         camera = FindObjectOfType<Camera>();
     }
 

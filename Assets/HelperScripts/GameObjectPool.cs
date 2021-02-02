@@ -7,6 +7,7 @@ public class GameObjectPool : MonoBehaviour
     Queue<GameObject> pool;
     [SerializeField] private GameObject[] prefabs;
     [SerializeField] private int poolSize;
+    [SerializeField] private int numberOfSpawnedObjects = 0;
 
     public void ReturnObject(GameObject gameObject)
     {
@@ -27,6 +28,7 @@ public class GameObjectPool : MonoBehaviour
             }
             thing.SetActive(false);
             pool.Enqueue(thing);
+            numberOfSpawnedObjects++;
         }
     }
 
@@ -53,6 +55,7 @@ public class GameObjectPool : MonoBehaviour
         GameObject obj = pool.Dequeue();
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.transform.parent = parent;
+        obj.SetActive(true);
         return obj;
     }
 

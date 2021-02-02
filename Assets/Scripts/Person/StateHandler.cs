@@ -11,6 +11,13 @@ public class StateHandler
 
     public string GetCurrentStateName => CurrentState.ToString();
 
+    private ePersonState startingState = ePersonState.Idle;
+    public ePersonState SetStartingState
+    {
+        get { return startingState; }
+        set { startingState = value; }
+    }
+
     private Dictionary<ePersonState, State> stateDict = new Dictionary<ePersonState, State>();
 
     public StateHandler(State[] states)
@@ -50,6 +57,12 @@ public class StateHandler
         {
             FinishState();
         }
+    }
+
+    public void ResetStates()
+    {
+        stateStack = new Stack<ePersonState>();
+        TransitionToState(startingState);
     }
 }
 

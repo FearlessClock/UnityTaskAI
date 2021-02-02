@@ -1,9 +1,16 @@
 ﻿
+using Pieter.NavMesh;
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Human : PersonBase
 {
+    // We suppose that the start position is where it spawns
+    [SerializeField] private Vector3 startPosition;
+    [SerializeField] private RoomInformation startRoom = null;
+    public Action<Human> OnScientistInactive = null;
+    [SerializeField] private float wanderChangeRoomChance = 50;
 
     private void OnDestroy()
     {
@@ -13,6 +20,27 @@ public class Human : PersonBase
     private void Awake()
     {
         StartUp();
+        startRoom = movementHandler.GetRoomInformationForLocation(startPosition);
+        DayCycleController.OnEndOfDay += OnEndOfDay;
+    }
+
+    private void OnEndOfDay()
+    {
+        InteruptTask();
+        WalkTask task = new WalkTask("Leave the building", TaskScope.Personal, startPosition, startRoom, -1, -1, true, 1, OnLeftBuilding);
+        debugHolder.Log("End of Day, return home", eDebugImportance.Unimportant);
+        taskHandler.AddNewTask(task);
+    }
+
+    private bool OnLeftBuilding()
+    {
+        OnScientistInactive?.Invoke(this);
+        return true;
+    }
+
+    internal void SetStartPoint(Vector3 position)
+    {
+        startPosition = position;
     }
 
     private void OnEnable()
@@ -23,6 +51,12 @@ public class Human : PersonBase
     protected override void OnDeath()
     {
         ScientistCounterController.instance.KillScientist();
+        DayCycleController.OnEndOfDay -= OnEndOfDay;
+    }
+
+    private void OnDisable()
+    {
+        DayCycleController.OnEndOfDay -= OnEndOfDay;
     }
 
     private void Update()
@@ -40,8 +74,18 @@ public class Human : PersonBase
         {
             if (!taskHandler.SetNewActiveTask(movementHandler.GetCurrentRoom.TraversalGenerator, this.transform.position, traversalAStar))
             {
-                WanderTask task = new WanderTask("Wander " + movementHandler.GetCurrentRoom.name, TaskScope.Personal, movementHandler.GetCurrentRoom.GetRandomSpotInsideRoom, movementHandler.GetCurrentRoom, null, 2, 5, true, 1, 3);
-                debugHolder.Log("No active and available tasks found, setting wander as active", eDebugImportance.Unimportant);
+                float randomValue = Random.Range(0, 100);
+                RoomInformation room = movementHandler.GetCurrentRoom;
+                if (randomValue < wanderChangeRoomChance)
+                {
+                    NavMeshEntrance randomEntrance = room.GetRandomEntrance();
+                    if (randomEntrance.IsUsed && randomEntrance.IsPassable)
+                    {
+                        room = room.GetConnectedRoomFromEntranceWithID(randomEntrance.ID);
+                    }
+                }
+                WanderTask task = new WanderTask("Wander " + room.name, TaskScope.Personal, room.GetRandomSpotInsideRoom, room, null, 2, 5, true, 1, 3);
+                debugHolder.Log("No active and available tasks found, setting wander as active to " + room.name, eDebugImportance.Unimportant);
                 taskHandler.SetActiveTask(task);
             }
 

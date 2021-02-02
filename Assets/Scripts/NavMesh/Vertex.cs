@@ -40,7 +40,8 @@ namespace Pieter.NavMesh
         public int ID = -1;
 
         [SerializeField] private DoorController doorController = null;
-        public bool isPassable => (doorController == null) || (doorController != null && doorController.IsPassable);
+        public bool IsDoorway => doorController != null && doorController.IsDoorActive;
+        public bool IsPassable => (doorController == null) || (doorController != null && doorController.IsPassable);
         public Vector3 Position => this.transform.position;
         public Vector3 savedPosition = new Vector3();
         public Vector3 LocalPosition => this.transform.localPosition;

@@ -20,6 +20,7 @@ namespace Save
                 blocks.Add(new LevelBlock() { ID = gennedRooms[i].blockID, x = gennedRooms[i].RoomInfo.transform.position.x, z = gennedRooms[i].RoomInfo.transform.position.z });
             }
             Lab lab = new Lab() { blocks = blocks };
+            lab.availableSpots = gen.GetAvailablePositions;
             lab.numberOfAliveScientists = currentNumberOfScientists.value;
             lab.numberOfScientists = totalNumberOfScientists.value;
             lab.maxBuildings = gen.MaxBuildings;
@@ -44,6 +45,7 @@ namespace Save
     public class Lab
     {
         public List<LevelBlock> blocks;
+        public Vector2Int[] availableSpots;
         public int numberOfAliveScientists;
         public int numberOfScientists;
         public int maxBuildings;

@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class FireBlock
 {
+    public GameObject instance = null;
     public float fireResistance = 1;
     public float smolderTime = 1;
     public float maxFuel = 1;

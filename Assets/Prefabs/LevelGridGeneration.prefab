@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ecef449e7b32784995afaa02497c281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelBlocks:
-  - {fileID: 9067046901041903100, guid: b4b3e9df347e56542891eca0eb319e69, type: 3}
-  - {fileID: 7059867841906196204, guid: f9eaf021c59e2e549af53cd6fb2d0197, type: 3}
+  levelBlocks: {fileID: 11400000, guid: 1bc5d9eba0c75184b9584e37d067701e, type: 2}
+  entranceBlock: {fileID: 5271941321942359287, guid: 311142543433f7148a5c83fad0a9dff4,
+    type: 3}
   gridWorldHolder: {fileID: 11400000, guid: ff4eaa2cfa1a9f841a22b914df0a6282, type: 2}
   roomGridHolder: {fileID: 11400000, guid: 46edb6d342bb2a04b9c96d92dc34e519, type: 2}
   tileSize: 20
@@ -57,9 +57,6 @@ MonoBehaviour:
   maxPositionY: {fileID: 11400000, guid: 9e30c8b096378894a855f92b63a15216, type: 2}
   minPositionX: {fileID: 11400000, guid: dc4e3485e5c65ef4aad5acde90f50fe3, type: 2}
   minPositionY: {fileID: 11400000, guid: abdf0b1e3a19f8d409ad83c43cb8461d, type: 2}
-  OnLevelGenerationFinished:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2677810432399626597
 MonoBehaviour:
   m_ObjectHideFlags: 0

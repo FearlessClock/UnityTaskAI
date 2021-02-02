@@ -12,6 +12,7 @@ public class MovementHandler : MonoBehaviour
     [SerializeField] private NavMeshMovementLine[] pathArray = null;
     private RoomInformation currentRoom = null;
     [SerializeField] private GridMapHolder gridWorldHolder = null;
+    [SerializeField] private RoomGraphHolder roomGraphHolder = null;
     private ITask activeTask = null;
     private Vector3 target;
     private Vertex associatedVertexTarget = null;
@@ -23,6 +24,8 @@ public class MovementHandler : MonoBehaviour
     public void SetPathIndexToZero() { currentPathPosition = 0; }
 
     public RoomInformation GetCurrentRoom => currentRoom;
+    public Action<int> OnPassedThroughDoor = null;
+    private int currentCombo = 0;
 
     public List<NavMeshMovementLine> Path 
     { 
@@ -104,6 +107,10 @@ public class MovementHandler : MonoBehaviour
     public void SetPathToTargetToFirst()
     {
         targets.Add(Path[currentPathPosition].point);
+        if(targets.Count > 10)
+        {
+            targets.RemoveAt(0);
+        }
         target = Path[currentPathPosition].point;
         associatedVertexTarget = Path[currentPathPosition].associatedVertex;
     }
@@ -117,7 +124,7 @@ public class MovementHandler : MonoBehaviour
     {
         int isDone = 0;
         //Check if the target is an open vertex
-        if (associatedVertexTarget == null || (associatedVertexTarget != null && associatedVertexTarget.isPassable))
+        if (associatedVertexTarget == null || (associatedVertexTarget != null && associatedVertexTarget.IsPassable))
         {
             float distanceToTaskPosition = GetDistanceToPosition(target);
             if (distanceToTaskPosition >= minDistanceToTaskLocation)
@@ -130,6 +137,7 @@ public class MovementHandler : MonoBehaviour
                 if (Path != null && Path.Count == currentPathPosition+1)
                 {
                     this.transform.position = activeTask.GetInteractionPosition;
+                    currentCombo = 0;
                     isDone = 1;
                 }
                 else if (Path != null && currentPathPosition+1 < Path.Count)
@@ -141,6 +149,16 @@ public class MovementHandler : MonoBehaviour
                     else
                     {
                         currentRoom = gridWorldHolder.GetRoomAtWorldPosition(this.transform.position);
+                    }
+                    if (currentRoom == null)
+                    {
+                        currentRoom = roomGraphHolder.FindClosestRoom(this.transform.position);
+                    }
+
+                    if (Path[currentPathPosition].associatedVertex != null && Path[currentPathPosition].associatedVertex.IsDoorway)
+                    {
+                        currentCombo++;
+                        OnPassedThroughDoor?.Invoke(currentCombo);
                     }
                     currentPathPosition++;
                     SetPathToTargetToFirst();

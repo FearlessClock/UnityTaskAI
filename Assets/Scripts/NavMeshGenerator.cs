@@ -27,7 +27,14 @@ namespace Pieter.NavMesh
         {
             get
             {
-                return connectedEntrance.IsOpen;
+                if(connectedEntrance != null)
+                {
+                    return connectedEntrance.IsOpen;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
         public bool IsOpen 
@@ -46,7 +53,7 @@ namespace Pieter.NavMesh
         }
 
         private bool isDoorUsed = false;
-        public bool IsUsed { set { isDoorUsed = value; if(doorController != null) doorController.IsDoorActive = value; } }
+        public bool IsUsed { get { return isDoorUsed; } set { isDoorUsed = value; if(doorController != null) doorController.IsDoorActive = value; } }
     }
 
     public class NavMeshGenerator : MonoBehaviour

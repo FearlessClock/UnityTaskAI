@@ -41,7 +41,31 @@ public class RoomGraphHolder : ScriptableObject
                 break;
             }
         }
+        if(room == null)
+        {
+            room = FindClosestRoom(position);
+        }
         return room;
+    }
+
+    public RoomInformation FindClosestRoom(Vector3 position)
+    {
+        RoomInformation room = (rooms[0].payload as RoomInformation);
+        float closestDistance = SqrDistance(room.WorldSpaceCenter, position);
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            float dis = SqrDistance(room.WorldSpaceCenter, position);
+            if (dis< closestDistance)
+            {
+                room = (rooms[i].payload as RoomInformation);
+                closestDistance = dis; 
+            }
+        }
+        return room;
+    }
+    private float SqrDistance(Vector3 a, Vector3 b)
+    {
+        return Mathf.Pow(a.x - b.x, 2) + Mathf.Pow(a.z - b.z, 2);
     }
 
     public void AddChild(RoomInformation selectedRoom, RoomInformation child)
@@ -96,7 +120,7 @@ public class RoomGraphHolder : ScriptableObject
         {
             roomGraphNavigation = new AStarRoomGraphNavigation(rooms);
         }
-        return roomGraphNavigation.GetPathFromTo(GetNodeFromRoom(startingRoom), GetNodeFromRoom(endingRoom), CheckIfDoorsAreOpen, false, false);
+        return roomGraphNavigation.GetPathFromTo(GetNodeFromRoom(startingRoom), GetNodeFromRoom(endingRoom), CheckIfDoorsAreOpen, true, false);
     }
 
     private bool CheckIfDoorsAreOpen(Node a, Node b)
@@ -114,11 +138,17 @@ public class RoomGraphHolder : ScriptableObject
         return false;
     }
 
-    private Node GetNodeFromRoom(RoomInformation startingRoom)
+    private Node GetNodeFromRoom(RoomInformation room)
     {
+        if(room == null)
+        {
+            Debug.LogError("The room is null in GetNodeFromRoom");
+            return null;
+
+        }
         for (int i = 0; i < rooms.Length; i++)
         {
-            if (startingRoom.Equals(rooms[i].payload))
+            if (room.Equals(rooms[i].payload))
             {
                 return rooms[i];
             }

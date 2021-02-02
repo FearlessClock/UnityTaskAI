@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
+using DG.Tweening;
 
 public class CameraController : MonoBehaviour
 {
@@ -46,14 +49,30 @@ public class CameraController : MonoBehaviour
     [SerializeField] private FloatVariable minPositionX;
     [SerializeField] private FloatVariable minPositionZ;
 
+    private bool hasLostControlOfMovement = false;
+
+    public float ZoomPercentage => (targetPosition.y - zoomMinHeight) / (zoomMaxHeight - zoomMinHeight);
+     
+
     private void Awake()
     {
         targetPosition = this.transform.position;
         camera = GetComponentInChildren<Camera>();
     }
 
+    public void SlideTo(Vector3 vec, float moveDuration)
+    {
+        hasLostControlOfMovement = true;
+        this.transform.DOMove(vec, moveDuration).SetEase(Ease.OutSine).OnComplete(() => hasLostControlOfMovement = false);
+        targetPosition = vec;
+    }
+
     private void Update()
     {
+        if (hasLostControlOfMovement) 
+        {
+            return;
+        }
         updatedDragXSpeed = dragXSpeed * (Screen.width / refScreenSize.x);
         updatedDragZSpeed = dragZSpeed * (Screen.height / refScreenSize.y);
 

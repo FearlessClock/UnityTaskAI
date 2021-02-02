@@ -157,8 +157,6 @@ public class PersonTaskHandler
                 allTasks.RemoveAt(i);
             }
         }
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
         allTasks.Sort();
         if (allTasks.Count > 0)
         {
@@ -178,12 +176,10 @@ public class PersonTaskHandler
                     ITask chosenTask = allTasks[i];
                     RemoveTaskInScopedHolder(allTasks[i]);
                     newPath.Clear();
-                    //Debug.Log(sw.ElapsedMilliseconds);
                     return chosenTask;
                 }
             }
         }
-        Debug.Log(sw.ElapsedMilliseconds);
         return null;
     }
 

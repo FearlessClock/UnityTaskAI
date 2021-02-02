@@ -14,6 +14,9 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] private GameObject tester = null;
     [SerializeField] private Save.SaveSystem saveSystem = null;
 
+    [SerializeField] private GameObject gameplayUI = null;
+    [SerializeField] private GameObject nighttimeUI = null;
+
     private void Awake()
     {
         roomGraphHolder.Clear();
@@ -41,18 +44,35 @@ public class LevelLoader : MonoBehaviour
     {
         roomGraphHolder.Clear();
         traversalGraphHolder.Clear();
-        spawner.RemoveScientists();
-        fireController.gameObject.SetActive(false);
-        tester.gameObject.SetActive(false);
+        EndDay();
         yield return new WaitForEndOfFrame();
     }
 
     private IEnumerator DelayReactivation()
     {
         yield return new WaitForEndOfFrame();
+        gameplayUI.SetActive(true);
+        StartNewDay();
+    }
+
+    public void StartNewDay()
+    {
+        spawner.RemoveScientists();
+        ScientistCounterController.instance.ResetScientists();
         StartCoroutine(spawner.SpawnScientist());
         fireController.gameObject.SetActive(true);
         tester.gameObject.SetActive(true);
         DayCycleController.instance.StartDay();
+        gameplayUI.SetActive(true);
+        nighttimeUI.SetActive(false);
+    }
+
+    public void EndDay()
+    {
+        spawner.RemoveScientists();
+        fireController.gameObject.SetActive(false);
+        tester.gameObject.SetActive(false);
+        gameplayUI.SetActive(false);
+        nighttimeUI.SetActive(true);
     }
 }

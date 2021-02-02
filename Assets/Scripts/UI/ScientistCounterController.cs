@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -40,5 +41,10 @@ public class ScientistCounterController : MonoBehaviour
     private void UpdateText()
     {
         textMesh.SetText(current + "/" + total);
+    }
+
+    public void ResetScientists()
+    {
+        current.value = 0;
     }
 }

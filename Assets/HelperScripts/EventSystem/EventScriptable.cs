@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HelperScripts.EventSystem
 {
-    [CreateAssetMenu(fileName = "New Event", menuName = "UnityHelperScripts/Event Variable")]
+    [CreateAssetMenu(fileName = "New Event", menuName = "UnityHelperScripts/Event system/Event Variable")]
     public class EventScriptable : ScriptableObject
     {
         [SerializeField] private List<EventListener> callbacks = new List<EventListener>();

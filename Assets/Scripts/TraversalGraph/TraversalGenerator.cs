@@ -86,11 +86,14 @@ namespace Pieter.GraphTraversal
         {
             foreach (TraversalEntrance ent in entrances)
             {
-                for (int i = 0; i < containedRoom.EntrancePoints.Length; i++)
+                if(containedRoom != null && containedRoom.EntrancePoints != null)
                 {
-                    if (containedRoom.EntrancePoints.Entrances[i].entrance.ID == ent.vertex.ID)
+                    for (int i = 0; i < containedRoom.EntrancePoints.Length; i++)
                     {
-                        ent.navMeshEntrance = containedRoom.EntrancePoints.Entrances[i];
+                        if (containedRoom.EntrancePoints.Entrances[i].entrance.ID == ent.vertex.ID)
+                        {
+                            ent.navMeshEntrance = containedRoom.EntrancePoints.Entrances[i];
+                        }
                     }
                 }
             }
@@ -234,6 +237,10 @@ namespace Pieter.GraphTraversal
                         if (!generator.traversalLines[i].adjacentVertexes.Contains(vertex2.Adjacent[j]))
                         {
                             generator.traversalLines[i].adjacentVertexes.Add(vertex2.Adjacent[j]);
+                            if(vertex2.IsDoorway && !vertex1.IsDoorway)
+                            {
+                                vertex1.SetDoorController(vertex2.GetDoorController);
+                            }
                             vertex2.Adjacent[j].RemoveAdjacentVertex(vertex2);
                             vertex2.Adjacent[j].AddAdjacentNode(vertex1);
                         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,10 @@ public class DayCycleController : MonoBehaviour
     [SerializeField] private int timeSpeed = 3;
     private float endTimeMinutes = 0;
 
+    public static Action OnEndOfDay = null;
+
+    public bool IsEndOfDay => isDayActive;
+
     private void Awake()
     {
         if (instance == null)
@@ -23,6 +28,7 @@ public class DayCycleController : MonoBehaviour
         else
         {
             Destroy(this);
+            return;
         }
         currentTime = startingTime.y + startingTime.x * 60;
         endTimeMinutes = endTime.y + endTime.x * 60;
@@ -31,11 +37,14 @@ public class DayCycleController : MonoBehaviour
     public void StartDay()
     {
         isDayActive = true;
+        currentTime = startingTime.y + startingTime.x * 60;
+        endTimeMinutes = endTime.y + endTime.x * 60;
     }
 
     public void EndOfDay()
     {
         isDayActive = false;
+        OnEndOfDay?.Invoke();
     }
 
     private void Update()

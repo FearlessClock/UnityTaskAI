@@ -59,6 +59,10 @@ namespace Assets.Scripts.Person
             if (taskHandler.ActiveTask.IsWorkDone)
             {
                 debugHolder.Log("Work is done", eDebugImportance.State);
+                if(taskHandler.ActiveTask.GetInteractableObject != null)
+                {
+                    taskHandler.ActiveTask.GetInteractableObject.WorkDone();
+                }
                 taskHandler.ActiveTask.GetWorkDoneFunction?.Invoke();
                 animatorController.ChangeState(taskHandler.ActiveTask.GetWorkAnimationType);
                 return true;

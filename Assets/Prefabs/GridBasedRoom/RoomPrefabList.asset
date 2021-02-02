@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46adfcd6399abc748b8bc276323bdbff, type: 3}
+  m_Name: RoomPrefabList
+  m_EditorClassIdentifier: 
+  gridLevels:
+  - {fileID: 7059867841906196204, guid: f9eaf021c59e2e549af53cd6fb2d0197, type: 3}
+  - {fileID: 9067046901041903100, guid: b4b3e9df347e56542891eca0eb319e69, type: 3}
+  - {fileID: 7145850455372209982, guid: f14395383ce471c44bd463b80ff31626, type: 3}

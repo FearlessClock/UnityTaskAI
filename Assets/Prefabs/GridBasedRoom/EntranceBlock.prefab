@@ -604,6 +604,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomInformation: {fileID: 7160070216463425875}
   blockID: 0
+  sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  gridPoint: {x: 0, y: 0}
 --- !u!114 &7160070216463425875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2359,6 +2361,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8089779459058478583}
     m_Modifications:
+    - target: {fileID: 1582170996508206350, guid: b856910d5b443ec46bd1402b6f5c0c4b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1792179744544042084, guid: b856910d5b443ec46bd1402b6f5c0c4b,
         type: 3}
       propertyPath: m_RootOrder
@@ -5531,6 +5538,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8089779459058478583}
     m_Modifications:
+    - target: {fileID: 1582170996508206350, guid: b856910d5b443ec46bd1402b6f5c0c4b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1792179744544042084, guid: b856910d5b443ec46bd1402b6f5c0c4b,
         type: 3}
       propertyPath: m_RootOrder
@@ -7474,6 +7486,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8089779459058478583}
     m_Modifications:
+    - target: {fileID: 1582170996508206350, guid: b856910d5b443ec46bd1402b6f5c0c4b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1792179744544042084, guid: b856910d5b443ec46bd1402b6f5c0c4b,
         type: 3}
       propertyPath: m_RootOrder

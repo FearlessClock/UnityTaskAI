@@ -70,6 +70,7 @@ public class PersonBase : MonoBehaviour
         AddState(ePersonState.Move, moveState);
         workState = new WorkStateBlock(debugHolder, animatorController, taskHandler);
         AddState(ePersonState.Work, workState);
+        stateHandler.SetStartingState = startingState;
         stateHandler.TransitionToState(startingState);
 
         if (healthController == null)
@@ -92,6 +93,12 @@ public class PersonBase : MonoBehaviour
 
     }
 
+    protected void InteruptTask()
+    {
+        debugHolder.Log("Task interupted by Human", eDebugImportance.Important);
+        taskHandler.InteruptActiveTask();
+        stateHandler.ResetStates();
+    }
     protected void CheckIfOnFire()
     {
         if (movementHandler.GetCurrentRoom == null)

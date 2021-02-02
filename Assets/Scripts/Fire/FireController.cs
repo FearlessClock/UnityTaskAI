@@ -10,7 +10,7 @@ public enum FireState { NOTHING = 0, ADJACENT = 1, BURNING = 2, SMOLDERING = 3}
 public class FireController : MonoBehaviour
 {
     private Vector2Int fireStartPoint;
-    [SerializeField] private GameObject firePrefab = null;
+    [SerializeField] private GameObjectPool firePool = null;
     private List<FireBlock> currentFirePositions = new List<FireBlock>();
     private List<FireBlock> adjacentGridPoints = new List<FireBlock>();
     private List<FireBlock> finishedBurningPoints = new List<FireBlock>();
@@ -136,6 +136,8 @@ public class FireController : MonoBehaviour
         {
             point.IsOnFire = true;
             currentFirePositions.Add(point);
+            GameObject fireInstances = firePool.Get(point.gridPoint.center, Quaternion.identity, this.transform);
+            point.instance = fireInstances;
             GridPoint[] adjacentRooms = point.gridPoint.GetAllAdjacentGridPoints();
             for (int i = 0; i < adjacentRooms.Length; i++)
             {
@@ -152,11 +154,19 @@ public class FireController : MonoBehaviour
     private void RemoveRoomOnFire(FireBlock block)
     {
         roomsOnFire[block.gridPoint.roomgrid.ID][TwoDToOneD(block.gridPoint.gridPosition, block.gridPoint.roomgrid)] = FireState.NOTHING;
+        if(block.instance != null)
+        {
+            firePool.ReturnObject(block.instance);
+        }
     }
     private void SmolderFire(FireBlock block)
     {
         block.IsOnFire = false;
         roomsOnFire[block.gridPoint.roomgrid.ID][TwoDToOneD(block.gridPoint.gridPosition, block.gridPoint.roomgrid)] = FireState.SMOLDERING;
+        if (block.instance != null)
+        {
+            firePool.ReturnObject(block.instance);
+        }
     }
 
     private int TwoDToOneD(Vector2Int gridPosition, RoomGrid room)

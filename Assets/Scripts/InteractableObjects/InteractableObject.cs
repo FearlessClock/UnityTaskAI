@@ -9,6 +9,7 @@ public class InteractableObject : MonoBehaviour
 {
     [SerializeField] protected Transform interactionPoint = null;
     [SerializeField] protected RoomGraphHolder roomGraphHolder = null;
+    [SerializeField] protected float scoreForFinishing = 10;
     private bool isWorking = true;
     public bool IsWorking => isWorking;
 
@@ -23,6 +24,8 @@ public class InteractableObject : MonoBehaviour
     }
 
     public virtual bool Work() { return true; }
+
+    public virtual void WorkDone() { ScoreController.instance.UpdateScore(scoreForFinishing); }
 
     public void ExplodeObject()
     {

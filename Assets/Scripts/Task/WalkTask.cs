@@ -23,6 +23,7 @@ public class WalkTask : ITask
     private int urgencyLevel = 1;
     private Func<bool> onDoneFunction = null;
     private Action OnTaskInvalidate = null;
+    public string taskName = "";
 
     public WalkTask(string name, TaskScope scope, Vector3 position, RoomInformation containedRoom, float timeLimit, float priority, bool isinterruptible, int urgencyLevel, Func<bool> onDoneFunction)
     {
@@ -74,7 +75,6 @@ public class WalkTask : ITask
     public int GetTaskUrgencyLevel => urgencyLevel;
 
 
-    public string taskName = "";
     public System.Func<bool> GetWorkDoneFunction => onDoneFunction;
 
     public Action onTaskInvalidate => OnTaskInvalidate;

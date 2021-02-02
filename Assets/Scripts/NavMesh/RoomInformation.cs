@@ -37,6 +37,7 @@ public class RoomInformation : MonoBehaviour
 
     public bool showOccupiedSpace = false;
     public Vector3 center;
+    public Vector3 WorldSpaceCenter => center + this.transform.position;
     [FormerlySerializedAs("helfExtents")] public Vector3 extents;
 
     private Dictionary<int, RoomInformation> connectedRooms = new Dictionary<int, RoomInformation>();
@@ -90,7 +91,15 @@ public class RoomInformation : MonoBehaviour
 
     public RoomInformation GetConnectedRoomFromEntranceWithID(int connectedEntranceID)
     {
-        return connectedRooms[connectedEntranceID];
+        try
+        {
+            return connectedRooms[connectedEntranceID];
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex.Message + " " + connectedEntranceID);
+            return null;
+        }
     }
 
     public override bool Equals(object other)

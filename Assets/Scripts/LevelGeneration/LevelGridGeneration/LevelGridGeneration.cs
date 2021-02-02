@@ -9,8 +9,9 @@ using UnityEngine.Events;
 
 public class LevelGridGeneration : MonoBehaviour
 {
-    [SerializeField] private GridLevelSquareInformation[] levelBlocks = null;
+    [SerializeField] private RoomPrefabsList levelBlocks = null;
     [SerializeField] private GridLevelSquareInformation entranceBlock = null;
+
     Dictionary<int, GridLevelSquareInformation> roomPrefabsIds = new Dictionary<int, GridLevelSquareInformation>();
     [SerializeField] private GridMapHolder gridWorldHolder = null;
     [SerializeField] private RoomGridHolder roomGridHolder = null;
@@ -33,20 +34,26 @@ public class LevelGridGeneration : MonoBehaviour
     public GridLevelSquareInformation[] GeneratedRooms => generatedRooms.ToArray();
 
     public int MaxBuildings => numberOfRooms;
+    private int buildingIdCounter = 0;
+    private List<Vector2Int> availableSpots = new List<Vector2Int>();
+    public Vector2Int[] GetAvailablePositions => availableSpots.ToArray();
+
+    public int GetTileSize => tileSize;
 
     private void Awake()
     {
         roomPrefabsIds.Add(entranceBlock.blockID, entranceBlock);
         for (int i = 0; i < levelBlocks.Length; i++)
         {
-            roomPrefabsIds.Add(levelBlocks[i].blockID, levelBlocks[i]);
+            roomPrefabsIds.Add(levelBlocks.gridLevels[i].blockID, levelBlocks.gridLevels[i]);
         }
     }
 
     public void GenerateLevel()
     {
         ResetValues();
-        StartCoroutine(GenerateBuilding(numberOfRooms, numberOfRooms, new List<Vector2Int>() { new Vector2Int(0, 0) }));
+        availableSpots.Add(new Vector2Int(0, 0));
+        StartCoroutine(GenerateBuilding(numberOfRooms, numberOfRooms, availableSpots));
     }
 
     public void GenerateLevel(Lab lab)
@@ -76,7 +83,7 @@ public class LevelGridGeneration : MonoBehaviour
     {
         for (int i = 0; i < levelBlocks.Length; i++)
         {
-            levelBlocks[i].RoomInfo.EntrancePoints.UpdateEntranceValues();
+            levelBlocks.gridLevels[i].RoomInfo.EntrancePoints.UpdateEntranceValues();
         }
     }
 
@@ -85,10 +92,13 @@ public class LevelGridGeneration : MonoBehaviour
     { 
         Vector2Int currentGridPoint = new Vector2Int((int)lab.blocks[index].x / tileSize, (int)lab.blocks[index].z / tileSize);
         int numberOfBuildingsBuilt = MaxBuildings - index;
+        availableSpots.Clear();
+        availableSpots.AddRange(lab.availableSpots);
         List<RoomInformation> neighborRoomsForFirstDirectionTest = GetNeighbouringRooms(currentGridPoint, new Vector2Int[4] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right });
         //Build the first room
         Vector3 pos = Vec2IntToVec3D(currentGridPoint * tileSize);
         GridLevelSquareInformation room = GenerateRoom(lab.maxBuildings, numberOfBuildingsBuilt, currentGridPoint, pos, roomPrefabsIds[lab.blocks[index].ID]);
+        room.gridPoint = currentGridPoint;
         generatedRooms.Add(room);
 
         if (index+1 < lab.blocks.Count)
@@ -98,14 +108,14 @@ public class LevelGridGeneration : MonoBehaviour
         OnDoneLevelGeneration?.Invoke();
     }
 
-    private IEnumerator GenerateBuilding(int maxBuildings, int numberOfBuildings, List<Vector2Int> availableSpots)
+    private IEnumerator GenerateBuilding(int maxBuildings, int numberOfBuildings, List<Vector2Int> availablePositions)
     {
         Vector2Int currentGridPoint;
-        if (availableSpots.Count > 0)
+        if (availablePositions.Count > 0)
         {
-            int randomIndex = Random.Range(0, availableSpots.Count);
-            currentGridPoint = availableSpots[randomIndex];
-            availableSpots.RemoveAt(randomIndex);
+            int randomIndex = Random.Range(0, availablePositions.Count);
+            currentGridPoint = availablePositions[randomIndex];
+            availablePositions.RemoveAt(randomIndex);
 
             List<RoomInformation> neighborRoomsForFirstDirectionTest = GetNeighbouringRooms(currentGridPoint, new Vector2Int[4] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right });
             //Build the first room
@@ -113,31 +123,45 @@ public class LevelGridGeneration : MonoBehaviour
             GridLevelSquareInformation randomRoom = GetWorkingRandomRoom(pos, neighborRoomsForFirstDirectionTest);
             if (randomRoom == null)
             {
-                yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
-                //return null;
+                yield return GenerateBuilding(maxBuildings, numberOfBuildings, availablePositions);
             }
             else
             {
-                GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, randomRoom);
-                generatedRooms.Add(room);
-                numberOfBuildings--;
+                numberOfBuildings = CreateRoom(maxBuildings, numberOfBuildings, availablePositions, currentGridPoint, pos, randomRoom);
 
                 if (numberOfBuildings > 0)
                 {
-                    Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
-                    foreach (Vector2Int dir in availableDirections)
-                    {
-                        if (!availableSpots.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
-                        {
-                            availableSpots.Add(currentGridPoint + dir);
-                        }
-                    }
-
-                    yield return GenerateBuilding(maxBuildings, numberOfBuildings, availableSpots);
+                    yield return GenerateBuilding(maxBuildings, numberOfBuildings, availablePositions);
                 }
             }
         }
         OnDoneLevelGeneration?.Invoke();
+    }
+
+    public void CreateNewRoom(Vector2Int roomGridPoint, GridLevelSquareInformation room)
+    {
+        availableSpots.Remove(roomGridPoint);
+        Vector3 pos = Vec2IntToVec3D(roomGridPoint * tileSize);
+        numberOfRooms = CreateRoom(MaxBuildings, numberOfRooms, availableSpots, roomGridPoint, pos, room);
+    }
+
+    private int CreateRoom(int maxBuildings, int numberOfBuildings, List<Vector2Int> availablePositions, Vector2Int currentGridPoint, Vector3 pos, GridLevelSquareInformation randomRoom)
+    {
+        GridLevelSquareInformation room = GenerateRoom(maxBuildings, numberOfBuildings, currentGridPoint, pos, randomRoom);
+        room.gridPoint = currentGridPoint;
+        generatedRooms.Add(room);
+        numberOfBuildings--;
+
+        Vector2Int[] availableDirections = room.RoomInfo.EntrancePoints.Directions;
+        foreach (Vector2Int dir in availableDirections)
+        {
+            if (!availablePositions.Contains(currentGridPoint + dir) && gridWorldMap.IsGridSpaceFree(currentGridPoint + dir, Vector2Int.one))
+            {
+                availablePositions.Add(currentGridPoint + dir);
+            }
+        }
+
+        return numberOfBuildings;
     }
 
     private GridLevelSquareInformation GenerateRoom(int maxBuildings, int numberOfBuildings, Vector2Int gridPosition, Vector3 worldSpacePosition, GridLevelSquareInformation randomRoom)
@@ -161,7 +185,7 @@ public class LevelGridGeneration : MonoBehaviour
         }
 
         GridLevelSquareInformation room = Instantiate<GridLevelSquareInformation>(randomRoom, this.transform);
-        room.RoomInfo.SetID(maxBuildings - numberOfBuildings);
+        room.RoomInfo.SetID(buildingIdCounter++);
         room.transform.position = worldSpacePosition;
         gridWorldMap.AddRectangle(gridPosition, Vector2Int.one, room.RoomInfo);
 
@@ -215,7 +239,6 @@ public class LevelGridGeneration : MonoBehaviour
         room.roomGrid.AddGrid(neighbor.roomGrid, entranceRoom.ID, traversalEntranceNeigbor.ID);
         neighbor.roomGrid.AddGrid(room.roomGrid, traversalEntranceNeigbor.ID, entranceRoom.ID);
 
-        room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator, neighbor.EntrancePoints);
         //neighbor.TraversalGenerator.RemoveNode(traversalEntranceNeigbor.vertex);
         //room.TraversalGenerator.AddAdjacentNodes(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex);
         //neighbor.TraversalGenerator.AddAdjacentNodes(traversalEntranceNeigbor.vertex, traversalEntranceRoom.vertex);
@@ -225,6 +248,8 @@ public class LevelGridGeneration : MonoBehaviour
 
         entranceNeighbor.IsUsed = true;
         entranceRoom.IsUsed = true;
+
+        room.TraversalGenerator.FuseNode(traversalEntranceRoom.vertex, traversalEntranceNeigbor.vertex, neighbor.TraversalGenerator, neighbor.EntrancePoints);
 
         entranceRoom.connectedEntrance = entranceNeighbor;
         entranceNeighbor.connectedEntrance = entranceRoom;
@@ -248,7 +273,7 @@ public class LevelGridGeneration : MonoBehaviour
             for (int i = 0; i < neighborRoomsForFirstDirectionTest.Count; i++)
             {
                 Vector2 dir = GetSingleDirectionToNextRoom(position, neighborRoomsForFirstDirectionTest[i].transform.position);
-                if (levelBlocks[randomRoomIndex].RoomInfo.EntrancePoints.HasEntranceInDirection(-dir))
+                if (levelBlocks.gridLevels[randomRoomIndex].RoomInfo.EntrancePoints.HasEntranceInDirection(-dir))
                 {
                     doesThisBlockWork = true;
                     break;
@@ -258,7 +283,7 @@ public class LevelGridGeneration : MonoBehaviour
 
         if(doesThisBlockWork)
         {
-            return levelBlocks[randomRoomIndex];
+            return levelBlocks.gridLevels[randomRoomIndex];
         }
         else
         {
@@ -298,11 +323,10 @@ public class LevelGridGeneration : MonoBehaviour
         return surroundingRooms;
     }
 
-    private Vector3 Vec2IntToVec3D(Vector2Int vec)
+    public static Vector3 Vec2IntToVec3D(Vector2Int vec)
     {
         return new Vector3(vec.x, 0, vec.y);
     }
-
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(new Vector3(minPositionX.value, 0, minPositionY.value), new Vector3(minPositionX.value, 0, maxPositionY.value));

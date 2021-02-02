@@ -9,6 +9,7 @@ public class DoorController : MonoBehaviour
     private bool isDoorOpen = false;
     [SerializeField] private bool defaultOpenState = true;
     [SerializeField] private ToggleDoorsWithWalls toggleDoorsWithWalls = null;
+    [SerializeField] private DoorLightController doorLightController = null;
     private bool isDoorActive = false;
     public bool IsDoorActive { get { return isDoorActive; } set { isDoorActive = value; toggleDoorsWithWalls.ToggleDoors(value);  ToggleDoor(defaultOpenState); } }
     public bool IsPassable => isDoorOpen || !isDoorActive;
@@ -27,6 +28,7 @@ public class DoorController : MonoBehaviour
         {
             isDoorOpen = !isDoorOpen;
             doorAnimator.SetBool("Open", isDoorOpen);
+            doorLightController.SwitchLight(isDoorOpen);
         }
     }
     public void ToggleDoor(bool value)
@@ -35,6 +37,7 @@ public class DoorController : MonoBehaviour
         {
             isDoorOpen = value;
             doorAnimator.SetBool("Open", value);
+            doorLightController.SwitchLight(value);
         }
     }
 }

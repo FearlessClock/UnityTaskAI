@@ -17,12 +17,6 @@ namespace Pieter.NavMesh
 
         private void Start()
         {
-            navMesh = new AStarNavMeshNavigation(navMeshHolder);
-            SelectedTriangle = navMeshHolder.GetRandomTriangle();
-            if (SelectedTriangle != null)
-            {
-                SelectedTriangle.isSelected = true;
-            }
 
         }
         private void Update()   
@@ -37,7 +31,14 @@ namespace Pieter.NavMesh
                 }
             }
 
-            path = navMesh.GetPathFromTo(this.transform.position, getRandomPoint ? navMeshHolder.GetRandomPointInTriangle(SelectedTriangle) : end.position);
+            if(navMeshHolder != null)
+            {
+                if(navMesh == null)
+                {
+                    navMesh = new AStarNavMeshNavigation(navMeshHolder);
+                }
+                path = navMesh.GetPathFromTo(this.transform.position, getRandomPoint ? navMeshHolder.GetRandomPointInTriangle(SelectedTriangle) : end.position);
+            }
         }
 
         private void OnDrawGizmos()

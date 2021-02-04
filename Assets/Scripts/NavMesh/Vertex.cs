@@ -45,7 +45,7 @@ namespace Pieter.NavMesh
         public Vector3 Position => this.transform.position;
         public Vector3 savedPosition = new Vector3();
         public Vector3 LocalPosition => this.transform.localPosition;
-        [SerializeField] private List<Vertex> adjacent;
+        [SerializeField] private List<Vertex> adjacent = new List<Vertex>();
         public List<Vertex> Adjacent => adjacent;
         private List<AdjacentVertex> adjacentInformation = new List<AdjacentVertex>();
         public List<AdjacentVertex> AdjacentInformation => adjacentInformation;

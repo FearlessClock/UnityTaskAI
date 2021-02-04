@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc36876a777cc594ebe5371fce72804f, type: 3}
-  m_Name: TotalScientists
+  m_Script: {fileID: 11500000, guid: 46adfcd6399abc748b8bc276323bdbff, type: 3}
+  m_Name: TestingPrefabLEvels
   m_EditorClassIdentifier: 
-  value: 0
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
+  gridLevels:
+  - {fileID: 5756976499271234517, guid: 0aae0ec05ce89d7448ca655d6f830aab, type: 3}

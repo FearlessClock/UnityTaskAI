@@ -143,6 +143,15 @@ namespace Pieter.NavMesh
             t2.Start(new AdjacentTriangles() { from = triangles.Length / 2, to = triangles.Length });
         }
 
+        public void UpdateAdjacentTrianglesWithoutThreads()
+        {
+            foreach (NavMeshTriangle triangle in triangles)
+            {
+                triangle.adjacentTriangles.Clear();
+            }
+            UpdatingTrisThread(new AdjacentTriangles() { from = 0, to = triangles.Length });
+        }
+
         private static void AddTriangleVertexesToAdjacencyList(NavMeshTriangle triangle)
         {
             AddVertexesToAdjacentList(triangle.vertex1, triangle.vertex2);
@@ -176,6 +185,10 @@ namespace Pieter.NavMesh
 
         public NavMeshTriangle AddNewTriangle()
         {
+            if(triangles == null)
+            {
+                triangles = new NavMeshTriangle[0];
+            }
             NavMeshTriangle[] newTriangles = new NavMeshTriangle[triangles.Length + 1];
             for (int i = 0; i < triangles.Length; i++)
             {
@@ -280,14 +293,17 @@ namespace Pieter.NavMesh
 
         private void OnDrawGizmos()
         {
-            foreach (NavMeshTriangle tri in triangles)
+            if(triangles != null)
             {
-                tri.GizmoDrawTriangle(Color.green);
-                for (int i = 0; i < tri.adjacentTriangles.Count; i++)
+                foreach (NavMeshTriangle tri in triangles)
                 {
-                    Gizmos.color = Color.cyan;
+                    tri.GizmoDrawTriangle(Color.green);
+                    for (int i = 0; i < tri.adjacentTriangles.Count; i++)
+                    {
+                        Gizmos.color = Color.cyan;
 
-                    Gizmos.DrawLine(tri.centerPoint, FindTriangleWithID(tri.adjacentTriangles[i]).centerPoint);
+                        Gizmos.DrawLine(tri.centerPoint, FindTriangleWithID(tri.adjacentTriangles[i]).centerPoint);
+                    }
                 }
             }
 

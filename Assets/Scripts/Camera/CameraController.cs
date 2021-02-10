@@ -11,8 +11,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float maxSpeed = 3;
     [SerializeField] private float dragXSpeed = 3;
     private float updatedDragXSpeed = 1;
-    [SerializeField] private float dragZSpeed = 3;
-    private float updatedDragZSpeed = 1;
+    [SerializeField] private float dragYSpeed = 3;
+    private float updatedDragYSpeed = 1;
     [SerializeField] private float cameraSpeed = 1;
     [SerializeField] private Vector2 refScreenSize = new Vector2(1920, 1080);
     [Range(0, 1)]
@@ -28,10 +28,8 @@ public class CameraController : MonoBehaviour
     private bool isMovingRight = false;
     private bool isMovingDown = false;
     private bool isMovingLeft = false;
-    private bool isTurning = false;
     private bool isMovingWithMouseDown = false;
     private Vector3 pressPosition;
-    [SerializeField] private float maxRotationSpeed = 1;
 
     [Space]
     [SerializeField] private bool useDragMovement = true;
@@ -45,9 +43,9 @@ public class CameraController : MonoBehaviour
     Vector3 targetPosition;
 
     [SerializeField] private FloatVariable maxPositionX;
-    [SerializeField] private FloatVariable maxPositionZ;
+    [SerializeField] private FloatVariable maxPositionY;
     [SerializeField] private FloatVariable minPositionX;
-    [SerializeField] private FloatVariable minPositionZ;
+    [SerializeField] private FloatVariable minPositionY;
 
     private bool hasLostControlOfMovement = false;
 
@@ -74,7 +72,7 @@ public class CameraController : MonoBehaviour
             return;
         }
         updatedDragXSpeed = dragXSpeed * (Screen.width / refScreenSize.x);
-        updatedDragZSpeed = dragZSpeed * (Screen.height / refScreenSize.y);
+        updatedDragYSpeed = dragYSpeed * (Screen.height / refScreenSize.y);
 
         if (isTiming)
         {
@@ -91,25 +89,7 @@ public class CameraController : MonoBehaviour
         Vector2 mousePos = Input.mousePosition;
         Vector2 screenPos = camera.ScreenToViewportPoint(mousePos);
 
-        if (InputManager.Instance.IsPressing(1) && !isMovingWithMouseDown)
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-                isTurning = true;
-                pressPosition = screenPos;
-            }
-
-            if (isTurning)
-            {
-                float delta = screenPos.x - pressPosition.x;
-                this.transform.rotation = this.transform.rotation * Quaternion.Euler(0, maxRotationSpeed * delta* Time.deltaTime, 0);
-            }
-        }
-        else if (InputManager.HasReleased(1))
-        {
-            isTurning = false;
-        }
-        else if (useDragMovement && InputManager.Instance.IsPressing(0) && !isTurning )
+        if (useDragMovement && InputManager.Instance.IsPressing(0) )
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -124,9 +104,9 @@ public class CameraController : MonoBehaviour
             {
                 worldPos = camera.ScreenToViewportPoint(mousePos);
                 float deltaX = worldPos.x - pressPosition.x;
-                float deltaZ = worldPos.y - pressPosition.y;
+                float deltaY = worldPos.y - pressPosition.y;
 
-                targetPosition = targetPosition + this.transform.rotation  * new Vector3(-updatedDragXSpeed * deltaX, 0, -updatedDragZSpeed * deltaZ) * Time.deltaTime;
+                targetPosition = targetPosition + this.transform.rotation  * new Vector3(-updatedDragXSpeed * deltaX, -updatedDragYSpeed * deltaY, 0) * Time.deltaTime;
                 pressPosition = worldPos;
             }
         }
@@ -142,7 +122,7 @@ public class CameraController : MonoBehaviour
                 (useEdgeMovement&&(canMove || isMovingDown || isMovingRight || isMovingLeft) && (screenPos.y >= 0 - percentageToEdge && screenPos.y < percentageToEdge)))
             {
                 isMovingDown = true;
-                acceleration -= this.gameObject.transform.forward;
+                acceleration -= this.gameObject.transform.up;
             }
             else
             {
@@ -152,7 +132,7 @@ public class CameraController : MonoBehaviour
                 (useEdgeMovement && (canMove || isMovingUp || isMovingRight || isMovingLeft) && screenPos.y <= 1 + percentageToEdge && screenPos.y > 1 - percentageToEdge))
             {
                 isMovingUp = true;
-                acceleration += this.gameObject.transform.forward;
+                acceleration += this.gameObject.transform.up;
             }
             else
             {
@@ -186,13 +166,13 @@ public class CameraController : MonoBehaviour
 
         float zoomDelta = Input.mouseScrollDelta.y * scrollZoomSpeed * Time.deltaTime;
 
-        Vector3 zoomAmount = targetPosition + camera.transform.forward * zoomDelta;
+        Vector3 zoomAmount = targetPosition + camera.transform.up * zoomDelta;
         if ((zoomAmount).y >= zoomMinHeight && (zoomAmount).y <= zoomMaxHeight)
         {
             targetPosition = zoomAmount;
         }
 
-        targetPosition = new Vector3(Mathf.Min(Mathf.Max(targetPosition.x, minPositionX.value), maxPositionX.value), targetPosition.y, Mathf.Min(Mathf.Max(targetPosition.z, minPositionZ.value), maxPositionZ.value));
+        targetPosition = new Vector3(Mathf.Min(Mathf.Max(targetPosition.x, minPositionX.value), maxPositionX.value), Mathf.Min(Mathf.Max(targetPosition.y, minPositionY.value), maxPositionY.value), targetPosition.z);
 
         this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, cameraMovementLerpAmount);
 

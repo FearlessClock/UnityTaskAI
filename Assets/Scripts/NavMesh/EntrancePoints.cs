@@ -67,7 +67,8 @@ public class EntrancePoints : MonoBehaviour
         directions.Clear();
         foreach (NavMeshEntrance entrance in entrancePoints)
         {
-            Vector2 direction = new Vector2((entrance.entrance.Position - generator.containedRoom.center).x, (entrance.entrance.Position - generator.containedRoom.center).z);
+            Vector2 diff = entrance.entrance.LocalPosition - generator.containedRoom.center;
+            Vector2 direction = new Vector2(diff.x, diff.y);
 
             direction.Normalize();
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))

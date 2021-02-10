@@ -20,7 +20,7 @@ public class RoomGraphHolder : ScriptableObject
         Node nextRoom = new Node();
         nextRoom.payload = room;
         nextRoom.id = room.ID;
-        nextRoom.position = room.transform.position.ThreeDTo2DVector() ;
+        nextRoom.position = room.transform.position ;
         Node[] roomsNew = new Node[rooms.Length + 1];
         for (int i = 0; i < rooms.Length; i++)
         {

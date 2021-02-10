@@ -95,7 +95,7 @@ public class PersonTaskHandler
     {
         if (activeTask != null && activeTask.IsTaskValid)
         {
-            return Vector3.Distance(activeTask.GetInteractionPosition, pos);
+            return Vector2.Distance(activeTask.GetInteractionPosition, pos);
         }
         else
         {

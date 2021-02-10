@@ -17,7 +17,7 @@ namespace Save
             GridLevelSquareInformation[] gennedRooms = gen.GeneratedRooms;
             for (int i = 0; i < gennedRooms.Length; i++)
             {
-                blocks.Add(new LevelBlock() { ID = gennedRooms[i].blockID, x = gennedRooms[i].RoomInfo.transform.position.x, z = gennedRooms[i].RoomInfo.transform.position.z });
+                blocks.Add(new LevelBlock() { ID = gennedRooms[i].blockID, x = gennedRooms[i].RoomInfo.transform.position.x, y = gennedRooms[i].RoomInfo.transform.position.z });
             }
             Lab lab = new Lab() { blocks = blocks };
             lab.availableSpots = gen.GetAvailablePositions;
@@ -39,7 +39,7 @@ namespace Save
     {
         public int ID;
         public float x;
-        public float z;
+        public float y;
     }
 
     public class Lab

@@ -43,12 +43,38 @@ public class AnimationCommandController : MonoBehaviour
             currentCommand = commandList.Dequeue();
             if(currentCommand != currentState)
             {
-                animator.SetTrigger(currentCommand.ToString());
+                UpdateAnimator();
             }
             else
             {
                 UpdateCommand();
             }
+        }
+    }
+
+    private void UpdateAnimator()
+    {
+        switch (currentCommand)
+        {
+            case eAnimationType.Idle:
+                break;
+            case eAnimationType.Work:
+                animator.SetTrigger(currentCommand.ToString());
+                break;
+            case eAnimationType.Sleep:
+                animator.SetTrigger(currentCommand.ToString());
+                break;
+            case eAnimationType.Panic:
+                animator.SetTrigger(currentCommand.ToString());
+                break;
+            case eAnimationType.Walk:
+
+                break;
+            case eAnimationType.Death:
+                animator.SetTrigger(currentCommand.ToString());
+                break;
+            default:
+                break;
         }
     }
 

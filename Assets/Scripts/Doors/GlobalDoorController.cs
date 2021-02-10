@@ -7,23 +7,25 @@ public class GlobalDoorController : MonoBehaviour
 {
     private new Camera camera;
     [SerializeField] private LayerMask doorMask = 0;
+    Collider2D[] results = null;
+    [SerializeField] private float touchRadius = 1;
 
     private void Start()
     {
         camera = FindObjectOfType<Camera>();
+        results = new Collider2D[10];
     }
 
     private void Update()
     {
         if (InputManager.Instance.InputExistsUp() && InputManager.Instance.IsMouseFree)
         {
-            RaycastHit[] results = new RaycastHit[10];
-            int size = Physics.RaycastNonAlloc(camera.ScreenPointToRay(InputManager.Instance.GetInput(0)), results, 1000, doorMask);
+            int size = Physics2D.OverlapCircleNonAlloc(camera.ScreenToWorldPoint(InputManager.Instance.GetInput(0)), touchRadius, results, doorMask);
             if (size > 0)
             {
                 for (int i = 0; i < size; i++)  
                 {
-                    results[i].collider.GetComponent<DoorController>().ToggleDoor();
+                    results[i].GetComponent<DoorController>().ToggleDoor();
                 }
             }
         }

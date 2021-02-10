@@ -291,7 +291,7 @@ public class GridWorldMap
                         Gizmos.color = color;
                     }
                 }
-                Gizmos.DrawWireCube(new Vector3(((i+ Mathf.Min(inversionMatrix.x, 0)*-1) * tileSize) * inversionMatrix.x + (0.5f * tileSize), 0, (-(j+ Mathf.Max(inversionMatrix.y, 0)) * tileSize) * inversionMatrix.y + (0.5f * tileSize)), Vector3.one * tileSize);
+                Gizmos.DrawWireCube(new Vector3(((i+ Mathf.Min(inversionMatrix.x, 0)*-1) * tileSize) * inversionMatrix.x + (0.5f * tileSize), (-(j+ Mathf.Max(inversionMatrix.y, 0)) * tileSize) * inversionMatrix.y + (0.5f * tileSize), 0), Vector3.one * tileSize);
             }
         }
     }

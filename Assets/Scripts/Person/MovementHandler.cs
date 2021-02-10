@@ -192,12 +192,13 @@ public class MovementHandler : MonoBehaviour
     protected virtual void WalkToTarget(float urgencyLevel)
     {
         Vector3 direction = (target - this.transform.position).normalized;
-        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), urgencyLevel * rotationSpeed * Time.deltaTime);
+        this.transform.position += urgencyLevel * direction * movementSpeed * Time.deltaTime;
+        //this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), urgencyLevel * rotationSpeed * Time.deltaTime);
     }
 
     private float GetDistanceToPosition(Vector3 target)
     {
-        return Vector3.Distance(target, this.transform.position);
+        return Vector2.Distance(target, this.transform.position);
     }
 
     private void OnDrawGizmos()
@@ -216,7 +217,7 @@ public class MovementHandler : MonoBehaviour
                 {
                     Gizmos.color = Color.blue;
                 }
-                Gizmos.DrawLine(lastPosition + Vector3.up, Path[i].point + Vector3.up);
+                Gizmos.DrawLine(lastPosition, Path[i].point);
                 Gizmos.DrawWireCube(Path[i].point, Vector3.one * 0.4f);
                 lastPosition = Path[i].point;
             }
@@ -225,8 +226,8 @@ public class MovementHandler : MonoBehaviour
         {
             for (int i = targets.Count-1; i >= 0; i--)
             {
-                Gizmos.color = new Color(0, 1, 0, 0.3f + ((float)i / (float)targets.Count));
-                Gizmos.DrawCube(targets[i] + Vector3.up * 2, Vector3.one * (0.5f+ ((float)i / (float)targets.Count)));
+                Gizmos.color = new Color(0, 1, 0, 0.1f + ((float)i / (float)targets.Count));
+                Gizmos.DrawCube(targets[i], Vector3.one * (0.5f+ ((float)i / (float)targets.Count)));
             }
         }
     }

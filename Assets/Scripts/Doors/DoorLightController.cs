@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class DoorLightController : MonoBehaviour
 {
-    [SerializeField] private Material lightOff = null;
-    [SerializeField] private Material lightOn = null;
-    [SerializeField] private new Renderer renderer = null;
+    [SerializeField] private ParticleSystem lightOn = null;
 
     public void SwitchLight(bool isOn)
     {
         if (isOn)
         {
-            renderer.material = lightOn;
+            lightOn.Play();
         }
         else
         {
-            renderer.material = lightOff;
+            lightOn.Stop();
         }
     }
 }

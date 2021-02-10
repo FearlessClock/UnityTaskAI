@@ -8,7 +8,7 @@ public class RoomGridTester : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(col != null && col.OverlapPoint(this.transform.position.ThreeDTo2DVector()))
+        if(col != null && col.OverlapPoint(this.transform.position))
         {
             Gizmos.color = Color.red;
         }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc36876a777cc594ebe5371fce72804f, type: 3}
   m_Name: TotalScientists
   m_EditorClassIdentifier: 
-  value: 0
+  value: 1
   OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

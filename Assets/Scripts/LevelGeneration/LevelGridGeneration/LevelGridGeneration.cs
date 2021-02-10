@@ -90,7 +90,7 @@ public class LevelGridGeneration : MonoBehaviour
     //Regenerate the building from the save data
     private IEnumerator GenerateBuilding(Lab lab, int index)
     { 
-        Vector2Int currentGridPoint = new Vector2Int((int)lab.blocks[index].x / tileSize, (int)lab.blocks[index].z / tileSize);
+        Vector2Int currentGridPoint = new Vector2Int((int)lab.blocks[index].x / tileSize, (int)lab.blocks[index].y / tileSize);
         int numberOfBuildingsBuilt = MaxBuildings - index;
         availableSpots.Clear();
         availableSpots.AddRange(lab.availableSpots);
@@ -175,13 +175,13 @@ public class LevelGridGeneration : MonoBehaviour
             minPositionX.SetValue(worldSpacePosition.x);
         }
         
-        if (worldSpacePosition.z >= maxPositionY.value )
+        if (worldSpacePosition.y >= maxPositionY.value )
         {
-            maxPositionY.SetValue(worldSpacePosition.z + tileSize);
+            maxPositionY.SetValue(worldSpacePosition.y + tileSize);
         }
-        else if( worldSpacePosition.z < minPositionY.value)
+        else if( worldSpacePosition.y < minPositionY.value)
         {
-            minPositionY.SetValue(worldSpacePosition.z);
+            minPositionY.SetValue(worldSpacePosition.y);
         }
 
         GridLevelSquareInformation room = Instantiate<GridLevelSquareInformation>(randomRoom, this.transform);
@@ -293,7 +293,7 @@ public class LevelGridGeneration : MonoBehaviour
 
     private static Vector2 GetSingleDirectionToNextRoom(Vector3 startingPosition, Vector3 endingPosition)
     {
-        Vector2 dir = new Vector2((startingPosition - endingPosition).x, (startingPosition - endingPosition).z);
+        Vector2 dir = new Vector2((startingPosition - endingPosition).x, (startingPosition - endingPosition).y);
         dir.Normalize();
 
         if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
@@ -325,14 +325,14 @@ public class LevelGridGeneration : MonoBehaviour
 
     public static Vector3 Vec2IntToVec3D(Vector2Int vec)
     {
-        return new Vector3(vec.x, 0, vec.y);
+        return new Vector3(vec.x, vec.y, 0);
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(new Vector3(minPositionX.value, 0, minPositionY.value), new Vector3(minPositionX.value, 0, maxPositionY.value));
-        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, maxPositionY.value), new Vector3(minPositionX.value, 0, maxPositionY.value));
-        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, maxPositionY.value), new Vector3(maxPositionX.value, 0, minPositionY.value));
-        Gizmos.DrawLine(new Vector3(maxPositionX.value, 0, minPositionY.value), new Vector3(minPositionX.value, 0, minPositionY.value));
+        Gizmos.DrawLine(new Vector3(minPositionX.value, minPositionY.value, 0), new Vector3(minPositionX.value, maxPositionY.value, 0));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, maxPositionY.value, 0), new Vector3(minPositionX.value, maxPositionY.value, 0));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, maxPositionY.value, 0), new Vector3(maxPositionX.value, minPositionY.value, 0));
+        Gizmos.DrawLine(new Vector3(maxPositionX.value, minPositionY.value, 0), new Vector3(minPositionX.value, minPositionY.value, 0));
         if(gridWorldMap != null)
         {
             gridWorldMap.DrawDebug(Color.green);
